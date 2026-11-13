@@ -19,6 +19,7 @@ import type {
   CollectibleType,
 } from '@/game/types';
 import { checkAchievements } from '@/game/progression/achievements';
+import { musicEngine } from '@/game/audio/music-engine';
 
 const DEFAULT_INVENTORY: Inventory = {
   items: {
@@ -140,6 +141,19 @@ export const useGameStore = create<GameStore>()(
         const nextVisited = visited.includes(room) ? visited : [...visited, room];
         set({ currentRoom: room, roomsVisited: nextVisited, moveTarget: null });
         get().checkAchievementsTrigger();
+
+        // Adaptive ambient music per space station module
+        const roomMusicMap: Record<string, 'exploration-command' | 'exploration-hangar' | 'exploration-lab' | 'exploration-comms'> = {
+          'hangar': 'exploration-hangar',
+          'science-lab': 'exploration-lab',
+          'comms-array': 'exploration-comms',
+          'command-center': 'exploration-command',
+          'resource-bay': 'exploration-hangar',
+          'mission-board': 'exploration-command',
+          'hallway': 'exploration-command',
+        };
+        const targetScene = roomMusicMap[room] || 'exploration-command';
+        musicEngine.setScene(targetScene, 0.22);
       },
       setMoveTarget: (target) => set({ moveTarget: target }),
 
@@ -321,6 +335,7 @@ export const useGameStore = create<GameStore>()(
         totalCollectiblesCount: state.totalCollectiblesCount,
         currentRoom: state.currentRoom,
         playerPosition: state.playerPosition,
+        playerFacing: state.playerFacing,
         roomsVisited: state.roomsVisited,
         totalItemsCrafted: state.totalItemsCrafted,
         missionsCompleted: state.missionsCompleted,

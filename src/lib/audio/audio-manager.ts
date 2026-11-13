@@ -16,6 +16,20 @@ export interface AudioSettings {
 
 const STORAGE_KEY = 'novascript_audio_settings_v1';
 
+type MusicSyncCallback = () => void;
+type MusicDuckCallback = (durationMs?: number) => void;
+
+let musicSyncCallback: MusicSyncCallback | null = null;
+let musicDuckCallback: MusicDuckCallback | null = null;
+
+export function registerMusicHooks(
+  syncCb: MusicSyncCallback,
+  duckCb: MusicDuckCallback
+): void {
+  musicSyncCallback = syncCb;
+  musicDuckCallback = duckCb;
+}
+
 export class AudioManager {
   private static instance: AudioManager;
   private settings: AudioSettings = {
@@ -50,11 +64,16 @@ export class AudioManager {
 
   public saveSettings(settings: Partial<AudioSettings>): void {
     this.settings = { ...this.settings, ...settings };
-    if (typeof window === 'undefined') return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.settings));
-    } catch {
-      // storage unavailable
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(this.settings));
+      } catch {
+        // storage unavailable
+      }
+    }
+    // Notify music engine to update volume
+    if (musicSyncCallback) {
+      musicSyncCallback();
     }
   }
 
@@ -85,10 +104,13 @@ export class AudioManager {
   }
 
   public warning(): void {
+    // Duck music when warnings/crises occur
+    if (musicDuckCallback) musicDuckCallback(1500);
     playSynthWarning(this.getEffectiveSfxVolume());
   }
 
   public failure(): void {
+    if (musicDuckCallback) musicDuckCallback(2000);
     playSynthFailure(this.getEffectiveSfxVolume());
   }
 }

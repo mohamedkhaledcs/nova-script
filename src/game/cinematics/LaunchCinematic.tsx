@@ -12,6 +12,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import type { MissionEnding } from '@/types/game';
+import { musicEngine } from '@/game/audio/music-engine';
 
 interface LaunchCinematicProps {
   ending: MissionEnding;
@@ -45,6 +46,9 @@ export default function LaunchCinematic({
     const container = containerRef.current;
     if (!container) return;
 
+    // Start dramatic launch countdown soundtrack
+    musicEngine.setScene('launch', 0.35);
+
     const tl = gsap.timeline({
       onComplete: () => {
         // Brief pause then transition
@@ -73,7 +77,10 @@ export default function LaunchCinematic({
     // Phase 4: Launch or failure
     if (isSuccess || ending.status === 'partial_success' || ending.status === 'strategy_revision') {
       // Successful launch
-      tl.call(() => setStatusText('LIFTOFF!'), [], 8.5);
+      tl.call(() => {
+        setStatusText('LIFTOFF!');
+        musicEngine.setScene('victory', 0.32);
+      }, [], 8.5);
 
       if (rocketRef.current) {
         tl.to(rocketRef.current, {
@@ -111,7 +118,10 @@ export default function LaunchCinematic({
 
     } else if (isLaunchFailure) {
       // Launch failure — rocket shakes and falls
-      tl.call(() => setStatusText('WARNING: MASS OVERLOAD DETECTED'), [], 8.5);
+      tl.call(() => {
+        setStatusText('WARNING: MASS OVERLOAD DETECTED');
+        musicEngine.setScene('failure', 0.35);
+      }, [], 8.5);
 
       if (rocketRef.current) {
         tl.to(rocketRef.current, {
@@ -152,7 +162,10 @@ export default function LaunchCinematic({
         }, 8.8);
       }
 
-      tl.call(() => setStatusText('THERMAL ANOMALY DETECTED'), [], 10);
+      tl.call(() => {
+        setStatusText('THERMAL ANOMALY DETECTED');
+        musicEngine.setScene('failure', 0.35);
+      }, [], 10);
 
       if (flashRef.current) {
         tl.to(flashRef.current, {
@@ -179,7 +192,10 @@ export default function LaunchCinematic({
 
     } else {
       // Resource failure or other
-      tl.call(() => setStatusText('MISSION ABORTED — RESOURCE DEPLETION'), [], 8.5);
+      tl.call(() => {
+        setStatusText('MISSION ABORTED — RESOURCE DEPLETION');
+        musicEngine.setScene('failure', 0.35);
+      }, [], 8.5);
       if (flashRef.current) {
         tl.to(flashRef.current, {
           opacity: 0.5,

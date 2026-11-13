@@ -69,6 +69,9 @@ export default function GamePage() {
 
   // Initialize on mount
   useEffect(() => {
+    if (typeof window !== 'undefined') {
+      (window as unknown as { __GAME_STORE__: typeof useGameStore }).__GAME_STORE__ = useGameStore;
+    }
     const saved = loadMissionFromStorage();
     if (saved && !saved.isComplete) {
       setHasSavedMission(true);
@@ -77,20 +80,62 @@ export default function GamePage() {
     setIsMuted(currentAudio.isMuted);
   }, []);
 
-  // Sync ESC key for closing mini-games back to exploring
+  // Global game hotkeys (Esc, Tab, I)
   useEffect(() => {
-    const handleEsc = (e: KeyboardEvent) => {
+    const handleGlobalKeyDown = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target && (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA')) {
+        return;
+      }
+
+      const key = e.key.toLowerCase();
+      const store = useGameStore.getState();
+
       if (e.key === 'Escape') {
-        const store = useGameStore.getState();
+        if (isSettingsOpen) {
+          setIsSettingsOpen(false);
+          return;
+        }
+        if (isCraftingOpen) {
+          setIsCraftingOpen(false);
+          store.setActiveMiniGame(null);
+          store.setPhase('exploring');
+          return;
+        }
+        if (isMissionSelectorOpen) {
+          setIsMissionSelectorOpen(false);
+          store.setActiveMiniGame(null);
+          store.setPhase('exploring');
+          return;
+        }
+        if (store.isInventoryOpen) {
+          store.setInventoryOpen(false);
+          return;
+        }
+        if (store.isCodexOpen) {
+          store.toggleCodex();
+          return;
+        }
         if (store.activeMiniGame) {
           store.setActiveMiniGame(null);
           store.setPhase('exploring');
+          return;
         }
       }
+
+      if (key === 'tab') {
+        e.preventDefault();
+        store.toggleCodex();
+      }
+
+      if (key === 'i') {
+        store.toggleInventory();
+      }
     };
-    window.addEventListener('keydown', handleEsc);
-    return () => window.removeEventListener('keydown', handleEsc);
-  }, []);
+
+    window.addEventListener('keydown', handleGlobalKeyDown);
+    return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+  }, [isSettingsOpen, isCraftingOpen, isMissionSelectorOpen]);
 
   // ---- Menu Actions ----
 
@@ -188,6 +233,21 @@ export default function GamePage() {
           // Play cinematic before showing report
           setScreen('cinematic');
           setGamePhase('cinematic');
+        } else {
+          // Dynamic music: check if any resource is within critical low range (<= 25)
+          const vals = [
+            updated.resources.budget,
+            updated.resources.mass,
+            updated.resources.power,
+            updated.resources.scientific_value,
+            updated.resources.communication,
+          ];
+          const hasCritical = vals.some((v) => v <= 25);
+          if (hasCritical) {
+            musicEngine.setScene('tension', 0.28);
+          } else {
+            musicEngine.setScene('mission-active', 0.22);
+          }
         }
       } catch (err) {
         console.error('Failed to commit decision:', err);

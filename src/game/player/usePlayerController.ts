@@ -27,7 +27,6 @@ function distance2D(a: Vec3, b: Vec3): number {
 export function usePlayerController() {
   const input = useInput();
   const portalCooldownRef = useRef(0);
-  const actionsConsumedRef = useRef(false);
   const footstepTimerRef = useRef(0);
   const footstepCountRef = useRef(0);
   const prevInteractionTargetRef = useRef<string | null>(null);
@@ -47,10 +46,6 @@ export function usePlayerController() {
     isInventoryOpen,
     isCodexOpen,
     isPaused,
-    toggleInventory,
-    toggleCodex,
-    togglePause,
-    setInventoryOpen,
     collectiblesFound,
     markCollectibleFound,
     collectItem,
@@ -65,30 +60,8 @@ export function usePlayerController() {
       portalCooldownRef.current -= dt;
     }
 
-    // Handle UI toggle actions (even when not exploring)
-    if (!actionsConsumedRef.current) {
-      if (input.justPressedInventory) {
-        toggleInventory();
-      }
-      if (input.justPressedCodex) {
-        toggleCodex();
-      }
-      if (input.justPressedPause) {
-        if (isInventoryOpen) {
-          setInventoryOpen(false);
-        } else {
-          togglePause();
-        }
-      }
-      actionsConsumedRef.current = true;
-      input.consumeActions();
-    } else {
-      // Reset the consumed flag when no action keys are pressed
-      if (!input.justPressedInteract && !input.justPressedInventory &&
-          !input.justPressedPause && !input.justPressedCodex) {
-        actionsConsumedRef.current = false;
-      }
-    }
+    // Consume any held input actions
+    input.consumeActions();
 
     // Only process movement during exploration phase
     if (phase !== 'exploring' || isPaused || isInventoryOpen || isCodexOpen) {
@@ -195,7 +168,7 @@ export function usePlayerController() {
       if (dist < 1.5) {
         markCollectibleFound(spawn.id);
         collectItem(spawn.type, 1);
-        playPickup(0.3);
+        playPickup(0.3, spawn.type);
       }
     }
 

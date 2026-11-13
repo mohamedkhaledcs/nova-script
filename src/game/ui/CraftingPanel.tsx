@@ -12,6 +12,7 @@ import { getCraftableRecipes } from '@/game/crafting/recipes';
 import { COLLECTIBLE_INFO } from '@/game/types';
 import type { CollectibleType, CraftingRecipe } from '@/game/types';
 import { audio } from '@/lib/audio/audio-manager';
+import { playCraftingSuccess } from '@/game/audio/exploration-sfx';
 
 interface CraftingPanelProps {
   isOpen: boolean;
@@ -49,7 +50,7 @@ export default function CraftingPanel({ isOpen, onClose }: CraftingPanelProps) {
       localStorage.setItem('novascript_crafted_v1', JSON.stringify(updated));
     } catch { /* ignore */ }
 
-    audio.success();
+    playCraftingSuccess();
   };
 
   return (

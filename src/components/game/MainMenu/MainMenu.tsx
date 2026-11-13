@@ -1,8 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
+import { musicEngine } from '@/game/audio/music-engine';
 
 interface MainMenuProps {
   hasSavedMission: boolean;
@@ -18,6 +19,22 @@ export default function MainMenu({
   onOpenSettings,
 }: MainMenuProps) {
   const [showAbout, setShowAbout] = useState(false);
+
+  useEffect(() => {
+    const handleFirstInteraction = () => {
+      musicEngine.setScene('menu', 0.22);
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+
+    window.addEventListener('pointerdown', handleFirstInteraction, { once: true });
+    window.addEventListener('keydown', handleFirstInteraction, { once: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', handleFirstInteraction);
+      window.removeEventListener('keydown', handleFirstInteraction);
+    };
+  }, []);
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center deep-space-bg stars-pattern px-4 py-12 select-none overflow-hidden">

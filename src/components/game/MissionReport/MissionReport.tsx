@@ -247,7 +247,7 @@ export default function MissionReport({
             className="flex-1 py-4 px-6 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-bold tracking-wider shadow-glow-cyan transition-all duration-200 flex items-center justify-center gap-3"
           >
             <RotateCcw className="w-5 h-5 text-cyan-200" />
-            <span>LAUNCH NEW MISSION</span>
+            <span>RETURN TO STATION & REPLAY</span>
           </button>
         </div>
       </div>
