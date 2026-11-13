@@ -3,16 +3,26 @@
 ## 1. Audio Architecture & Design Principles
 
 Sound is vital for an authentic Mission Control and deep-space flight experience. NovaScript implements a **centralized Audio Manager** (`src/lib/audio/audio-manager.ts`) supporting:
-- Independent volume sliders for **Master**, **Sound Effects (SFX)**, and **Background Music (BGM)**.
+- Independent volume controls for **Master**, **Sound Effects (SFX)**, and **Background Music (BGM)**.
 - LocalStorage persistence for user audio preferences.
 - Autoplay policy compliance: Audio context initializes only upon the player's first deliberate gesture (e.g. clicking "Start Mission").
-- Dual-mode architecture: Plays pre-rendered high-quality audio files when available, with an **instant procedural Web Audio API synthesizer** providing zero-dependency sound effects out of the box!
+- Clear distinction between **Synthesized Sound Effects** and **Background Music**.
 
 ---
 
-## 2. Audio Categories & Event Manifest
+## 2. Procedural Web Audio API Synthesizer (Primary SFX Engine)
 
-| Event ID | Category | Trigger Action | Audio Description / Synthesis Parameter |
+To guarantee that NovaScript has complete zero-latency audio feedback without relying on external `.mp3` or `.wav` dependencies, `src/lib/audio/procedural-synth.ts` creates real-time sound effects directly via the browser's `AudioContext`:
+- Oscillators: Sine, Triangle, Square, Sawtooth.
+- Noise generators: Filtered white and brown noise buffers for thruster plumes and atmospheric wind.
+- ADSR envelope shaping (Attack, Decay, Sustain, Release).
+- Biquad low-pass and band-pass filtering.
+
+---
+
+## 3. Sound Effects (SFX) Manifest
+
+| Event ID | Category | Trigger Action | Synthesis / Audio Description |
 |---|---|---|---|
 | `UI_HOVER` | Interface | Mouse hover on interactive elements | Subtle 1200Hz sine blip, 40ms duration, low amplitude. |
 | `UI_CLICK` | Interface | Button press or toggle | Crisp 800Hz-to-400Hz downward frequency sweep, 60ms. |
@@ -25,43 +35,33 @@ Sound is vital for an authentic Mission Control and deep-space flight experience
 | `CHOICE_CRITICAL` | Feedback | Critical depletion or failure ending | Piercing Klaxon alarm (900Hz alternating square wave). |
 | `TASK_COMPLETE` | Feedback | Task board objective cleared | Triumphant digital shimmer. |
 | `ROCKET_IGNITION` | Spacecraft | T-3s launch countdown | Low-frequency rumbling noise with low-pass resonance filter. |
-| `ROCKET_LIFTOFF` | Spacecraft | T-0s ascent through atmosphere | Roaring sustained rocket engine exhaust rumble with Doppler pitch. |
+| `ROCKET_LIFTOFF` | Spacecraft | T-0s ascent through atmosphere | Roaring sustained rocket engine exhaust rumble. |
 | `STAGE_SEPARATION` | Spacecraft | Booster / fairing jettison | Explosive pyrotechnic latch crack followed by metallic ring. |
 | `THRUSTER_BURST` | Spacecraft | Trajectory correction burn | High-pressure cold-gas thruster hiss, 250ms. |
 | `INSTRUMENT_SCAN` | Spacecraft | Activating camera or spectrometer | High-tech servo whirr followed by digital telemetry chirp. |
-| `RADAR_PING` | Spacecraft | Subsurface radar sounder pulse | Deep submarine-like acoustic ping with long reverberant decay. |
-| `DSN_TRANSMIT` | Spacecraft | Beaming science data to Earth | Fast modulating FSK (Frequency Shift Keying) data stream sound. |
-| `DUST_STORM` | Environment | Martian regional dust storm | Howling wind turbulence with filtered brown noise. |
+| `RADAR_PING` | Spacecraft | Subsurface radar sounder pulse | Deep acoustic ping with long reverberant decay. |
+| `DSN_TRANSMIT` | Spacecraft | Beaming science data to Earth | Fast modulating FSK data stream sound. |
+| `DUST_STORM` | Environment | Martian regional dust storm | Filtered brown noise wind turbulence. |
 | `SOLAR_STORM` | Environment | Solar coronal mass ejection warning | Static radiation crackle and warning siren. |
-| `MISSION_SUCCESS` | Outcome | High-scoring final report (E001/E002) | Grand triumphant orchestral synth fanfare. |
-| `MISSION_FAILURE` | Outcome | Mission loss ending (E006/E007/E008) | Solemn descending drone with telemetry static fade-out. |
+| `MISSION_SUCCESS` | Outcome | High-scoring final report (`E001`/`E002`) | Ascending multi-oscillator fanfare. |
+| `MISSION_FAILURE` | Outcome | Mission loss ending (`E006`/`E007`/`E008`) | Descending low-frequency drone with telemetry static fade-out. |
 
 ---
 
-## 3. Background Music Suites
+## 4. Background Music (BGM) Strategy
 
-1. **`BGM_MENU`**: *"Deep Space Horizon"* - Ambient floating pads, slow evolving sub-bass, distant pulsar rhythm (BPM: 65).
-2. **`BGM_PLANNING`**: *"Mission Formulation"* - Thoughtful, focused analog synthesizers, gentle arpeggiated sequences.
-3. **`BGM_FLIGHT`**: *"Interplanetary Cruise"* - Expansive cosmic soundscape, subtle ticking clocks, deep space ambiance.
-4. **`BGM_CRISIS`**: *"Anomaly Operations"* - Tense polyrhythmic pulse, distorted bass swells, operational urgency.
-5. **`BGM_REPORT`**: *"Mission Debrief"* - Reflective, cinematic closure score.
-
----
-
-## 4. Procedural Web Audio API Synthesizer (Built-in Fallback)
-
-To guarantee that NovaScript never breaks due to missing remote sound files, `src/lib/audio/procedural-synth.ts` creates real-time audio waveforms directly via the browser's `AudioContext`:
-- Pure oscillators (Sine, Triangle, Square, Sawtooth)
-- White / Brown noise generators for rocket plumes and wind
-- ADSR envelope shaping (Attack, Decay, Sustain, Release)
-- Biquad low-pass and band-pass filtering
-- Gain nodes for instantaneous zero-latency playback
+> [!NOTE]
+> **Audio Asset Availability**: No pre-recorded soundtrack files have been supplied in the repository. Full orchestral music tracks do **not** exist yet.
+>
+> To deliver an immersive soundscape without infringing copyrights:
+> 1. NovaScript features a procedural ambient synthesizer that produces gentle, evolving deep-space drone chords (C-minor/Eb ambient pads) using detuned sine oscillators and low-pass filters.
+> 2. If dedicated music files are added in the future, they must be strictly public domain (CC0) or licensed royalty-free assets and documented here with verified source URLs.
 
 ---
 
 ## 5. Licensing & Attribution Standards
 
-All external audio assets must strictly adhere to:
+All external audio assets added to `public/audio/` must strictly adhere to:
 - **Creative Commons 0 (CC0)** / Public Domain, or
-- Royalty-Free permissive licenses with explicit commercial/educational re-use rights.
-- Under no circumstances will copyrighted soundtrack music be included.
+- Permissive royalty-free licenses with explicit redistribution rights.
+- Under no circumstances will commercial soundtrack recordings be included.

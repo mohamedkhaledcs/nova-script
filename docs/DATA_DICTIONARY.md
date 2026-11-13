@@ -6,15 +6,17 @@ This document specifies the exact data types, schema structures, and mathematica
 
 ## 1. Core Data Models
 
-### 1.1 Resources & Bounds
+### 1.1 Normalized Resources & Bounds
+
+In accordance with `ques-en.json`, all resources are **normalized numeric points** bounded between 0 and 100. They do not represent real physical units (no USD, kg, W, or %):
 
 ```typescript
 export interface Resources {
-  budget: number;           // Remaining financial budget ($M) [0 - 100]
-  mass: number;             // Spacecraft dry + payload mass (kg/index) [0 - 100]
-  power: number;            // Electrical power reserve / margin (W / %) [0 - 100]
-  scientific_value: number; // Cumulative science value return [0 - 100]
-  communication: number;    // RF signal link quality / throughput [0 - 100]
+  budget: number;           // Remaining mission budget points [0 - 100]
+  mass: number;             // Spacecraft structural and payload mass index [0 - 100]
+  power: number;            // Electrical power availability and energy storage index [0 - 100]
+  scientific_value: number; // Cumulative scientific discovery points [0 - 100]
+  communication: number;    // Radio link margin and throughput index [0 - 100]
 }
 
 export interface ResourceBounds {
@@ -25,7 +27,7 @@ export interface ResourceBounds {
 export type ResourceKey = keyof Resources;
 ```
 
-**Initial State in `ques-en.json`**:
+**Canonical Initial Resources in `ques-en.json`**:
 ```json
 {
   "budget": 70,
@@ -60,20 +62,20 @@ export interface SourceCitation {
 export interface AnswerOption {
   id: string;                      // e.g. "A001"
   text: string;                    // User-facing choice text
-  next_question_id: string | null; // e.g. "Q002" or null if leads to ending
-  ending_id: string | null;        // e.g. "E001" or null if leads to next question
+  next_question_id: string | null; // e.g. "Q002" (null if terminal answer)
+  ending_id: string | null;        // e.g. "E001" (null if non-terminal answer)
   consequence_summary: string;     // Narrative consequence
-  effects: Partial<Resources>;     // Resource changes (additive deltas)
-  learning_point: string;          // Educational NASA takeaway
+  effects: Partial<Resources>;     // Additive resource deltas
+  learning_point: string;          // Educational takeaway
 }
 
 export interface Question {
   id: string;               // e.g. "Q001"
-  stage: MissionStage;      // Mission phase category
+  stage: MissionStage;      // One of the 8 canonical stages
   story: string;            // Situational narrative context
   question: string;         // Prompt text
-  source: SourceCitation;   // NASA source attribution
-  answers: [AnswerOption, AnswerOption]; // Exactly 2 binary options per question
+  source: SourceCitation;   // Literature source attribution
+  answers: [AnswerOption, AnswerOption]; // Exactly 2 binary options
 }
 ```
 
@@ -121,9 +123,7 @@ The 8 ending formulas in `ques-en.json` are:
 | **E008** | Thermal Protection Failure During Entry | `engineering_failure` | `budget * 0.5` |
 
 ### Safe Evaluator Rule
-No `eval()` or `Function()` constructor. The scoring engine decomposes formulas into tokens matching the regex:
-`([a-z_]+|\d+(?:\.\d+)?|[\+\*])`
-Variables are resolved strictly from the player's final `Resources` state, multiplied and summed deterministically.
+Never use `eval()` or the `Function()` constructor. The scoring engine decomposes formula strings into tokens matching `([a-z_]+|\d+(?:\.\d+)?|[\+\*])` and evaluates them deterministically using the player's final normalized `Resources` values.
 
 ---
 
@@ -158,17 +158,20 @@ export interface MissionState {
 
 ---
 
-## 4. Supabase Database Schema
+## 4. Supabase Database Schema & Security Specification
+
+> [!CAUTION]
+> **Database Migration Policy**: Do not execute database migrations yet. This schema defines the target cloud persistence architecture for Phase 6. Guest players store all data locally in `localStorage` without database interaction.
 
 ```sql
--- Profiles table for optional authenticated users
+-- Profiles table for authenticated users
 CREATE TABLE public.profiles (
   id UUID REFERENCES auth.users(id) ON DELETE CASCADE PRIMARY KEY,
   username TEXT UNIQUE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- Active mission saves
+-- Active mission drafts / saves (strictly private to owner)
 CREATE TABLE public.mission_saves (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
@@ -177,25 +180,52 @@ CREATE TABLE public.mission_saves (
   updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- Completed mission runs (for archives & leaderboards)
+-- Completed mission runs (strictly private to owner)
 CREATE TABLE public.mission_runs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE,
+  user_id UUID REFERENCES public.profiles(id) ON DELETE CASCADE NOT NULL,
   destination TEXT NOT NULL,
   ending_id TEXT NOT NULL,
   ending_status TEXT NOT NULL,
   final_score NUMERIC(6, 2) NOT NULL,
   mission_summary JSONB NOT NULL,
+  is_public BOOLEAN DEFAULT FALSE NOT NULL,
   created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL
 );
 
--- Row Level Security
+-- Safe Public Leaderboard View (Exposes only opted-in public runs, omits private state)
+CREATE VIEW public.public_leaderboard AS
+SELECT 
+  mr.id,
+  p.username,
+  mr.destination,
+  mr.ending_id,
+  mr.ending_status,
+  mr.final_score,
+  mr.created_at
+FROM public.mission_runs mr
+JOIN public.profiles p ON mr.user_id = p.id
+WHERE mr.is_public = TRUE;
+
+-- Enable Row Level Security
 ALTER TABLE public.profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.mission_saves ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.mission_runs ENABLE ROW LEVEL SECURITY;
 
-CREATE POLICY "Users read own profile" ON public.profiles FOR SELECT USING (auth.uid() = id);
-CREATE POLICY "Users manage own save" ON public.mission_saves FOR ALL USING (auth.uid() = user_id);
-CREATE POLICY "Users manage own runs" ON public.mission_runs FOR ALL USING (auth.uid() = user_id OR user_id IS NULL);
-CREATE POLICY "Public read completed runs" ON public.mission_runs FOR SELECT USING (true);
+-- Strict Owner-Only RLS Policies (Zero access for other users or unauthenticated actors)
+CREATE POLICY "Users view own profile" 
+  ON public.profiles FOR SELECT 
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users update own profile" 
+  ON public.profiles FOR UPDATE 
+  USING (auth.uid() = id);
+
+CREATE POLICY "Users manage own save" 
+  ON public.mission_saves FOR ALL 
+  USING (auth.uid() = user_id);
+
+CREATE POLICY "Users manage own runs" 
+  ON public.mission_runs FOR ALL 
+  USING (auth.uid() = user_id);
 ```

@@ -21,10 +21,14 @@ flowchart LR
 
 ## Detailed Phase Breakdown
 
-### Phase 0: Reconnaissance & Planning *(Completed)*
+### Phase 0: Reconnaissance & Planning *(Completed & Revised)*
 - [x] Inspect local workspace, git status, and remote repository (`https://github.com/mohamedkhaledcs/nova-script`).
+- [x] Rename legacy resource directory to `resources` and update all project references.
+- [x] Add suitable `.gitignore` and official `LICENSE` file (MIT).
 - [x] Audit `ques-en.json` (31 questions, 62 answers, 8 endings, 33 paths, 100% reachability verified).
-- [x] Audit visual assets (`player.png`, `mouse cursor.png`) and NASA reference PDFs.
+- [x] Correct component descriptions (`A026` thin aluminum foil, `Q026` gentle weeks vs 3 deep passes).
+- [x] Align resources to normalized 0–100 points without unsupported physical units.
+- [x] Design safe owner-only Supabase RLS policies and opt-in leaderboard view.
 - [x] Author core documentation suite (`README.md`, `AGENTS.md`, 10 documents in `docs/`).
 - [x] Stage source assets into `public/data/` and `public/assets/`.
 
@@ -58,19 +62,19 @@ flowchart LR
 
 ---
 
-### Phase 3: Game UI & Mission Environments
-- [ ] Build **GameHUD**: Live resource gauges (Budget, Mass, Power, Science, Comms), mission timer, stage pill, and active alerts.
-- [ ] Build **Phase 1: Main Menu**: Cinematic deep space backdrop, starfield, Start/Resume mission buttons, settings modal, mission archive.
-- [ ] Build **Phase 2: Mission Control**: Briefing room, animated pixel-art astronaut avatar (`player.png`), mission objective acceptance.
-- [ ] Build **Phase 3: Mission Planner**: Destination selector (Moon vs Mars) with interactive planetary comparison cards.
-- [ ] Build **Phase 4: Spacecraft Hangar**: Bus and power system configuration interface with visual component slots.
-- [ ] Build **Phase 5: Instrument Lab**: Equipment rack with interactive payload cards and learning points.
-- [ ] Build **Phase 6: Orbit Planner**: Orbital altitude and trajectory selection screen.
-- [ ] Build **Phase 7: Launch Prep Console**: Rocket selection, mass margin check, launch countdown checklist.
-- [ ] Build **Phase 8 & 9: Mission Operations**: Event console with real-time operational alerts (dust storms, solar flare, eclipse).
-- [ ] Build **Phase 10: Space Communications**: DSN signal lock console and telemetry downlink progress bar.
-- [ ] Build **Phase 11: Task Board**: Dynamic objective board tracking mission milestones.
-- [ ] Build **Phase 12: Mission Dossier Report**: Comprehensive ending report, official final score, decision timeline, and replay options.
+### Phase 3: Game UI & Presentation Layers
+- [ ] Build **GameHUD**: Live normalized resource gauges (Budget, Mass, Power, Science, Comms), mission timer, stage pill, and active alerts.
+- [ ] Build **Main Menu Layer**: Cinematic deep space backdrop, starfield, Start/Resume mission buttons, settings modal, mission archive.
+- [ ] Build **Mission Control Layer**: Briefing room, animated pixel-art astronaut avatar (`player.png`), mission objective acceptance.
+- [ ] Build **Mission Planner Layer**: Destination selector (Moon vs Mars) with interactive planetary comparison cards.
+- [ ] Build **Spacecraft Hangar Layer**: Bus and power system configuration interface with visual component slots.
+- [ ] Build **Instrument Lab Layer**: Equipment rack with interactive payload cards and learning points.
+- [ ] Build **Orbit Planner Layer**: Orbital altitude and trajectory selection screen.
+- [ ] Build **Launch Prep Console Layer**: Rocket selection, mass margin check, launch countdown checklist.
+- [ ] Build **Operations Alert Console Layer**: Event console with real-time operational alerts (dust storms, solar flare, eclipse).
+- [ ] Build **Space Communications Layer**: DSN signal lock console and telemetry downlink progress bar.
+- [ ] Build **Task Board**: Dynamic objective board tracking supplementary mission milestones.
+- [ ] Build **Mission Dossier Report**: Comprehensive ending report, official final score, decision timeline, and replay options.
 
 ---
 
@@ -78,9 +82,10 @@ flowchart LR
 - [ ] Create Three.js Solar System scene (`SolarSystemScene.tsx`): 3D Earth, Moon, and Mars with atmospheric glows and orbit rings.
 - [ ] Create Modular 3D Spacecraft scene (`SpacecraftScene.tsx`):
   - Bus chassis, dynamic solar array deployment, gold MLI blanket shader, ceramic heat shields, parabolic dish.
-- [ ] Build GSAP Cinematic Launch Sequence:
+- [ ] Build GSAP Launch & Terminal Cinematic Sequences:
   - Pad gantry, T-10 countdown, engine ignition smoke, liftoff acceleration, booster separation, payload fairing jettison.
   - Implement E007 launch scrub failure animation for overloaded rockets.
+  - Implement E008 thermal entry burn-up animation for unshielded spacecraft.
 - [ ] Build Astrodynamics Orbit Scene:
   - Trajectory spline, planetary shadow/eclipse cone, real-time power drop simulation.
 - [ ] Build WebGL detection & 2D blueprint fallback for non-WebGL devices.
@@ -97,12 +102,13 @@ flowchart LR
   - Autoplay compliance (first-click user unlock).
 - [ ] Implement Procedural Web Audio API Synthesizer:
   - Zero-asset fallback sound effects for UI blips, alarms, thrusters, radar pings, and rocket rumble.
+  - Procedural ambient drone generator for background music until licensed assets are integrated.
 
 ---
 
 ### Phase 6: Supabase Persistence & Optional Accounts
 - [ ] Configure Supabase client & SSR utilities (`src/lib/supabase/client.ts`).
-- [ ] Create SQL migration for `profiles`, `mission_saves`, and `mission_runs` with Row Level Security.
+- [ ] Prepare SQL schema for `profiles`, `mission_saves`, and `mission_runs` with strict owner-only RLS and safe public leaderboard view (do not execute migrations prematurely).
 - [ ] Add optional Login / Sign-up dialog in Mission Archive.
 - [ ] Enable cloud save synchronization for authenticated players without impeding guest gameplay.
 

@@ -8,8 +8,8 @@ NovaScript is constructed as a decoupled, layered web application built on Next.
 +-----------------------------------------------------------------------------------+
 |                                 USER INTERFACE                                    |
 |   +-----------------------+   +-----------------------+   +-------------------+   |
-|   |   GameHUD / Telemetry |   |  Phase View Overlays  |   | Context Radial UI |   |
-|   |  (Resources, Comms)   |   | (Planning, Lab, Ops)  |   |  (Inspect, Focus) |   |
+|   |   GameHUD / Telemetry |   | Presentation Overlays |   | Context Radial UI |   |
+|   |  (Normalized Gauges)  |   | (Planning, Lab, Ops)  |   |  (Inspect, Focus) |   |
 |   +-----------------------+   +-----------------------+   +-------------------+   |
 |   |               Custom Rocket Cursor Layer (Pointer-events: none)           |   |
 +-----------------------------------------------------------------------------------+
@@ -31,13 +31,13 @@ NovaScript is constructed as a decoupled, layered web application built on Next.
 +------------------------------------+          +-----------------------------------+
 |      VISUAL SIMULATION LAYER       |          |        PERSISTENCE LAYER          |
 |  +------------------------------+  |          |  +-----------------------------+  |
-|  | Three.js / R3F Canvas        |  |          |  | LocalStorage                |  |
-|  | - Solar System & Orbits      |  |          |  | - Active Mission State      |  |
-|  | - Spacecraft Bus & Modulars  |  |          |  | - Audio & Display Settings  |  |
+|  | Three.js / R3F Canvas        |  |          |  | LocalStorage (Primary)      |  |
+|  | - Solar System & Orbits      |  |          |  | - Guest Active State        |  |
+|  | - Modular Spacecraft Bus     |  |          |  | - Audio & Display Settings  |  |
 |  +------------------------------+  |          |  +-----------------------------+  |
 |  | GSAP Timelines               |  |          |  | Supabase (Optional Cloud)   |  |
-|  | - Launch & Separation        |  |          |  | - User Profiles (Auth)      |  |
-|  | - Camera Choreography        |  |          |  | - Cloud Mission Dossiers    |  |
+|  | - Launch & Terminal Sequences|  |          |  | - User Profiles (Auth)      |  |
+|  | - Camera Choreography        |  |          |  | - Opt-In Public Leaderboard |  |
 |  +------------------------------+  |          |  +-----------------------------+  |
 +------------------------------------+          +-----------------------------------+
 ```
@@ -112,7 +112,7 @@ To eliminate CSS property collision and render stutter:
 - **GSAP (`gsap`, `@gsap/react`)**:
   - Launch sequence staging & countdown
   - Camera zoom & orbit fly-by transitions
-  - Spacecraft trajectory progression
+  - Spacecraft trajectory progression and terminal sequence cinematics
 - **Motion for React (`motion/react`)**:
   - Overlay modal popups and consequence alerts
   - Telemetry HUD counter animations

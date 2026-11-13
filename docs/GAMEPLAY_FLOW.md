@@ -1,8 +1,14 @@
 # NovaScript: Gameplay Flow & State Machine Specification
 
-## 1. High-Level State Machine
+## 1. High-Level State Machine & Architecture
 
-The NovaScript runtime operates as a deterministic finite-state machine (FSM). The state machine coordinates UI views, 3D simulation scenes, audio soundscapes, and resource accounting.
+The NovaScript runtime operates as a deterministic finite-state machine (FSM). The state machine coordinates UI views, 3D simulation scenes, audio cues, and resource accounting.
+
+> [!IMPORTANT]
+> **Data Stages vs. Experience Layers**:
+> The canonical game data in `ques-en.json` consists of **8 data stages** forming a directed acyclic graph (DAG) with **33 distinct playable paths** varying from 4 to 6 decisions. The **12 experience phases** described in the brief represent dynamic presentation layers and interactive environments, **not** a mandatory 12-step linear sequence.
+>
+> If a player chooses an option leading to an early ending (such as `E008` at `Q013` during spacecraft design or `E007` at `Q021`/`Q025` during launch planning), the mission engine immediately executes the matching cinematic sequence and displays the final mission report. It does not force the player through subsequent stages.
 
 ```mermaid
 stateDiagram-v2
@@ -16,100 +22,115 @@ stateDiagram-v2
     
     state ANSWER_RESOLUTION {
         [*] --> UPDATE_RESOURCES
-        UPDATE_RESOURCES --> SHOW_CONSEQUENCE_MODAL
-        SHOW_CONSEQUENCE_MODAL --> UPDATE_3D_VISUALS
-        UPDATE_3D_VISUALS --> UPDATE_TASKS
-        UPDATE_TASKS --> CHECK_NEXT_STEP
-        CHECK_NEXT_STEP --> [*]
+        UPDATE_RESOURCES --> SHOW_CONSEQUENCE_DIALOG
+        SHOW_CONSEQUENCE_DIALOG --> UPDATE_3D_VISUALS
+        UPDATE_3D_VISUALS --> UPDATE_SUPPLEMENTARY_TASKS
+        UPDATE_SUPPLEMENTARY_TASKS --> CHECK_TERMINAL_BRANCH
+        CHECK_TERMINAL_BRANCH --> [*]
     }
 
-    ANSWER_RESOLUTION --> LAUNCH_CINEMATIC : Choice is Launch Action
     ANSWER_RESOLUTION --> QUESTION_STAGE : Has next_question_id
-    ANSWER_RESOLUTION --> MISSION_REPORT : Has ending_id
+    ANSWER_RESOLUTION --> TERMINAL_CINEMATIC : Has ending_id
 
-    LAUNCH_CINEMATIC --> QUESTION_STAGE : Launch Successful
-    LAUNCH_CINEMATIC --> MISSION_REPORT : Launch Overload (E007)
-
+    TERMINAL_CINEMATIC --> MISSION_REPORT : Cinematic Completes
     MISSION_REPORT --> MAIN_MENU : Return to Menu
     MISSION_REPORT --> MISSION_BRIEFING : Retry Mission
 ```
 
 ---
 
-## 2. Comprehensive Gameplay Stages
+## 2. Canonical Data Stages & Question Mapping
 
-The 31 questions in `ques-en.json` span 8 core mission stages. Each stage maps to a specialized visual environment:
+The 31 questions in `ques-en.json` span 8 canonical data stages:
 
 ### Stage 1: `mission_planning` (Questions Q001 – Q003)
 - **Environment**: Global Mission Control Briefing Room.
-- **Visuals**: Planetary holograms of Earth, Moon, and Mars; orbital distance readouts.
-- **Player Actions**:
-  - Q001: Select destination (Moon: 384,400 km vs Mars: 225,000,000 km).
-  - Q002 (Moon branch): Select objective (Sunlit mapping plains vs Polar crater water ice).
-  - Q003 (Mars branch): Select objective (Martian atmosphere & dust storms vs Rocky crust & ancient water).
+- **Visuals**: Planetary 3D spheres of Earth, Moon, and Mars; orbital distance indicators.
+- **Player Decisions**:
+  - `Q001`: Destination trade (Moon: close, saves budget, strong radio vs Mars: distant, higher budget and mass, high science).
+  - `Q002` (Moon): Primary goal (Sunlit plains mapping vs Polar dark crater water ice).
+  - `Q003` (Mars): Primary goal (Atmosphere & global dust storms vs Rocky crust & ancient water history).
 
 ### Stage 2: `spacecraft_design` (Questions Q004 – Q007, Q013 – Q014)
-- **Environment**: Spacecraft Cleanroom & Assembly Hangar.
-- **Visuals**: Real-time 3D spacecraft bus with mounting rails, solar panels, MLI gold thermal blankets, radiator panels, and entry heat shields.
-- **Player Actions**:
-  - Bus structural sizing and primary power system (Solar array vs Dual battery bus).
-  - Thermal control subsystems (Gold multi-layer insulation vs Electric heating grids).
-  - Atmospheric entry architecture (Ceramic heat tiles vs Carbon-composite ablative shields).
-  - Mars surface architecture (Solar rover vs Radioisotope Thermoelectric Generator / RTG).
+- **Environment**: Spacecraft Assembly Cleanroom.
+- **Visuals**: 3D spacecraft bus with mounting rails, modular solar panels, gold MLI blankets, and heat shield surfaces.
+- **Player Decisions**:
+  - `Q004`: Bus & power architecture (Lightweight solar-panel bus vs Dual high-capacity batteries).
+  - `Q005`: Thermal protection for lunar polar cold (Gold MLI blankets and heaters vs Heavy-duty quick-dive battery pack).
+  - `Q006`: Mars orbiter architecture (Wide high-efficiency solar wings vs Streamlined aerobraking frame).
+  - `Q007`: Mars surface architecture (Six-wheeled rover with robotic arm vs Geological survey orbiter).
+  - `Q013`: Aerobraking thermal protection (Ceramic-composite heat tiles leading to `Q026` vs Skipping extra heat shielding with thin aluminum foil, leading immediately to `E008`).
+  - `Q014`: Mars rover power source (Nuclear RTG leading to `Q027` vs Solar panels with dust wipers leading to `Q028`).
 
 ### Stage 3: `scientific_instruments` (Questions Q008 – Q012, Q015)
-- **Environment**: Payload Integration Laboratory.
-- **Visuals**: Equipment inspection bench, optical sensor apertures, spectrometer booms, and radar antennae.
-- **Player Actions**:
-  - Optical & mapping payloads (3D high-resolution stereo cameras vs Laser mineral spectrometers).
-  - Penetrating instruments (Subsurface radar sounders vs Epithermal neutron spectrometers).
-  - Instrument mass vs power budget trade-off analysis.
+- **Environment**: Payload Integration Lab.
+- **Visuals**: Equipment inspection bench, optical apertures, spectrometer booms, and radar antennae.
+- **Player Decisions**:
+  - `Q008`: Lunar surface payload (Lightweight 3D stereo camera vs High-power laser mineral spectrometer).
+  - `Q009`: Battery capacity usage (Lunar hopper module vs Dual wide-angle & thermal cameras).
+  - `Q010`: Lunar ice detector (Neutron spectrometer vs Heavy surface drill and heating oven).
+  - `Q011`: Dark crater sensor (Laser altimeter vs Deep-penetrating ice radar sounder).
+  - `Q012`: Mars atmospheric payload (Neutral gas mass spectrometer vs High-power dust/cloud lidar).
+  - `Q015`: Mars geological payload (Subsurface ground-penetrating radar vs X-ray mineral spectrometer).
 
 ### Stage 4: `orbit_selection` (Questions Q016, Q019, Q024)
 - **Environment**: Astrodynamics Flight Dynamics Console.
-- **Visuals**: Target planetary sphere with 3D orbital trajectory spline, sunlight/umbra cones, ground track coverage, and communication line-of-sight arcs.
-- **Player Actions**:
-  - Orbit altitude and inclination trade (Low circular polar orbit vs High elliptical frozen orbit).
-  - Sun-synchronous coverage vs eclipse duration management.
+- **Visuals**: Target planetary sphere with 3D orbit spline, sunlight/shadow cones, and line-of-sight arcs.
+- **Player Decisions**:
+  - `Q016`: Lunar orbit profile (Low circular polar mapping orbit leading to `Q031` vs Stable medium-altitude frozen orbit leading to `E002`).
+  - `Q019`: Lunar orbital inclination (High-inclination polar orbit leading to `E001` vs Low-inclination equatorial orbit leading to `E002`).
+  - `Q024`: Mars orbit profile (Low upper-atmosphere sampling orbit leading to `Q030` vs High stable orbit leading to `E002`).
 
 ### Stage 5: `launch_planning` (Questions Q021, Q022, Q025, Q027)
-- **Environment**: Launch Complex & Pad Gantry.
-- **Visuals**: Launch vehicle on pad, propellant loading vapor vents, payload fairing integration, and pre-launch telemetry checklist.
-- **Player Actions**:
-  - Selecting launch vehicle class (Small commercial budget rocket vs Medium-lift vs Proven heavy-lift vs Super-heavy).
-  - Verifying payload mass margin vs rocket lift capacity to avoid payload mass overload (Ending E007).
+- **Environment**: Launch Complex Console.
+- **Visuals**: Launch vehicle on pad, propellant vapor venting, and pre-launch payload checklist.
+- **Player Decisions**:
+  - `Q021`: Lunar lander launch vehicle (Medium-lift budget rocket leading to payload overload `E007` vs Heavy-lift rocket leading to `E003`).
+  - `Q022`: Laser altimeter launch vehicle (Shared rideshare leading to `E002` vs Dedicated medium rocket leading to `E003`).
+  - `Q025`: Mars orbiter launch vehicle (Medium Earth-orbit class rocket leading to payload overload `E007` vs Heavy deep-space vehicle leading to `E001`).
+  - `Q027`: Mars rover rocket (Proven heavy-lift rocket leading to `E001` vs Oversized ultra-heavy rocket leading to `E002`).
 
 ### Stage 6: `resource_management` (Question Q018)
 - **Environment**: Surface Operations Command Center.
-- **Visuals**: Lunar surface terrain, hopper thruster plume, propellant tank levels, battery state of charge (SoC).
-- **Player Actions**:
-  - Balance science hops vs fuel reserves to avoid stranding (Ending E006).
+- **Visuals**: Lunar surface terrain, hopper thruster plume, and propellant/battery gauges.
+- **Player Decision**:
+  - `Q018`: Lunar hopper flight commanding (Two safe hops with data uplink leading to `E003` vs Third high-risk hop leading to fuel/battery depletion `E006`).
 
 ### Stage 7: `space_communications` (Questions Q017, Q020, Q023, Q029)
-- **Environment**: Deep Space Network (DSN) Telecommunications Console.
-- **Visuals**: High-gain parabolic dish articulation, RF signal wave visualization connecting spacecraft to Earth ground stations (Goldstone, Madrid, Canberra), bit-rate gauges.
-- **Player Actions**:
-  - Managing data storage and transmission protocols (High-power live DSN downlink vs Onboard memory buffering and prioritized packet bursts).
+- **Environment**: Deep Space Communications Console.
+- **Visuals**: High-gain parabolic antenna articulation and RF pulse transmission across deep space.
+- **Player Decisions**:
+  - `Q017`: Lunar spectrometer transmission (Burst low-frequency antenna leading to `E004` vs Steerable high-gain dish leading to `E001`).
+  - `Q020`: Polar ice data relay (Direct-to-Earth low-frequency beacon leading to `E004` vs Lunar relay satellite overhead leading to `E001`).
+  - `Q023`: Radar depth dataset downlink (High-frequency Ka-band transmitter leading to `E001` vs Onboard software compression leading to `E002`).
+  - `Q029`: Mars subsurface radar DSN downlink (Point 3-meter dish at DSN leading to `E001` vs Store files and transmit prioritized highlights leading to `E003`).
 
 ### Stage 8: `mission_operations` (Questions Q026, Q028, Q030, Q031)
-- **Environment**: In-Flight Emergency Operations Room.
-- **Visuals**: Dynamic warning sirens, solar flare particle flux, Martian regional dust storm atmospheric opacity, lunar umbra eclipse entry.
-- **Player Actions**:
-  - Responding to mission-critical events:
-    - Q026: Mars aerobraking pacing (Gradual 3-month passes vs Fast 3-week passes).
-    - Q028: Mars rover dust storm survival (Low-power hibernation vs Driving in storm).
-    - Q030: Solar proton storm response (Safe Mode camera shutdown vs Radiation sensor active logging).
-    - Q031: Lunar eclipse power crisis (Instrument sleep mode vs Running full power in shadow).
+- **Environment**: Operational Crisis Management Console.
+- **Visuals**: Warning indicators, solar flare flux, dust storm opacity, and lunar shadow entry.
+- **Player Decisions**:
+  - `Q026`: Mars aerobraking pacing:
+    - `A051`: *"Perform dozens of gentle, shallow passes over several weeks."* -> settles smoothly into science orbit (`E003`).
+    - `A052`: *"Dive deep into thick air to finish aerobraking in three passes."* -> air density spikes force emergency orbit raise (`E005`).
+  - `Q028`: Mars rover dust storm commanding (Low-power hibernation until winds clear leading to `E004` vs Driving and drilling at full speed leading to rapid battery drain `E005`).
+  - `Q030`: Solar storm response (Safe Mode camera shutdown leading to `E002` vs Active logging with shielded radiation sensors leading to `E001`).
+  - `Q031`: Lunar shadow power management (Pause cameras during eclipse passes leading to `E002` vs Full power in the dark leading to battery depletion `E006`).
 
 ---
 
-## 3. Mission Consequence & Learning Feedback Loop
+## 3. Terminal Cinematic Sequences
 
-Whenever the player commits a decision:
-1. **Audio Feedback**: Context-specific selection sound fires.
-2. **Resource Mutation**: Resource deltas are applied with bound clamping [0, 100]. Animated HUD counters tick up/down with color-coded badges (`+15 Green`, `-10 Red`).
-3. **Consequence Dialog**: Displays the narrative outcome (`consequence_summary`) and the NASA scientific takeaway (`learning_point`).
-4. **Visual & 3D Evolution**: Installed components (solar wings, antennas, cameras, heat shields) snap onto the spacecraft model; orbital lines change color or geometry.
-5. **Branch Evaluation**:
-   - If `next_question_id != null`: Transitions smoothly to the next question.
-   - If `ending_id != null`: Triggers final mission cinematic transition and opens the Mission Report dossier.
+When an answer targets an `ending_id`, the engine executes an appropriate **Terminal Cinematic Sequence** before transitioning to the final report:
+
+| Ending ID | Status | Cinematic Sequence Description |
+|---|---|---|
+| **E001** | `outstanding_success` | **Grand Achievement Sequence**: Triumphant 3D fly-by of target planet; high-gain dish transmits high-rate data pulse to Earth; ground station telemetry streams illuminate green. |
+| **E002** | `efficient_success` | **Precision Mission Sequence**: Smooth orbital insertion burn; solar panels track the Sun; balanced resource telemetry displays mission objectives cleared on budget. |
+| **E003** | `scientific_discovery` | **Discovery Reveal Sequence**: Radar/spectrometer scanning beam penetrates planetary surface; scientific data visualizer maps ancient water/ice reservoirs. |
+| **E004** | `partial_success` | **Degraded Telemetry Sequence**: Intermittent signal pulses; camera feeds transmit partial low-res frames; mission operations confirms partial objective recovery. |
+| **E005** | `strategy_revision` | **Emergency Maneuver Sequence**: Thrust vector warning; probe fires RCS thrusters to execute an emergency orbit raise away from dangerous atmospheric friction or dust storms. |
+| **E006** | `resource_failure` | **Power Blackout Sequence**: Battery meter reaches zero; warning lights blink and fade; spacecraft systems go silent in the dark shadow / surface terrain. |
+| **E007** | `launch_failure` | **Launchpad Mass Scrub Sequence**: Launch vehicle engines ignite at T-0s; telemetry alarms flash structural overload; automated countdown abort shuts down engines on the pad. |
+| **E008** | `engineering_failure` | **Atmospheric Burn-up Sequence**: Spacecraft hits upper atmosphere; thin foil shields overheat and tear under friction; telemetry link severs as hull temperature exceeds limits. |
+
+Following the cinematic sequence, the **Mission Dossier Report** displays the official title, final normalized score calculated deterministically, scientific explanation, educational learning point, and complete decision chronology.
