@@ -1,0 +1,1425 @@
+{
+  "game_title": "Commanders of the Cosmos: Space Mission Design Adventure",
+  "version": "1.0.0",
+  "start_question_id": "Q001",
+  "initial_resources": {
+    "budget": 70,
+    "mass": 20,
+    "power": 60,
+    "scientific_value": 10,
+    "communication": 50
+  },
+  "resource_bounds": {
+    "min": 0,
+    "max": 100
+  },
+  "questions": [
+    {
+      "id": "Q001",
+      "stage": "mission_planning",
+      "story": "Welcome to Mission Control, Commander! Your engineering team is ready to design a brand-new robotic space mission. Every choice you make will change your spacecraft's weight, power, budget, and discoveries.",
+      "question": "Which destination will your mission explore?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Mission Objectives & Destination Selection"
+      },
+      "answers": [
+        {
+          "id": "A001",
+          "text": "Explore the Moon, Earth's closest neighbor.",
+          "next_question_id": "Q002",
+          "ending_id": null,
+          "consequence_summary": "A 3-day trip saves mission budget and keeps radio signals strong, while offering solid lunar science.",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": 0,
+            "scientific_value": 5,
+            "communication": 10
+          },
+          "learning_point": "The Moon is about 384,400 km away, making travel faster, cheaper, and easier for radio communication than deep space."
+        },
+        {
+          "id": "A002",
+          "text": "Explore Mars, the distant Red Planet.",
+          "next_question_id": "Q003",
+          "ending_id": null,
+          "consequence_summary": "A multi-month deep-space journey costs more budget and weakens radio signals, but unlocks huge scientific rewards.",
+          "effects": {
+            "budget": -15,
+            "mass": 5,
+            "power": -5,
+            "scientific_value": 15,
+            "communication": -10
+          },
+          "learning_point": "Mars is millions of kilometers away, requiring more fuel, stronger radios, and higher budgets for big discoveries."
+        }
+      ]
+    },
+    {
+      "id": "Q002",
+      "stage": "mission_planning",
+      "story": "Your lunar mission is approved! Now your science team needs a clear primary goal so engineers know what kind of spacecraft to build.",
+      "question": "What is your main scientific objective on the Moon?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Space Mission Objectives"
+      },
+      "answers": [
+        {
+          "id": "A003",
+          "text": "Map sunlit lunar plains to study surface rocks and minerals.",
+          "next_question_id": "Q004",
+          "ending_id": null,
+          "consequence_summary": "Sunlit regions make solar power easy and keep costs low.",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 10,
+            "communication": 5
+          },
+          "learning_point": "Sunlit areas on the Moon receive steady sunlight for two weeks at a time, ideal for solar-powered spacecraft."
+        },
+        {
+          "id": "A004",
+          "text": "Search dark polar craters for frozen water ice.",
+          "next_question_id": "Q005",
+          "ending_id": null,
+          "consequence_summary": "Finding water ice is a major discovery, but permanently shadowed craters are freezing cold and lack sunlight.",
+          "effects": {
+            "budget": -10,
+            "mass": 5,
+            "power": -10,
+            "scientific_value": 20,
+            "communication": -5
+          },
+          "learning_point": "Deep craters near the Moon's poles never see sunlight, trapping ancient water ice in extreme cold."
+        }
+      ]
+    },
+    {
+      "id": "Q003",
+      "stage": "mission_planning",
+      "story": "Your Mars mission team gathers around the planetary map. Mars has a thin atmosphere and ancient dry riverbeds.",
+      "question": "What is your primary scientific goal at Mars?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Space Mission Objectives"
+      },
+      "answers": [
+        {
+          "id": "A005",
+          "text": "Study the Martian atmosphere and track global dust storms.",
+          "next_question_id": "Q006",
+          "ending_id": null,
+          "consequence_summary": "An atmospheric orbiter avoids risky landing gear, saving mass and budget.",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": 5,
+            "scientific_value": 15,
+            "communication": 5
+          },
+          "learning_point": "Studying a planet from orbit avoids the weight and risk of landing systems while watching weather across the whole globe."
+        },
+        {
+          "id": "A006",
+          "text": "Investigate Mars's rocky crust and ancient water history.",
+          "next_question_id": "Q007",
+          "ending_id": null,
+          "consequence_summary": "Investigating rocks and subsurface layers requires heavier instruments and more power, but yields top-tier geology data.",
+          "effects": {
+            "budget": -10,
+            "mass": 10,
+            "power": -5,
+            "scientific_value": 20,
+            "communication": 0
+          },
+          "learning_point": "Mars's rocks and underground layers hold chemical clues about whether ancient Mars once had lakes and rivers."
+        }
+      ]
+    },
+    {
+      "id": "Q004",
+      "stage": "spacecraft_design",
+      "story": "To map the sunlit lunar surface, engineers need to build the spacecraft's main body—called the spacecraft bus—and its power system.",
+      "question": "Which spacecraft configuration will you build?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Spacecraft Design & Power Systems"
+      },
+      "answers": [
+        {
+          "id": "A007",
+          "text": "A lightweight solar-panel bus with a standard small battery.",
+          "next_question_id": "Q008",
+          "ending_id": null,
+          "consequence_summary": "Keeps mass and cost low, though power drops whenever the spacecraft passes behind the Moon.",
+          "effects": {
+            "budget": -5,
+            "mass": 5,
+            "power": 10,
+            "scientific_value": 5,
+            "communication": 0
+          },
+          "learning_point": "Lightweight spacecraft cost less to launch, but smaller batteries limit how much work they can do in the dark."
+        },
+        {
+          "id": "A008",
+          "text": "A larger bus with dual high-capacity rechargeable batteries.",
+          "next_question_id": "Q009",
+          "ending_id": null,
+          "consequence_summary": "Adds weight and cost, but gives your mission plenty of stored energy for night operations.",
+          "effects": {
+            "budget": -12,
+            "mass": 15,
+            "power": 20,
+            "scientific_value": 5,
+            "communication": 5
+          },
+          "learning_point": "Batteries store solar energy so a spacecraft can keep operating during lunar eclipses or night passes."
+        }
+      ]
+    },
+    {
+      "id": "Q005",
+      "stage": "spacecraft_design",
+      "story": "Exploring dark polar craters on the Moon means temperatures can plunge below -200 degrees Celsius, where electronics can freeze.",
+      "question": "How will you protect your crater-hunting spacecraft?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Spacecraft Design & Thermal Management"
+      },
+      "answers": [
+        {
+          "id": "A009",
+          "text": "Add gold multi-layer thermal blankets and electric heaters.",
+          "next_question_id": "Q010",
+          "ending_id": null,
+          "consequence_summary": "Heaters use electrical power and add moderate mass, but keep sensitive instruments alive.",
+          "effects": {
+            "budget": -10,
+            "mass": 10,
+            "power": -10,
+            "scientific_value": 10,
+            "communication": 0
+          },
+          "learning_point": "Thermal insulation and heaters prevent spacecraft computers and batteries from freezing in shadowy space environments."
+        },
+        {
+          "id": "A010",
+          "text": "Install a heavy-duty battery pack to power quick crater dives.",
+          "next_question_id": "Q011",
+          "ending_id": null,
+          "consequence_summary": "Boosts available power significantly, though the heavy batteries increase total spacecraft mass.",
+          "effects": {
+            "budget": -15,
+            "mass": 18,
+            "power": 15,
+            "scientific_value": 5,
+            "communication": 0
+          },
+          "learning_point": "High-capacity batteries add significant mass, creating a classic engineering trade-off between energy and weight."
+        }
+      ]
+    },
+    {
+      "id": "Q006",
+      "stage": "spacecraft_design",
+      "story": "At Mars, sunlight is less than half as bright as it is at Earth! Your atmospheric orbiter needs a smart design to gather enough energy.",
+      "question": "How will you configure your Mars orbiter?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Spacecraft Design & Power Systems"
+      },
+      "answers": [
+        {
+          "id": "A011",
+          "text": "Equip wide, high-efficiency solar wings.",
+          "next_question_id": "Q012",
+          "ending_id": null,
+          "consequence_summary": "Wide solar panels generate strong power at Mars without carrying heavy braking fuel.",
+          "effects": {
+            "budget": -10,
+            "mass": 10,
+            "power": 15,
+            "scientific_value": 5,
+            "communication": 5
+          },
+          "learning_point": "Because Mars is farther from the Sun than Earth, solar-powered spacecraft need larger solar wings to capture enough light."
+        },
+        {
+          "id": "A012",
+          "text": "Build a streamlined aerobraking frame to skim Mars's upper air.",
+          "next_question_id": "Q013",
+          "ending_id": null,
+          "consequence_summary": "Using atmospheric drag saves rocket fuel mass and budget, but requires careful heat protection.",
+          "effects": {
+            "budget": -5,
+            "mass": -5,
+            "power": 0,
+            "scientific_value": 10,
+            "communication": 0
+          },
+          "learning_point": "Aerobraking uses friction from a planet's upper atmosphere to slow a spacecraft down, saving heavy fuel."
+        }
+      ]
+    },
+    {
+      "id": "Q007",
+      "stage": "spacecraft_design",
+      "story": "Your science team wants to uncover how water once shaped Mars. You can either drive across the surface or scan deep underground from orbit.",
+      "question": "Which mission architecture will you choose?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Spacecraft Configuration & Engineering Trade-offs"
+      },
+      "answers": [
+        {
+          "id": "A013",
+          "text": "Build a six-wheeled surface rover with a robotic arm.",
+          "next_question_id": "Q014",
+          "ending_id": null,
+          "consequence_summary": "Rovers deliver extraordinary hands-on science, but add major mass and budget cost.",
+          "effects": {
+            "budget": -20,
+            "mass": 20,
+            "power": -5,
+            "scientific_value": 20,
+            "communication": -5
+          },
+          "learning_point": "Planetary rovers require heat shields, parachutes, and wheels, making them heavier and costlier than orbiters."
+        },
+        {
+          "id": "A014",
+          "text": "Build a dedicated geological survey orbiter.",
+          "next_question_id": "Q015",
+          "ending_id": null,
+          "consequence_summary": "An orbiter is lighter, cheaper, and communicates easily with Earth while mapping large regions.",
+          "effects": {
+            "budget": -10,
+            "mass": 8,
+            "power": 10,
+            "scientific_value": 15,
+            "communication": 10
+          },
+          "learning_point": "Orbiters can map an entire planet's geology over several years without the risk of landing."
+        }
+      ]
+    },
+    {
+      "id": "Q008",
+      "stage": "scientific_instruments",
+      "story": "Your lightweight lunar spacecraft is ready for its science payload. Every instrument adds mass and draws power from your solar panels.",
+      "question": "Which primary scientific instrument will you install?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Scientific Instruments & Payload Trade-offs"
+      },
+      "answers": [
+        {
+          "id": "A015",
+          "text": "A lightweight 3D stereo mapping camera.",
+          "next_question_id": "Q016",
+          "ending_id": null,
+          "consequence_summary": "Uses minimal power and mass while capturing detailed elevation maps of lunar craters.",
+          "effects": {
+            "budget": -5,
+            "mass": 5,
+            "power": -5,
+            "scientific_value": 15,
+            "communication": 0
+          },
+          "learning_point": "Stereo cameras take two slightly offset pictures to build 3D maps of mountains and craters."
+        },
+        {
+          "id": "A016",
+          "text": "A high-power laser mineral spectrometer.",
+          "next_question_id": "Q017",
+          "ending_id": null,
+          "consequence_summary": "Reveals exact rock chemistry for huge science points, but drains power and budget.",
+          "effects": {
+            "budget": -12,
+            "mass": 10,
+            "power": -15,
+            "scientific_value": 25,
+            "communication": -5
+          },
+          "learning_point": "Spectrometers analyze reflected light to identify what chemical elements are inside lunar rocks."
+        }
+      ]
+    },
+    {
+      "id": "Q009",
+      "stage": "scientific_instruments",
+      "story": "With dual batteries onboard, your spacecraft has extra energy reserves! You can use that power for mobility or wide-area mapping.",
+      "question": "How will you put your extra battery capacity to work?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Scientific Instruments & Resource Balance"
+      },
+      "answers": [
+        {
+          "id": "A017",
+          "text": "Add a small lunar hopper module to visit multiple sites.",
+          "next_question_id": "Q018",
+          "ending_id": null,
+          "consequence_summary": "Hopping between sites boosts science, though propellant tanks add extra weight.",
+          "effects": {
+            "budget": -10,
+            "mass": 15,
+            "power": -10,
+            "scientific_value": 20,
+            "communication": 0
+          },
+          "learning_point": "Because the Moon has only one-sixth of Earth's gravity, small thrusters let a spacecraft hop from crater to crater."
+        },
+        {
+          "id": "A018",
+          "text": "Carry dual wide-angle and thermal mapping cameras in orbit.",
+          "next_question_id": "Q019",
+          "ending_id": null,
+          "consequence_summary": "Balanced weight and power while collecting continuous temperature and mineral maps.",
+          "effects": {
+            "budget": -8,
+            "mass": 8,
+            "power": -10,
+            "scientific_value": 18,
+            "communication": 5
+          },
+          "learning_point": "Thermal cameras measure heat glowing off the lunar surface, showing where solid rock or fine dust lies."
+        }
+      ]
+    },
+    {
+      "id": "Q010",
+      "stage": "scientific_instruments",
+      "story": "Your thermal blankets keep your spacecraft warm near the lunar poles. Now you need an instrument to confirm whether water ice is hidden in the dark soil.",
+      "question": "Which ice-hunting instrument will you choose?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Scientific Instruments"
+      },
+      "answers": [
+        {
+          "id": "A019",
+          "text": "A neutron spectrometer that detects hydrogen from orbit.",
+          "next_question_id": "Q020",
+          "ending_id": null,
+          "consequence_summary": "Light and efficient—spots buried water molecules without touching the freezing surface.",
+          "effects": {
+            "budget": -8,
+            "mass": 6,
+            "power": -5,
+            "scientific_value": 20,
+            "communication": 0
+          },
+          "learning_point": "Neutron spectrometers detect hydrogen atoms just beneath the lunar soil, a strong sign of hidden water ice."
+        },
+        {
+          "id": "A020",
+          "text": "A heavy surface drill and soil-heating oven.",
+          "next_question_id": "Q021",
+          "ending_id": null,
+          "consequence_summary": "Directly tests real ice samples for massive science, but makes your spacecraft very heavy.",
+          "effects": {
+            "budget": -15,
+            "mass": 25,
+            "power": -15,
+            "scientific_value": 25,
+            "communication": 0
+          },
+          "learning_point": "Drilling into frozen lunar soil requires heavy motors and extra power, greatly increasing total spacecraft mass."
+        }
+      ]
+    },
+    {
+      "id": "Q011",
+      "stage": "scientific_instruments",
+      "story": "Inside permanently shadowed craters, normal cameras see only pitch blackness. You need an active instrument that creates its own beam.",
+      "question": "Which active sensor will you mount on your spacecraft?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Scientific Instruments & Power Trade-offs"
+      },
+      "answers": [
+        {
+          "id": "A021",
+          "text": "A laser altimeter that bounces light pulses into dark craters.",
+          "next_question_id": "Q022",
+          "ending_id": null,
+          "consequence_summary": "Maps crater floors and bright icy patches while keeping mass manageable.",
+          "effects": {
+            "budget": -8,
+            "mass": 8,
+            "power": -10,
+            "scientific_value": 18,
+            "communication": 0
+          },
+          "learning_point": "Laser altimeters fire pulses of laser light to measure topography and spot bright ice patches in total darkness."
+        },
+        {
+          "id": "A022",
+          "text": "A deep-penetrating ice radar sounder.",
+          "next_question_id": "Q023",
+          "ending_id": null,
+          "consequence_summary": "Sees thick ice layers underground, though it generates huge data files that need strong communications.",
+          "effects": {
+            "budget": -12,
+            "mass": 12,
+            "power": -12,
+            "scientific_value": 22,
+            "communication": -10
+          },
+          "learning_point": "Radar sounders send radio waves beneath the surface to measure how thick buried ice sheets are."
+        }
+      ]
+    },
+    {
+      "id": "Q012",
+      "stage": "scientific_instruments",
+      "story": "Your wide-winged Mars orbiter has plenty of solar power. Your atmospheric scientists have proposed two specialized instruments.",
+      "question": "Which atmospheric instrument will you fly?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Scientific Instruments"
+      },
+      "answers": [
+        {
+          "id": "A023",
+          "text": "A neutral gas mass spectrometer to measure escaping air.",
+          "next_question_id": "Q024",
+          "ending_id": null,
+          "consequence_summary": "Light and low-power—helps explain how Mars lost its thick ancient atmosphere.",
+          "effects": {
+            "budget": -8,
+            "mass": 7,
+            "power": -8,
+            "scientific_value": 20,
+            "communication": 0
+          },
+          "learning_point": "Mass spectrometers weigh individual gas molecules to see how solar wind strips away Mars's upper atmosphere."
+        },
+        {
+          "id": "A024",
+          "text": "A high-power atmospheric dust and cloud lidar.",
+          "next_question_id": "Q025",
+          "ending_id": null,
+          "consequence_summary": "Tracks 3D dust storms in crisp detail, though the instrument adds substantial mass.",
+          "effects": {
+            "budget": -12,
+            "mass": 20,
+            "power": -12,
+            "scientific_value": 22,
+            "communication": 0
+          },
+          "learning_point": "Lidar uses laser pulses to measure dust clouds and wind layers at different altitudes in the Martian sky."
+        }
+      ]
+    },
+    {
+      "id": "Q013",
+      "stage": "spacecraft_design",
+      "story": "Aerobraking lets your orbiter dip into Mars's upper atmosphere to slow down without burning rocket fuel—but atmospheric friction creates intense heat!",
+      "question": "What thermal protection will you install for aerobraking?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Spacecraft Design & Engineering Trade-offs"
+      },
+      "answers": [
+        {
+          "id": "A025",
+          "text": "Install tested ceramic-composite heat tiles on the leading edge.",
+          "next_question_id": "Q026",
+          "ending_id": null,
+          "consequence_summary": "Adds a little mass and budget, but safely absorbs friction heat during atmospheric passes.",
+          "effects": {
+            "budget": -8,
+            "mass": 10,
+            "power": 0,
+            "scientific_value": 10,
+            "communication": 0
+          },
+          "learning_point": "Heat-resistant tiles protect spacecraft structures when friction with atmospheric gas molecules heats the hull."
+        },
+        {
+          "id": "A026",
+          "text": "Skip extra heat shielding and use thin aluminum foil to save weight.",
+          "next_question_id": null,
+          "ending_id": "E008",
+          "consequence_summary": "Saving weight without thermal protection causes critical overheating during atmospheric entry.",
+          "effects": {
+            "budget": 0,
+            "mass": -5,
+            "power": -50,
+            "scientific_value": -10,
+            "communication": -50
+          },
+          "learning_point": "Cutting safety hardware below engineering limits can cause mission loss when extreme space heat strikes."
+        }
+      ]
+    },
+    {
+      "id": "Q014",
+      "stage": "spacecraft_design",
+      "story": "Your Mars rover is taking shape! Unlike orbiters, a surface rover must survive freezing Martian nights and dusty skies.",
+      "question": "How will you power your Mars rover?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Power Systems & Mission Lifetime"
+      },
+      "answers": [
+        {
+          "id": "A027",
+          "text": "Use a radioisotope power system (MMRTG) for steady day-and-night energy.",
+          "next_question_id": "Q027",
+          "ending_id": null,
+          "consequence_summary": "Expensive and heavier, but provides reliable electricity and warmth through dust storms and winter nights.",
+          "effects": {
+            "budget": -18,
+            "mass": 15,
+            "power": 25,
+            "scientific_value": 15,
+            "communication": 5
+          },
+          "learning_point": "Radioisotope power systems turn heat from natural radioactive decay into electricity, working even in dark dust storms."
+        },
+        {
+          "id": "A028",
+          "text": "Use fold-out solar panels to save budget.",
+          "next_question_id": "Q028",
+          "ending_id": null,
+          "consequence_summary": "Saves budget and weight, though dust buildup on panels can reduce power over time.",
+          "effects": {
+            "budget": -5,
+            "mass": 5,
+            "power": 5,
+            "scientific_value": 10,
+            "communication": 0
+          },
+          "learning_point": "Solar-powered Mars rovers are lighter and cheaper, but Martian dust can coat their solar panels and limit power."
+        }
+      ]
+    },
+    {
+      "id": "Q015",
+      "stage": "scientific_instruments",
+      "story": "Your Mars geological orbiter is ready for its primary sensor. Your team wants to find where ancient water flowed.",
+      "question": "Which geological instrument will you choose?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Scientific Instruments"
+      },
+      "answers": [
+        {
+          "id": "A029",
+          "text": "A subsurface ground-penetrating radar to search for buried ice.",
+          "next_question_id": "Q029",
+          "ending_id": null,
+          "consequence_summary": "Finds hidden underground water ice, creating large datasets to transmit back to Earth.",
+          "effects": {
+            "budget": -10,
+            "mass": 12,
+            "power": -10,
+            "scientific_value": 22,
+            "communication": -5
+          },
+          "learning_point": "Subsurface radar sends radio pulses through Mars's crust to detect buried ice layers and ancient channels."
+        },
+        {
+          "id": "A030",
+          "text": "A hyperspectral mineral imager to spot ancient clay deposits.",
+          "next_question_id": "Q030",
+          "ending_id": null,
+          "consequence_summary": "Identifies water-formed minerals across the surface with moderate power needs.",
+          "effects": {
+            "budget": -8,
+            "mass": 8,
+            "power": -8,
+            "scientific_value": 20,
+            "communication": 0
+          },
+          "learning_point": "Hyperspectral imagers split reflected sunlight into hundreds of colors to spot clay minerals that only form in water."
+        }
+      ]
+    },
+    {
+      "id": "Q016",
+      "stage": "orbit_selection",
+      "story": "Your 3D stereo camera is bolted onto your lunar spacecraft. Now you must choose the orbit path around the Moon.",
+      "question": "Which lunar orbit will you select?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Orbital Selection & Constraints"
+      },
+      "answers": [
+        {
+          "id": "A031",
+          "text": "A low 50 km polar mapping orbit for ultra-sharp photos.",
+          "next_question_id": "Q031",
+          "ending_id": null,
+          "consequence_summary": "Gives crystal-clear close-up images, though the spacecraft passes into the Moon's shadow every two hours.",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": -10,
+            "scientific_value": 20,
+            "communication": 0
+          },
+          "learning_point": "Low polar orbits fly close to the entire Moon over time, giving sharp images while passing frequently through shadow."
+        },
+        {
+          "id": "A032",
+          "text": "A higher elliptical orbit that stays in sunlight longer.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Keeps solar panels charged and radios linked to Earth for a reliable, steady mission.",
+          "effects": {
+            "budget": 0,
+            "mass": 0,
+            "power": 15,
+            "scientific_value": 12,
+            "communication": 15
+          },
+          "learning_point": "Higher elliptical orbits spend more time in sunlight and in view of Earth antennas, making operations smoother."
+        }
+      ]
+    },
+    {
+      "id": "Q017",
+      "stage": "space_communications",
+      "story": "Your laser mineral spectrometer collects rich chemical data, but sending large files back to Earth takes strong radio equipment.",
+      "question": "Which communication system will you install?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Communications with Earth & Data Transmission"
+      },
+      "answers": [
+        {
+          "id": "A033",
+          "text": "Keep a small omni-directional antenna to save budget and mass.",
+          "next_question_id": null,
+          "ending_id": "E004",
+          "consequence_summary": "Saves money, but slow data rates mean only part of your mineral map reaches Earth before mission end.",
+          "effects": {
+            "budget": 5,
+            "mass": -5,
+            "power": 5,
+            "scientific_value": -5,
+            "communication": -20
+          },
+          "learning_point": "Small antennas broadcast weakly in all directions, limiting how much science data can be sent back to Earth."
+        },
+        {
+          "id": "A034",
+          "text": "Install a steerable high-gain dish antenna.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "Focuses radio signals directly toward Earth, downloading 100% of your mineral discoveries!",
+          "effects": {
+            "budget": -8,
+            "mass": 5,
+            "power": -5,
+            "scientific_value": 15,
+            "communication": 25
+          },
+          "learning_point": "High-gain dish antennas focus radio waves into a narrow beam aimed at Earth, dramatically increasing data download speed."
+        }
+      ]
+    },
+    {
+      "id": "Q018",
+      "stage": "resource_management",
+      "story": "Your lunar hopper has landed! After studying its first crater, your team spots an intriguing ridge 2 kilometers away.",
+      "question": "How will you balance fuel and instruments for the hop?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Resource Management & Mass Trade-offs"
+      },
+      "answers": [
+        {
+          "id": "A035",
+          "text": "Prioritize reserve thruster propellant and execute a short, controlled hop.",
+          "next_question_id": null,
+          "ending_id": "E003",
+          "consequence_summary": "Safe fuel margins let you explore two craters and return valuable comparison data!",
+          "effects": {
+            "budget": 0,
+            "mass": -5,
+            "power": 5,
+            "scientific_value": 18,
+            "communication": 10
+          },
+          "learning_point": "Keeping reserve propellant ensures a spacecraft can safely complete maneuvers without running out of fuel."
+        },
+        {
+          "id": "A036",
+          "text": "Attempt a long-range leap across rugged terrain with minimal fuel margin.",
+          "next_question_id": null,
+          "ending_id": "E006",
+          "consequence_summary": "Thrusters run dry mid-maneuver, leaving the hopper tilted in a shadowed gully unable to point its antenna.",
+          "effects": {
+            "budget": 0,
+            "mass": -10,
+            "power": -35,
+            "scientific_value": -10,
+            "communication": -35
+          },
+          "learning_point": "Propellant is a strict, non-renewable resource in space—pushing beyond fuel margins risks losing the spacecraft."
+        }
+      ]
+    },
+    {
+      "id": "Q019",
+      "stage": "orbit_selection",
+      "story": "Your dual thermal and wide-angle cameras are ready in lunar orbit. Flight controllers ask you to set your mapping altitude.",
+      "question": "Which orbital altitude will you choose?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Orbit Selection"
+      },
+      "answers": [
+        {
+          "id": "A037",
+          "text": "Fly at 50 km altitude for high-resolution thermal maps.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "Your dual batteries easily power through short eclipses, delivering razor-sharp maps of the entire Moon!",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": -5,
+            "scientific_value": 22,
+            "communication": 10
+          },
+          "learning_point": "Combining low-altitude orbits with strong battery reserves lets a spacecraft capture high-detail maps safely."
+        },
+        {
+          "id": "A038",
+          "text": "Fly at 200 km altitude for wide regional coverage and gentle fuel use.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Uses very little station-keeping fuel and completes a smooth, efficient lunar survey.",
+          "effects": {
+            "budget": 5,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 14,
+            "communication": 15
+          },
+          "learning_point": "Higher lunar orbits require less fuel to stay stable because uneven lunar gravity pulls less strongly farther out."
+        }
+      ]
+    },
+    {
+      "id": "Q020",
+      "stage": "space_communications",
+      "story": "Your neutron spectrometer found strong hydrogen signals inside a deep crater near the Moon's south pole! However, Earth sits very low on the horizon from the pole.",
+      "question": "How will you send your discovery data back to Earth?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Communications with Earth"
+      },
+      "answers": [
+        {
+          "id": "A039",
+          "text": "Wait for brief direct line-of-sight windows with Earth.",
+          "next_question_id": null,
+          "ending_id": "E004",
+          "consequence_summary": "Terrain blocks signals part of the time, so only summary data reaches Earth.",
+          "effects": {
+            "budget": 5,
+            "mass": 0,
+            "power": 0,
+            "scientific_value": 5,
+            "communication": -15
+          },
+          "learning_point": "Radio waves travel in straight lines—crater rims and horizons can block direct communication with Earth."
+        },
+        {
+          "id": "A040",
+          "text": "Beam data through a lunar relay satellite overhead.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "The relay satellite bounces your signal cleanly around the Moon's edge, sending every byte home!",
+          "effects": {
+            "budget": -8,
+            "mass": 0,
+            "power": 5,
+            "scientific_value": 20,
+            "communication": 25
+          },
+          "learning_point": "Relay satellites act like space mirrors for radio signals, connecting polar craters and the far side of the Moon to Earth."
+        }
+      ]
+    },
+    {
+      "id": "Q021",
+      "stage": "launch_planning",
+      "story": "Launchpad check! Your ice-drilling lander is packed with heavy drills, heaters, and ovens—pushing your spacecraft mass into the heavy range.",
+      "question": "Which launch vehicle will you book for liftoff?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Launch Vehicles & Payload Capacity"
+      },
+      "answers": [
+        {
+          "id": "A041",
+          "text": "Book a budget-friendly medium-lift rocket.",
+          "next_question_id": null,
+          "ending_id": "E007",
+          "consequence_summary": "Your heavy drilling lander exceeds the medium rocket's payload limit, grounding the mission before launch!",
+          "effects": {
+            "budget": 10,
+            "mass": 15,
+            "power": 0,
+            "scientific_value": -15,
+            "communication": 0
+          },
+          "learning_point": "Every rocket has a maximum payload mass limit. If a spacecraft is too heavy, the rocket cannot reach escape velocity."
+        },
+        {
+          "id": "A042",
+          "text": "Book a heavy-lift rocket matched to your lander's mass.",
+          "next_question_id": null,
+          "ending_id": "E003",
+          "consequence_summary": "The heavy rocket lifts your drill safely to the Moon, confirming subsurface water ice!",
+          "effects": {
+            "budget": -18,
+            "mass": 0,
+            "power": 5,
+            "scientific_value": 20,
+            "communication": 10
+          },
+          "learning_point": "Heavy-lift launch vehicles cost more budget, but they are essential for sending heavy landers and drills beyond Earth."
+        }
+      ]
+    },
+    {
+      "id": "Q022",
+      "stage": "launch_planning",
+      "story": "Your laser altimeter spacecraft has a moderate mass and high-capacity batteries. Now it needs a ride to space!",
+      "question": "Which launch option will you choose?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Launch Vehicles & Budget Management"
+      },
+      "answers": [
+        {
+          "id": "A043",
+          "text": "Share a rocket ride with another mission to split launch costs.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Saves major budget and reaches lunar orbit smoothly on a shared trajectory.",
+          "effects": {
+            "budget": 15,
+            "mass": 0,
+            "power": 5,
+            "scientific_value": 12,
+            "communication": 10
+          },
+          "learning_point": "Rideshare launches let smaller spacecraft share a rocket with larger payloads, saving millions in mission budget."
+        },
+        {
+          "id": "A044",
+          "text": "Book a dedicated medium rocket for a direct polar trajectory.",
+          "next_question_id": null,
+          "ending_id": "E003",
+          "consequence_summary": "Costs more budget, but places your spacecraft directly over the lunar poles for crisp ice-crater maps!",
+          "effects": {
+            "budget": -12,
+            "mass": 0,
+            "power": 5,
+            "scientific_value": 20,
+            "communication": 10
+          },
+          "learning_point": "A dedicated launch lets engineers pick the exact launch window and orbit best suited for their science goal."
+        }
+      ]
+    },
+    {
+      "id": "Q023",
+      "stage": "space_communications",
+      "story": "Your deep-penetrating radar sounder has mapped thick layers of ice beneath the Moon's poles, generating gigabytes of radar echoes.",
+      "question": "How will you handle this massive flood of scientific data?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Scientific Data Collection & Transmission"
+      },
+      "answers": [
+        {
+          "id": "A045",
+          "text": "Use a high-frequency Ka-band radio transmitter.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "High-frequency Ka-band beams down ultra-detailed radar maps of buried lunar ice!",
+          "effects": {
+            "budget": -10,
+            "mass": 5,
+            "power": -8,
+            "scientific_value": 20,
+            "communication": 25
+          },
+          "learning_point": "Higher radio frequencies like Ka-band can carry far more scientific data per second than older S-band radios."
+        },
+        {
+          "id": "A046",
+          "text": "Use onboard software compression to shrink files before sending.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Saves power and hardware weight while sending clean summary maps to Earth.",
+          "effects": {
+            "budget": 5,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 14,
+            "communication": 15
+          },
+          "learning_point": "Onboard data compression reduces file sizes so spacecraft can transmit discoveries faster using less radio power."
+        }
+      ]
+    },
+    {
+      "id": "Q024",
+      "stage": "orbit_selection",
+      "story": "Your Mars atmospheric orbiter arrives at the Red Planet with its gas spectrometer ready to measure escaping air.",
+      "question": "Which Mars orbit will you enter?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Orbit Selection"
+      },
+      "answers": [
+        {
+          "id": "A047",
+          "text": "Dip into a low upper-atmosphere sampling orbit.",
+          "next_question_id": "Q030",
+          "ending_id": null,
+          "consequence_summary": "Sniffs atmospheric gases directly for huge science, just as a solar flare erupts!",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": -5,
+            "scientific_value": 20,
+            "communication": 0
+          },
+          "learning_point": "Low periapsis orbits let spacecraft sample thin upper-atmosphere gases directly before climbing back up."
+        },
+        {
+          "id": "A048",
+          "text": "Stay in a high, stable orbit with long Earth communication passes.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Protects the spacecraft from drag and delivers steady, long-term weather data.",
+          "effects": {
+            "budget": 5,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 14,
+            "communication": 20
+          },
+          "learning_point": "High orbits avoid atmospheric drag, helping spacecraft last many years with minimal fuel."
+        }
+      ]
+    },
+    {
+      "id": "Q025",
+      "stage": "launch_planning",
+      "story": "Your Mars orbiter carries wide solar wings and a heavy atmospheric dust lidar, and it needs enough rocket speed to escape Earth's gravity all the way to Mars.",
+      "question": "Which launch vehicle will send your orbiter to Mars?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Launch Vehicles & Payload Capacity"
+      },
+      "answers": [
+        {
+          "id": "A049",
+          "text": "Select a medium-class rocket meant mainly for Earth orbit.",
+          "next_question_id": null,
+          "ending_id": "E007",
+          "consequence_summary": "The rocket lacks enough thrust to push a heavy orbiter onto a Mars transfer trajectory.",
+          "effects": {
+            "budget": 10,
+            "mass": 10,
+            "power": 0,
+            "scientific_value": -15,
+            "communication": 0
+          },
+          "learning_point": "Reaching Mars requires much higher rocket speed (escape velocity) than reaching Earth orbit, reducing how much mass a rocket can carry."
+        },
+        {
+          "id": "A050",
+          "text": "Select a heavy deep-space launch vehicle.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "Launches cleanly to Mars, where your lidar maps global dust storms in 3D!",
+          "effects": {
+            "budget": -18,
+            "mass": 0,
+            "power": 5,
+            "scientific_value": 25,
+            "communication": 15
+          },
+          "learning_point": "Deep-space missions need powerful multi-stage rockets to break free of Earth's gravity and reach another planet."
+        }
+      ]
+    },
+    {
+      "id": "Q026",
+      "stage": "mission_operations",
+      "story": "Your ceramic heat tiles are installed! Now Flight Dynamics must plan how deeply your orbiter dips into Mars's atmosphere during aerobraking.",
+      "question": "How fast will you execute the aerobraking campaign?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Mission Operations & Safety Margins"
+      },
+      "answers": [
+        {
+          "id": "A051",
+          "text": "Perform dozens of gentle, shallow passes over several weeks.",
+          "next_question_id": null,
+          "ending_id": "E003",
+          "consequence_summary": "Keeps temperatures safe and settles smoothly into your target science orbit!",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 20,
+            "communication": 15
+          },
+          "learning_point": "Gradual aerobraking spreads heat over many orbits, letting engineers adjust for unexpected changes in air density."
+        },
+        {
+          "id": "A052",
+          "text": "Dive deep into thick air to finish aerobraking in three passes.",
+          "next_question_id": null,
+          "ending_id": "E005",
+          "consequence_summary": "Unexpected air density spikes force an emergency orbit raise, cutting science time short.",
+          "effects": {
+            "budget": -10,
+            "mass": 0,
+            "power": -15,
+            "scientific_value": 5,
+            "communication": 0
+          },
+          "learning_point": "Planetary atmospheres can swell unexpectedly due to dust storms or solar heating, making aggressive dives risky."
+        }
+      ]
+    },
+    {
+      "id": "Q027",
+      "stage": "launch_planning",
+      "story": "Your nuclear-powered Mars rover and its entry aeroshell are ready for launch. Heavy interplanetary payloads require careful rocket selection.",
+      "question": "Which deep-space rocket configuration will you choose?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Launch Vehicles & Budget Trade-offs"
+      },
+      "answers": [
+        {
+          "id": "A053",
+          "text": "Use a proven heavy-lift interplanetary rocket.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "Precise launch injection lands your rover in an ancient crater lakebed, discovering organic-rich clay!",
+          "effects": {
+            "budget": -15,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 25,
+            "communication": 15
+          },
+          "learning_point": "Matching a spacecraft's exact mass to a proven launch vehicle maximizes mission reliability and science return."
+        },
+        {
+          "id": "A054",
+          "text": "Pay extra for an oversized ultra-heavy rocket with huge spare capacity.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Reaches Mars easily, though the high launch price leaves less budget for extended rover operations.",
+          "effects": {
+            "budget": -25,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 15,
+            "communication": 10
+          },
+          "learning_point": "Buying far more rocket capacity than needed drains mission budget that could fund extra science operations."
+        }
+      ]
+    },
+    {
+      "id": "Q028",
+      "stage": "mission_operations",
+      "story": "Alert from Mars! A giant regional dust storm has darkened the sky over your solar-powered rover, dropping solar electricity to 20%.",
+      "question": "How will you command your rover during the dust storm?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Unexpected Mission Challenges & Power Management"
+      },
+      "answers": [
+        {
+          "id": "A055",
+          "text": "Put the rover into low-power hibernation until winds clear the panels.",
+          "next_question_id": null,
+          "ending_id": "E004",
+          "consequence_summary": "Protects the batteries so the rover survives, though weeks of driving time are lost.",
+          "effects": {
+            "budget": 0,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 5,
+            "communication": 5
+          },
+          "learning_point": "Turning off non-essential heaters and motors during power drops helps solar rovers survive Martian dust storms."
+        },
+        {
+          "id": "A056",
+          "text": "Keep driving and drilling at full speed during the storm.",
+          "next_question_id": null,
+          "ending_id": "E005",
+          "consequence_summary": "Batteries drain rapidly, triggering an emergency system reset that requires replanning the mission.",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": -20,
+            "scientific_value": 0,
+            "communication": -10
+          },
+          "learning_point": "When solar power drops, commanders must reduce power demand so batteries don't fall below critical levels."
+        }
+      ]
+    },
+    {
+      "id": "Q029",
+      "stage": "space_communications",
+      "story": "Your Mars subsurface radar has detected a huge underground ice deposit! Now you must beam the radar maps across 200 million kilometers to Earth.",
+      "question": "How will you manage Deep Space Network communications?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Communications with Earth & Data Prioritization"
+      },
+      "answers": [
+        {
+          "id": "A057",
+          "text": "Point your 3-meter high-gain dish at NASA's Deep Space Network.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "Giant 70-meter antennas on Earth capture your weak signal, revealing a landmark underground water map!",
+          "effects": {
+            "budget": -8,
+            "mass": 0,
+            "power": -5,
+            "scientific_value": 22,
+            "communication": 25
+          },
+          "learning_point": "NASA's Deep Space Network uses giant dish antennas around Earth to hear faint radio whispers from Mars and beyond."
+        },
+        {
+          "id": "A058",
+          "text": "Store files in onboard memory and transmit prioritized highlights.",
+          "next_question_id": null,
+          "ending_id": "E003",
+          "consequence_summary": "Smart data prioritization sends the clearest ice-layer discoveries first without draining power.",
+          "effects": {
+            "budget": 0,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 18,
+            "communication": 15
+          },
+          "learning_point": "Because Earth communication time is shared among many missions, spacecraft prioritize their most important data first."
+        }
+      ]
+    },
+    {
+      "id": "Q030",
+      "stage": "mission_operations",
+      "story": "Space Weather Alert! The Sun just unleashed a strong solar flare, sending high-energy radiation toward Mars while your orbiter is collecting data.",
+      "question": "How will you respond to the solar storm?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Unexpected Mission Challenges"
+      },
+      "answers": [
+        {
+          "id": "A059",
+          "text": "Switch sensitive cameras to Safe Mode until radiation passes.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Protects electronics from radiation glitches and completes the primary mapping mission safely.",
+          "effects": {
+            "budget": 0,
+            "mass": 0,
+            "power": 10,
+            "scientific_value": 10,
+            "communication": 10
+          },
+          "learning_point": "Safe Mode turns off sensitive instruments during solar storms to prevent radiation from damaging computer memory."
+        },
+        {
+          "id": "A060",
+          "text": "Use shielded radiation sensors to record how the storm hits Mars.",
+          "next_question_id": null,
+          "ending_id": "E001",
+          "consequence_summary": "Captures rare real-time data showing how solar storms strip gases from Mars's atmosphere!",
+          "effects": {
+            "budget": -5,
+            "mass": 0,
+            "power": -10,
+            "scientific_value": 25,
+            "communication": 10
+          },
+          "learning_point": "Observing a solar storm at Mars gives scientists rare insight into how space weather affects planets without magnetic fields."
+        }
+      ]
+    },
+    {
+      "id": "Q031",
+      "stage": "mission_operations",
+      "story": "Your low-orbit lunar mapping spacecraft passes into the Moon's dark shadow, and your small battery drops to 25% charge!",
+      "question": "How will you manage power until your spacecraft returns to sunlight?",
+      "source": {
+        "title": "NASA Space Apps Challenge 2026: Space Mission Design Game",
+        "url": "https://www.spaceappschallenge.org/2026/challenges/space-mission-design-game/",
+        "section": "Power Management & Mission Operations"
+      },
+      "answers": [
+        {
+          "id": "A061",
+          "text": "Pause the stereo camera during shadow passes and keep only core computers on.",
+          "next_question_id": null,
+          "ending_id": "E002",
+          "consequence_summary": "Conserves battery charge through every eclipse, completing a reliable lunar survey!",
+          "effects": {
+            "budget": 0,
+            "mass": 0,
+            "power": 15,
+            "scientific_value": 10,
+            "communication": 10
+          },
+          "learning_point": "Duty-cycling—turning instruments off in shadow and back on in sunlight—lets small-battery spacecraft thrive."
+        },
+        {
+          "id": "A062",
+          "text": "Keep heaters, transmitters, and cameras running at full power in the dark.",
+          "next_question_id": null,
+          "ending_id": "E006",
+          "consequence_summary": "The battery runs completely flat in the shadow, shutting down the spacecraft's computers permanently.",
+          "effects": {
+            "budget": 0,
+            "mass": 0,
+            "power": -25,
+            "scientific_value": -10,
+            "communication": -30
+          },
+          "learning_point": "If a spacecraft's battery drains completely in the dark, its heaters turn off and it may never wake up again."
+        }
+      ]
+    }
+  ],
+  "endings": [
+    {
+      "id": "E001",
+      "title": "Outstanding Scientific Success",
+      "status": "outstanding_success",
+      "final_score_formula": "scientific_value * 1.5 + communication + power + budget",
+      "description": "Congratulations, Commander! Your spacecraft delivered groundbreaking discoveries back to Earth while balancing power, communications, and mission budget. Scientists around the world are celebrating your data!",
+      "scientific_explanation": "By matching your instruments, orbit, and high-gain communications to your mission objective, your spacecraft collected and transmitted complete, high-value scientific datasets.",
+      "learning_point": "Great space missions succeed when every subsystem—power, instruments, orbit, and communications—works together in balance."
+    },
+    {
+      "id": "E002",
+      "title": "Successful Mission with Smart Resource Efficiency",
+      "status": "efficient_success",
+      "final_score_formula": "budget * 1.3 + power * 1.2 + scientific_value + communication",
+      "description": "Mission accomplished! You designed a smart, reliable spacecraft that stayed within budget, protected its power reserves, and completed its core exploration goals.",
+      "scientific_explanation": "Conservative orbital choices, data compression, and smart power scheduling kept your spacecraft healthy across its entire planned lifetime.",
+      "learning_point": "Real space engineers often choose safe, resource-efficient designs so a mission lasts longer and delivers dependable science."
+    },
+    {
+      "id": "E003",
+      "title": "Valuable Scientific Discovery",
+      "status": "scientific_discovery",
+      "final_score_formula": "scientific_value * 1.4 + communication + power",
+      "description": "Major discovery confirmed! Despite tough engineering trade-offs, your bold choices paid off with exciting new measurements that advance planetary science.",
+      "scientific_explanation": "Targeted instruments and careful operational margins allowed your spacecraft to gather unique data from challenging environments.",
+      "learning_point": "Exploring hard-to-reach places in space requires careful planning and extra safety margins, but yields extraordinary discoveries."
+    },
+    {
+      "id": "E004",
+      "title": "Partial Mission Success",
+      "status": "partial_success",
+      "final_score_formula": "scientific_value + communication + budget",
+      "description": "Your spacecraft survived its journey and sent back helpful initial findings, though limited communication windows or power conservation prevented a full data return.",
+      "scientific_explanation": "When antenna bandwidth or solar power is constrained, spacecraft can only transmit priority summaries rather than complete high-resolution maps.",
+      "learning_point": "A space mission is only as productive as the data it can power and send back to Earth."
+    },
+    {
+      "id": "E005",
+      "title": "Mission Requires a New Strategy",
+      "status": "strategy_revision",
+      "final_score_formula": "scientific_value + power + budget * 0.8",
+      "description": "Your spacecraft entered safe recovery mode after pushing environmental limits. Flight controllers have stabilized the ship, and your team is redesigning the next mission phase.",
+      "scientific_explanation": "Unexpected atmospheric density or dust-storm power drops forced the onboard computer to halt science operations to protect hardware.",
+      "learning_point": "In real spaceflight, anomalies teach engineers how to update flight software and plan safer operational margins."
+    },
+    {
+      "id": "E006",
+      "title": "Mission Failure Due to Power or Fuel Depletion",
+      "status": "resource_failure",
+      "final_score_formula": "scientific_value * 0.5 + budget * 0.5",
+      "description": "Contact lost! Your spacecraft ran out of battery energy or thruster propellant during a critical maneuver, ending the mission early.",
+      "scientific_explanation": "Without stored electrical power for heaters and radios—or propellant for attitude control—a spacecraft cannot maintain contact with Earth.",
+      "learning_point": "Managing power and fuel reserves is just as important as picking great cameras and sensors."
+    },
+    {
+      "id": "E007",
+      "title": "Launch Scrubbed: Payload Mass Overload",
+      "status": "launch_failure",
+      "final_score_formula": "budget * 0.6 + scientific_value * 0.4",
+      "description": "Hold the countdown! Pre-launch weight checks show your spacecraft is too heavy for the selected launch vehicle to reach its target trajectory.",
+      "scientific_explanation": "Every rocket has a strict lift-mass limit determined by its engines and propellant. Heavy payloads require heavy-lift launch vehicles.",
+      "learning_point": "Engineers track every kilogram during spacecraft design so the finished vehicle fits within its rocket's payload limit."
+    },
+    {
+      "id": "E008",
+      "title": "Thermal Protection Failure During Entry",
+      "status": "engineering_failure",
+      "final_score_formula": "budget * 0.5",
+      "description": "Telemetry lost during atmospheric entry! Without proper heat shielding, friction with atmospheric gases overheated the spacecraft.",
+      "scientific_explanation": "Moving at kilometers per second through even a thin planetary atmosphere generates intense heat that requires specialized thermal protection.",
+      "learning_point": "Never sacrifice essential thermal or structural protection just to save mass—space environments are unforgiving."
+    }
+  ]
+}
