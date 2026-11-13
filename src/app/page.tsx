@@ -30,6 +30,8 @@ import PauseMenu from '@/game/ui/PauseMenu';
 import MiniGameOverlay from '@/game/ui/MiniGameOverlay';
 import CraftingPanel from '@/game/ui/CraftingPanel';
 import CodexPanel from '@/game/ui/CodexPanel';
+import LaunchCinematic from '@/game/cinematics/LaunchCinematic';
+import MissionSelector from '@/game/ui/MissionSelector';
 import InteractionHandler from '@/game/interactions/InteractionHandler';
 import { useGameStore } from '@/game/store';
 import { addCodexEntry } from '@/game/ui/CodexPanel';
@@ -46,7 +48,7 @@ import { getQuestionById, getInitialResources } from '@/lib/data/game-data-servi
 import { audio } from '@/lib/audio/audio-manager';
 import type { MissionState, Resources } from '@/types/game';
 
-type TopLevelScreen = 'menu' | 'exploring' | 'briefing' | 'gameplay' | 'report';
+type TopLevelScreen = 'menu' | 'exploring' | 'briefing' | 'gameplay' | 'cinematic' | 'report';
 
 export default function GamePage() {
   const [screen, setScreen] = useState<TopLevelScreen>('menu');
@@ -56,6 +58,7 @@ export default function GamePage() {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [isCraftingOpen, setIsCraftingOpen] = useState(false);
+  const [isMissionSelectorOpen, setIsMissionSelectorOpen] = useState(false);
 
   const gamePhase = useGameStore((s) => s.phase);
   const setGamePhase = useGameStore((s) => s.setPhase);
@@ -119,9 +122,16 @@ export default function GamePage() {
 
   const handleStartMissionFromBoard = useCallback(() => {
     audio.select();
+    setIsMissionSelectorOpen(true);
+  }, []);
+
+  const handleMissionSelected = useCallback((answerId: string) => {
+    setIsMissionSelectorOpen(false);
     const fresh = createInitialMissionState();
-    setMissionState(fresh);
-    saveMissionToStorage(fresh);
+    // Commit the first answer (A001=Moon, A002=Mars)
+    const afterFirst = commitAnswerToState(fresh, answerId);
+    setMissionState(afterFirst);
+    saveMissionToStorage(afterFirst);
     setScreen('briefing');
     setGamePhase('mission-active');
     musicEngine.setScene('mission-active', 0.2);
@@ -173,8 +183,9 @@ export default function GamePage() {
             const isSuccess = updated.ending.status.includes('success') || updated.ending.status === 'scientific_discovery';
             musicEngine.setScene(isSuccess ? 'victory' : 'failure', 0.25);
           }
-          setScreen('report');
-          setGamePhase('mission-report');
+          // Play cinematic before showing report
+          setScreen('cinematic');
+          setGamePhase('cinematic');
         }
       } catch (err) {
         console.error('Failed to commit decision:', err);
@@ -289,6 +300,16 @@ export default function GamePage() {
           {/* Codex panel */}
           <CodexPanel />
 
+          {/* Mission selector overlay */}
+          <MissionSelector
+            isOpen={isMissionSelectorOpen}
+            onSelectMission={handleMissionSelected}
+            onClose={() => {
+              setIsMissionSelectorOpen(false);
+              useGameStore.getState().setPhase('exploring');
+            }}
+          />
+
           {/* Interaction handler (invisible, handles E key presses) */}
           <InteractionHandler
             onStartMission={handleStartMissionFromBoard}
@@ -335,6 +356,18 @@ export default function GamePage() {
             )}
           </div>
         </div>
+      )}
+
+      {/* ===== LAUNCH CINEMATIC ===== */}
+      {screen === 'cinematic' && missionState && missionState.ending && (
+        <LaunchCinematic
+          ending={missionState.ending}
+          destination={missionState.destination}
+          onComplete={() => {
+            setScreen('report');
+            setGamePhase('mission-report');
+          }}
+        />
       )}
 
       {/* ===== MISSION REPORT ===== */}
