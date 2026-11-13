@@ -43,6 +43,19 @@ export default function MainMenu({
           </p>
         </div>
 
+        {/* Player astronaut preview */}
+        <div className="mb-6 animate-float">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/assets/characters/player.png"
+            alt="Astronaut"
+            width={80}
+            height={80}
+            className="pixel-art drop-shadow-[0_4px_20px_rgba(0,240,255,0.5)]"
+            draggable={false}
+          />
+        </div>
+
         {/* Action Panel */}
         <div className="w-full max-w-md glass-panel p-6 sm:p-8 rounded-2xl shadow-2xl flex flex-col gap-4 border border-cyan-500/20">
           {hasSavedMission && (
@@ -55,7 +68,7 @@ export default function MainMenu({
               className="group relative w-full py-4 px-6 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-bold tracking-wider shadow-glow-cyan transition-all duration-200 flex items-center justify-center gap-3"
             >
               <RotateCcw className="w-5 h-5 text-cyan-200 group-hover:-rotate-45 transition-transform" />
-              <span>RESUME MISSION</span>
+              <span>CONTINUE</span>
             </button>
           )}
 
@@ -72,7 +85,7 @@ export default function MainMenu({
             }`}
           >
             <Play className="w-5 h-5 text-cyan-300 group-hover:scale-110 transition-transform fill-current" />
-            <span>START NEW MISSION</span>
+            <span>ENTER STATION</span>
           </button>
 
           <div className="grid grid-cols-2 gap-3 mt-2">
