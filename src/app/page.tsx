@@ -32,6 +32,8 @@ import CraftingPanel from '@/game/ui/CraftingPanel';
 import CodexPanel from '@/game/ui/CodexPanel';
 import LaunchCinematic from '@/game/cinematics/LaunchCinematic';
 import MissionSelector from '@/game/ui/MissionSelector';
+import CollectibleNotifications from '@/game/ui/CollectibleNotifications';
+import AchievementNotifications from '@/game/ui/AchievementNotifications';
 import InteractionHandler from '@/game/interactions/InteractionHandler';
 import { useGameStore } from '@/game/store';
 import { addCodexEntry } from '@/game/ui/CodexPanel';
@@ -396,6 +398,10 @@ export default function GamePage() {
           </div>
         </div>
       )}
+
+      {/* ===== GLOBAL NOTIFICATION TOASTS ===== */}
+      <CollectibleNotifications />
+      <AchievementNotifications />
 
       {/* ===== SETTINGS MODAL (always available) ===== */}
       <SettingsModal

@@ -36,10 +36,12 @@ export function usePlayerController() {
     playerPosition,
     currentRoom,
     phase,
+    moveTarget,
     setPlayerPosition,
     setPlayerFacing,
     setIsMoving,
     setCurrentRoom,
+    setMoveTarget,
     setInteractionTarget,
     setShowInteractionPrompt,
     isInventoryOpen,
@@ -98,8 +100,10 @@ export function usePlayerController() {
     const halfW = room.size.width / 2 - WALL_MARGIN;
     const halfD = room.size.depth / 2 - WALL_MARGIN;
 
-    // Movement
+    // Movement (WASD keyboard takes priority, fallback to click-to-move)
     if (input.isMoving) {
+      if (moveTarget) setMoveTarget(null);
+
       const newX = playerPosition.x + input.moveDirection.x * PLAYER_SPEED * dt;
       const newZ = playerPosition.z + input.moveDirection.y * PLAYER_SPEED * dt;
 
@@ -121,6 +125,36 @@ export function usePlayerController() {
       // Update facing direction
       if (input.moveDirection.x > 0.1) setPlayerFacing('right');
       if (input.moveDirection.x < -0.1) setPlayerFacing('left');
+    } else if (moveTarget) {
+      const dx = moveTarget.x - playerPosition.x;
+      const dz = moveTarget.z - playerPosition.z;
+      const dist = Math.sqrt(dx * dx + dz * dz);
+
+      if (dist < 0.25) {
+        setMoveTarget(null);
+        setIsMoving(false);
+      } else {
+        const nx = dx / dist;
+        const nz = dz / dist;
+        const step = Math.min(dist, PLAYER_SPEED * dt);
+
+        const newX = Math.max(-halfW, Math.min(halfW, playerPosition.x + nx * step));
+        const newZ = Math.max(-halfD, Math.min(halfD, playerPosition.z + nz * step));
+
+        setPlayerPosition({ x: newX, y: 0, z: newZ });
+        setIsMoving(true);
+
+        // Footstep sounds
+        footstepTimerRef.current += dt;
+        if (footstepTimerRef.current >= FOOTSTEP_INTERVAL) {
+          footstepTimerRef.current = 0;
+          footstepCountRef.current++;
+          playFootstep(0.12, footstepCountRef.current);
+        }
+
+        if (nx > 0.1) setPlayerFacing('right');
+        if (nx < -0.1) setPlayerFacing('left');
+      }
     } else {
       setIsMoving(false);
       footstepTimerRef.current = FOOTSTEP_INTERVAL; // Ready to play immediately on next move

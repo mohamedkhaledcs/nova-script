@@ -20,13 +20,33 @@ import type { InteractableObject } from '@/game/types';
 // ====================================
 
 function RoomFloor({ width, depth, color }: { width: number; depth: number; color: string }) {
+  const setMoveTarget = useGameStore((s) => s.setMoveTarget);
+  const moveTarget = useGameStore((s) => s.moveTarget);
+
   return (
     <group>
-      {/* Main floor */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]} receiveShadow>
+      {/* Main floor with click-to-move pointer handler */}
+      <mesh
+        rotation={[-Math.PI / 2, 0, 0]}
+        position={[0, 0, 0]}
+        receiveShadow
+        onPointerDown={(e) => {
+          e.stopPropagation();
+          setMoveTarget({ x: e.point.x, z: e.point.z });
+        }}
+      >
         <planeGeometry args={[width, depth]} />
         <meshStandardMaterial color={color} roughness={0.8} metalness={0.2} />
       </mesh>
+
+      {/* Click target reticle when moving via click */}
+      {moveTarget && (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[moveTarget.x, 0.02, moveTarget.z]}>
+          <ringGeometry args={[0.3, 0.45, 16]} />
+          <meshBasicMaterial color="#00F0FF" transparent opacity={0.6} side={THREE.DoubleSide} />
+        </mesh>
+      )}
+
       {/* Grid lines overlay */}
       <gridHelper
         args={[Math.max(width, depth), Math.max(width, depth) / 2, '#1a2a4a', '#0d1933']}

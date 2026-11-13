@@ -4,47 +4,23 @@
 
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React from 'react';
+import { useGameStore } from '@/game/store';
 import { getAchievementById } from '@/game/progression/achievements';
 
-interface AchievementNotif {
-  id: string;
-  achievementId: string;
-  timestamp: number;
-}
+export default function AchievementNotifications() {
+  const toasts = useGameStore((s) => s.achievementToasts);
 
-let notifCounter = 0;
-
-export function useAchievementNotifications() {
-  const [notifications, setNotifications] = useState<AchievementNotif[]>([]);
-
-  const notify = useCallback((achievementId: string) => {
-    const id = `ach-${++notifCounter}`;
-    setNotifications((prev) => [...prev, { id, achievementId, timestamp: Date.now() }]);
-
-    setTimeout(() => {
-      setNotifications((prev) => prev.filter((n) => n.id !== id));
-    }, 4000);
-  }, []);
-
-  return { notifications, notify };
-}
-
-export default function AchievementNotifications({
-  notifications,
-}: {
-  notifications: AchievementNotif[];
-}) {
-  if (notifications.length === 0) return null;
+  if (!toasts || toasts.length === 0) return null;
 
   return (
     <div className="fixed top-20 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-3 pointer-events-none">
-      {notifications.map((notif) => {
-        const ach = getAchievementById(notif.achievementId);
+      {toasts.map((toast) => {
+        const ach = getAchievementById(toast.achievementId);
         if (!ach) return null;
         return (
           <div
-            key={notif.id}
+            key={toast.id}
             className="glass-panel rounded-xl px-6 py-3 flex items-center gap-4 border border-amber-500/50 shadow-glow-amber animate-in slide-in-from-top duration-500"
           >
             <span className="text-3xl">{ach.icon}</span>

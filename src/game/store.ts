@@ -1,7 +1,7 @@
 /**
  * Central game world state store using Zustand.
  * Manages exploration state, inventory, player position, interactions, 
- * and game phase transitions.
+ * click-to-move, achievements, and notifications.
  * 
  * IMPORTANT: This store manages SUPPLEMENTARY game state only.
  * Canonical mission state (questions, resources, endings) remains in
@@ -17,10 +17,9 @@ import type {
   Vec3,
   Inventory,
   CollectibleType,
-  INITIAL_INVENTORY,
 } from '@/game/types';
+import { checkAchievements } from '@/game/progression/achievements';
 
-// Re-export the initial inventory constant inline to avoid circular imports
 const DEFAULT_INVENTORY: Inventory = {
   items: {
     'metal-scrap': 0,
@@ -32,6 +31,17 @@ const DEFAULT_INVENTORY: Inventory = {
   maxCapacity: 99,
 };
 
+export interface CollectibleToast {
+  id: string;
+  type: CollectibleType;
+  amount: number;
+}
+
+export interface AchievementToast {
+  id: string;
+  achievementId: string;
+}
+
 export interface GameStore {
   // Phase
   phase: GamePhase;
@@ -42,10 +52,12 @@ export interface GameStore {
   playerFacing: PlayerFacing;
   isMoving: boolean;
   currentRoom: RoomId;
+  moveTarget: { x: number; z: number } | null;
   setPlayerPosition: (pos: Vec3) => void;
   setPlayerFacing: (facing: PlayerFacing) => void;
   setIsMoving: (moving: boolean) => void;
   setCurrentRoom: (room: RoomId) => void;
+  setMoveTarget: (target: { x: number; z: number } | null) => void;
 
   // Interaction
   interactionTarget: string | null;
@@ -63,6 +75,7 @@ export interface GameStore {
   collectiblesFound: string[];
   markCollectibleFound: (id: string) => void;
   isCollectibleFound: (id: string) => boolean;
+  totalCollectiblesCount: number;
 
   // Mini-games
   activeMiniGame: string | null;
@@ -77,12 +90,27 @@ export interface GameStore {
   isPaused: boolean;
   togglePause: () => void;
 
-  // Mission unlock & progression
-  isMissionUnlocked: boolean;
-  unlockMission: () => void;
+  // Progression & Stats
+  roomsVisited: string[];
+  totalItemsCrafted: number;
+  incrementCraftedCount: () => void;
   missionsCompleted: number;
   endingsDiscovered: string[];
-  addEndingDiscovered: (endingId: string) => void;
+  bestScore: number;
+  totalScore: number;
+  addEndingDiscovered: (endingId: string, score?: number) => void;
+
+  // Achievements
+  unlockedAchievements: string[];
+  achievementToasts: AchievementToast[];
+  dismissAchievementToast: (id: string) => void;
+
+  // Collectible Toasts
+  collectibleToasts: CollectibleToast[];
+  dismissCollectibleToast: (id: string) => void;
+
+  // Check achievements helper
+  checkAchievementsTrigger: () => void;
 
   // Reset
   resetExplorationState: () => void;
@@ -93,17 +121,27 @@ export const useGameStore = create<GameStore>()(
     (set, get) => ({
       // Phase
       phase: 'exploring',
-      setPhase: (phase) => set({ phase }),
+      setPhase: (phase) => {
+        set({ phase });
+        get().checkAchievementsTrigger();
+      },
 
       // Player
       playerPosition: { x: 0, y: 0, z: 0 },
       playerFacing: 'right',
       isMoving: false,
       currentRoom: 'command-center',
+      moveTarget: null,
       setPlayerPosition: (pos) => set({ playerPosition: pos }),
       setPlayerFacing: (facing) => set({ playerFacing: facing }),
       setIsMoving: (moving) => set({ isMoving: moving }),
-      setCurrentRoom: (room) => set({ currentRoom: room }),
+      setCurrentRoom: (room) => {
+        const visited = get().roomsVisited;
+        const nextVisited = visited.includes(room) ? visited : [...visited, room];
+        set({ currentRoom: room, roomsVisited: nextVisited, moveTarget: null });
+        get().checkAchievementsTrigger();
+      },
+      setMoveTarget: (target) => set({ moveTarget: target }),
 
       // Interaction
       interactionTarget: null,
@@ -113,7 +151,8 @@ export const useGameStore = create<GameStore>()(
 
       // Inventory
       inventory: { ...DEFAULT_INVENTORY },
-      collectItem: (type, amount = 1) =>
+      collectItem: (type, amount = 1) => {
+        const toastId = `toast-${Date.now()}-${Math.random()}`;
         set((state) => ({
           inventory: {
             ...state.inventory,
@@ -125,7 +164,16 @@ export const useGameStore = create<GameStore>()(
               ),
             },
           },
-        })),
+          totalCollectiblesCount: state.totalCollectiblesCount + amount,
+          collectibleToasts: [...state.collectibleToasts, { id: toastId, type, amount }],
+        }));
+
+        setTimeout(() => {
+          get().dismissCollectibleToast(toastId);
+        }, 2200);
+
+        get().checkAchievementsTrigger();
+      },
       removeItem: (type, amount = 1) => {
         const current = get().inventory.items[type];
         if (current < amount) return false;
@@ -144,6 +192,7 @@ export const useGameStore = create<GameStore>()(
 
       // Collectibles
       collectiblesFound: [],
+      totalCollectiblesCount: 0,
       markCollectibleFound: (id) =>
         set((state) => ({
           collectiblesFound: state.collectiblesFound.includes(id)
@@ -165,17 +214,87 @@ export const useGameStore = create<GameStore>()(
       isPaused: false,
       togglePause: () => set((s) => ({ isPaused: !s.isPaused })),
 
-      // Mission
-      isMissionUnlocked: false,
-      unlockMission: () => set({ isMissionUnlocked: true }),
+      // Progression
+      roomsVisited: ['command-center'],
+      totalItemsCrafted: 0,
+      incrementCraftedCount: () => {
+        set((s) => ({ totalItemsCrafted: s.totalItemsCrafted + 1 }));
+        get().checkAchievementsTrigger();
+      },
       missionsCompleted: 0,
       endingsDiscovered: [],
-      addEndingDiscovered: (endingId) =>
-        set((state) => ({
-          endingsDiscovered: state.endingsDiscovered.includes(endingId)
+      bestScore: 0,
+      totalScore: 0,
+      addEndingDiscovered: (endingId, score = 0) => {
+        set((state) => {
+          const nextEndings = state.endingsDiscovered.includes(endingId)
             ? state.endingsDiscovered
-            : [...state.endingsDiscovered, endingId],
+            : [...state.endingsDiscovered, endingId];
+          return {
+            endingsDiscovered: nextEndings,
+            missionsCompleted: state.missionsCompleted + 1,
+            totalScore: state.totalScore + score,
+            bestScore: Math.max(state.bestScore, score),
+          };
+        });
+        get().checkAchievementsTrigger();
+      },
+
+      // Achievements
+      unlockedAchievements: [],
+      achievementToasts: [],
+      dismissAchievementToast: (id) =>
+        set((state) => ({
+          achievementToasts: state.achievementToasts.filter((t) => t.id !== id),
         })),
+
+      // Collectible Toasts
+      collectibleToasts: [],
+      dismissCollectibleToast: (id) =>
+        set((state) => ({
+          collectibleToasts: state.collectibleToasts.filter((t) => t.id !== id),
+        })),
+
+      checkAchievementsTrigger: () => {
+        const state = get();
+        const stats = {
+          missionsCompleted: state.missionsCompleted,
+          endingsDiscovered: state.endingsDiscovered,
+          totalCollectiblesFound: state.totalCollectiblesCount,
+          totalItemsCrafted: state.totalItemsCrafted,
+          roomsVisited: state.roomsVisited,
+          totalScore: state.totalScore,
+          bestScore: state.bestScore,
+        };
+
+        const newUnlocked = checkAchievements(stats, state.unlockedAchievements);
+        if (newUnlocked.length > 0) {
+          const newToasts: AchievementToast[] = newUnlocked.map((achId) => ({
+            id: `ach-${Date.now()}-${achId}`,
+            achievementId: achId,
+          }));
+
+          set({
+            unlockedAchievements: [...state.unlockedAchievements, ...newUnlocked],
+            achievementToasts: [...state.achievementToasts, ...newToasts],
+          });
+
+          // Sync with localStorage key for backward compatibility
+          try {
+            localStorage.setItem(
+              'novascript_achievements_v1',
+              JSON.stringify([...state.unlockedAchievements, ...newUnlocked])
+            );
+          } catch { /* ignore */ }
+
+          // Auto dismiss after 4.5s
+          newToasts.forEach((t) => {
+            setTimeout(() => {
+              get().dismissAchievementToast(t.id);
+            }, 4500);
+          });
+        }
+      },
 
       // Reset exploration
       resetExplorationState: () =>
@@ -185,6 +304,7 @@ export const useGameStore = create<GameStore>()(
           playerFacing: 'right',
           isMoving: false,
           currentRoom: 'command-center',
+          moveTarget: null,
           interactionTarget: null,
           showInteractionPrompt: false,
           activeMiniGame: null,
@@ -194,15 +314,20 @@ export const useGameStore = create<GameStore>()(
         }),
     }),
     {
-      name: 'novascript_game_world_v1',
+      name: 'novascript_game_world_v2',
       partialize: (state) => ({
         inventory: state.inventory,
         collectiblesFound: state.collectiblesFound,
+        totalCollectiblesCount: state.totalCollectiblesCount,
         currentRoom: state.currentRoom,
         playerPosition: state.playerPosition,
-        isMissionUnlocked: state.isMissionUnlocked,
+        roomsVisited: state.roomsVisited,
+        totalItemsCrafted: state.totalItemsCrafted,
         missionsCompleted: state.missionsCompleted,
         endingsDiscovered: state.endingsDiscovered,
+        bestScore: state.bestScore,
+        totalScore: state.totalScore,
+        unlockedAchievements: state.unlockedAchievements,
       }),
     }
   )

@@ -19,7 +19,7 @@ interface CraftingPanelProps {
 }
 
 export default function CraftingPanel({ isOpen, onClose }: CraftingPanelProps) {
-  const { inventory, removeItem } = useGameStore();
+  const { inventory, removeItem, incrementCraftedCount } = useGameStore();
   const [craftedItems, setCraftedItems] = React.useState<string[]>([]);
 
   // Load crafted items from localStorage
@@ -44,6 +44,7 @@ export default function CraftingPanel({ isOpen, onClose }: CraftingPanelProps) {
     // Mark as crafted
     const updated = [...craftedItems, recipe.resultId];
     setCraftedItems(updated);
+    incrementCraftedCount();
     try {
       localStorage.setItem('novascript_crafted_v1', JSON.stringify(updated));
     } catch { /* ignore */ }

@@ -46,7 +46,7 @@ function loadCodexEntries(): CodexEntry[] {
 }
 
 export default function CodexPanel() {
-  const { isCodexOpen, toggleCodex, endingsDiscovered } = useGameStore();
+  const { isCodexOpen, toggleCodex, unlockedAchievements } = useGameStore();
   const [entries, setEntries] = useState<CodexEntry[]>([]);
   const [expandedStage, setExpandedStage] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'knowledge' | 'achievements'>('knowledge');
@@ -76,17 +76,6 @@ export default function CodexPanel() {
     launch_planning: 'Launch Planning',
     mission_operations: 'Flight Operations',
   };
-
-  // Achievement status
-  const unlockedAchievements = (() => {
-    if (typeof window === 'undefined') return [];
-    try {
-      const raw = localStorage.getItem('novascript_achievements_v1');
-      return raw ? JSON.parse(raw) as string[] : [];
-    } catch {
-      return [];
-    }
-  })();
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/75 backdrop-blur-sm p-4">
