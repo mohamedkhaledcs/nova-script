@@ -28,8 +28,12 @@ import ExplorationHUD from '@/game/ui/ExplorationHUD';
 import InventoryPanel from '@/game/ui/InventoryPanel';
 import PauseMenu from '@/game/ui/PauseMenu';
 import MiniGameOverlay from '@/game/ui/MiniGameOverlay';
+import CraftingPanel from '@/game/ui/CraftingPanel';
+import CodexPanel from '@/game/ui/CodexPanel';
 import InteractionHandler from '@/game/interactions/InteractionHandler';
 import { useGameStore } from '@/game/store';
+import { addCodexEntry } from '@/game/ui/CodexPanel';
+import { musicEngine } from '@/game/audio/music-engine';
 
 import {
   createInitialMissionState,
@@ -51,6 +55,7 @@ export default function GamePage() {
   const [lastDeltas, setLastDeltas] = useState<Partial<Resources> | undefined>(undefined);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [isCraftingOpen, setIsCraftingOpen] = useState(false);
 
   const gamePhase = useGameStore((s) => s.phase);
   const setGamePhase = useGameStore((s) => s.setPhase);
@@ -91,6 +96,7 @@ export default function GamePage() {
     setLastDeltas(undefined);
     resetExploration();
     setScreen('exploring');
+    musicEngine.setScene('exploration', 0.2);
   }, [resetExploration]);
 
   const handleResumeMission = useCallback(() => {
@@ -118,6 +124,7 @@ export default function GamePage() {
     saveMissionToStorage(fresh);
     setScreen('briefing');
     setGamePhase('mission-active');
+    musicEngine.setScene('mission-active', 0.2);
   }, [setGamePhase]);
 
   const handleProceedFromBriefing = useCallback(() => {
@@ -145,9 +152,26 @@ export default function GamePage() {
         setMissionState(updated);
         saveMissionToStorage(updated);
 
+        // Record learning point in codex
+        if (currentQuestion) {
+          const selectedAnswer = currentQuestion.answers.find((a) => a.id === answerId);
+          if (selectedAnswer) {
+            addCodexEntry({
+              questionId: currentQuestion.id,
+              questionText: currentQuestion.question,
+              answerId: selectedAnswer.id,
+              answerText: selectedAnswer.text,
+              learningPoint: selectedAnswer.learning_point,
+              stage: currentQuestion.stage,
+            });
+          }
+        }
+
         if (updated.isComplete) {
           if (updated.ending) {
             addEndingDiscovered(updated.ending.id);
+            const isSuccess = updated.ending.status.includes('success') || updated.ending.status === 'scientific_discovery';
+            musicEngine.setScene(isSuccess ? 'victory' : 'failure', 0.25);
           }
           setScreen('report');
           setGamePhase('mission-report');
@@ -188,6 +212,7 @@ export default function GamePage() {
     setLastDeltas(undefined);
     setScreen('exploring');
     setGamePhase('exploring');
+    musicEngine.setScene('exploration', 0.2);
   }, [setGamePhase]);
 
   // ---- Audio ----
@@ -251,10 +276,24 @@ export default function GamePage() {
           {/* Mini-game overlay */}
           <MiniGameOverlay />
 
+          {/* Crafting panel */}
+          <CraftingPanel
+            isOpen={isCraftingOpen}
+            onClose={() => {
+              setIsCraftingOpen(false);
+              useGameStore.getState().setActiveMiniGame(null);
+              useGameStore.getState().setPhase('exploring');
+            }}
+          />
+
+          {/* Codex panel */}
+          <CodexPanel />
+
           {/* Interaction handler (invisible, handles E key presses) */}
           <InteractionHandler
             onStartMission={handleStartMissionFromBoard}
             onOpenCrafting={() => {
+              setIsCraftingOpen(true);
               useGameStore.getState().setPhase('interacting');
               useGameStore.getState().setActiveMiniGame('crafting');
             }}
