@@ -186,8 +186,8 @@ nova-script/
 ### Core Team & Collaborators
 - **Mohamed Khaled**
 - **Mohamed Ahmed**
-- **Mohamed Fares**
-- **Mahmoud Abdullah**
+- **Mohamed Fares** ([@Mo7amedFares](https://github.com/Mo7amedFares))
+- **Mahmoud Abdullah** ([@MahmoudAbdullah228](https://github.com/MahmoudAbdullah228))
 - **Mohamed Sobhy**
 - **Abdullatif Walid**
 
