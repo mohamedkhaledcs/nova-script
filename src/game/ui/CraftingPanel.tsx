@@ -137,7 +137,9 @@ export default function CraftingPanel({ isOpen, onClose }: CraftingPanelProps) {
                     <h4 className="font-mono text-sm font-bold text-amber-300">
                       {recipeName}
                       {alreadyCrafted && (
-                        <span className="ml-2 text-emerald-400 text-xs">✓ {t.craftedBadge}</span>
+                        <span className="ml-2 inline-flex items-center gap-1 text-emerald-400 text-xs">
+                          <Check className="w-3.5 h-3.5" /> {t.craftedBadge}
+                        </span>
                       )}
                     </h4>
                     <p className="text-xs text-slate-400 mt-1">{recipeDesc}</p>

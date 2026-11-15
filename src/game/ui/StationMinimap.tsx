@@ -169,7 +169,7 @@ export default function StationMinimap() {
         <div className="flex items-center justify-between px-3 py-1.5 border-b border-cyan-900/50 bg-space-900/80">
           <div className="flex items-center gap-1.5">
             <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span className="font-mono text-[10px] text-cyan-300 font-bold tracking-wider">
+            <span className={`${language === 'ar' ? 'font-sans' : 'font-mono'} text-[10px] text-cyan-300 font-bold tracking-wider`}>
               {t.stationRadar}
             </span>
           </div>
@@ -397,7 +397,7 @@ export default function StationMinimap() {
         </div>
 
         {/* Hover / Active Module Info Bar (Bottom Bar) */}
-        <div className="px-3 py-1.5 border-t border-cyan-900/40 bg-space-950 flex items-center justify-between text-[9px] font-mono">
+        <div className={`px-3 py-1.5 border-t border-cyan-900/40 bg-space-950 flex items-center justify-between text-[9px] ${language === 'ar' ? 'font-sans font-medium' : 'font-mono'}`}>
           {waypointRoom ? (
             <div className="flex items-center gap-1 text-amber-300 font-bold truncate">
               <Navigation className="w-3 h-3 text-amber-400 shrink-0" />

@@ -188,10 +188,17 @@ export default function Player3D() {
       )}
 
       {/* Ground Contact Shadow */}
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
-        <circleGeometry args={[0.42, 24]} />
-        <meshBasicMaterial color="#000511" transparent opacity={0.5} />
-      </mesh>
+      {visualMode === 'retro-pixel' ? (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+          <planeGeometry args={[0.7, 0.7]} />
+          <meshBasicMaterial color="#000000" transparent opacity={0.5} />
+        </mesh>
+      ) : (
+        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
+          <circleGeometry args={[0.42, 24]} />
+          <meshBasicMaterial color="#000511" transparent opacity={0.5} />
+        </mesh>
+      )}
 
       {/* Character Billboard Sprite */}
       <Billboard follow lockX={false} lockY={false} lockZ={false}>

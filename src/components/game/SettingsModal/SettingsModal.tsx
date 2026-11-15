@@ -15,6 +15,7 @@ import {
   Globe,
   Radio,
   Zap,
+  X,
 } from 'lucide-react';
 import { audio, type AudioSettings } from '@/lib/audio/audio-manager';
 import { useGameStore } from '@/game/store';
@@ -95,25 +96,25 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       id: 'cinematic-3d',
       title: t.modeCinematic,
       desc: t.modeCinematicDesc,
-      icon: '[3D-CINEMA]',
+      icon: '[3D-SIM]',
     },
     {
       id: 'retro-pixel',
       title: t.modeRetro,
       desc: t.modeRetroDesc,
-      icon: '[16-BIT]',
+      icon: '[VOXEL-3D]',
     },
     {
       id: 'cyber-neon',
       title: t.modeCyber,
       desc: t.modeCyberDesc,
-      icon: '[CYBER]',
+      icon: '[NEON]',
     },
     {
       id: 'performance',
       title: t.modePerf,
       desc: t.modePerfDesc,
-      icon: '[PERF]',
+      icon: '[CAD-PERF]',
     },
   ];
 
@@ -157,9 +158,10 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
             <button
               onClick={onClose}
-              className="text-slate-400 hover:text-white font-mono text-sm px-2 py-1 rounded hover:bg-space-850"
+              className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-space-850 transition-colors"
+              title="Close Settings"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>

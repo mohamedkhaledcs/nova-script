@@ -6,7 +6,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, BookOpen, ChevronDown, ChevronRight, Award, Lock } from 'lucide-react';
+import { X, BookOpen, ChevronDown, ChevronRight, Award, Lock, Check } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { ACHIEVEMENTS, type AchievementDef } from '@/game/progression/achievements';
 
@@ -205,7 +205,7 @@ export default function CodexPanel() {
                       <div className="text-xs text-slate-400">{ach.description}</div>
                     </div>
                     {isUnlocked && (
-                      <span className="ml-auto text-xs font-mono text-emerald-400">✓</span>
+                      <Check className="ml-auto w-4 h-4 text-emerald-400" />
                     )}
                   </div>
                 );

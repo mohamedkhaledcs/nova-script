@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck, User, BookOpen, Globe } from 'lucide-react';
+import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck, User, BookOpen, Globe, X } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
 import { musicEngine } from '@/game/audio/music-engine';
 import { useGameStore } from '@/game/store';
@@ -234,9 +234,10 @@ export default function MainMenu({
               </h3>
               <button
                 onClick={() => setShowAbout(false)}
-                className="text-slate-400 hover:text-white font-mono text-sm px-2 py-1"
+                className="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-space-850 transition-colors"
+                title="Close"
               >
-                ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 

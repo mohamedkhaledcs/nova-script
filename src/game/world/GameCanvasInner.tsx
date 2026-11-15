@@ -22,17 +22,17 @@ export default function GameCanvasInner() {
     switch (visualMode) {
       case 'retro-pixel':
         return {
-          dpr: 0.32, // Low-res buffer for genuine 16-bit chunky pixelation
+          dpr: 0.42, // Crisp 3D voxel pixelation
           antialias: false,
-          fogColor: '#050a14',
-          fogNear: 16,
-          fogFar: 44,
+          fogColor: '#080e1c',
+          fogNear: 22,
+          fogFar: 55,
           style: {
             width: '100%',
             height: '100%',
-            background: '#040710',
+            background: '#060a14',
             imageRendering: 'pixelated' as const,
-            filter: 'contrast(1.35) saturate(1.25) brightness(1.05)',
+            filter: 'contrast(1.2) saturate(1.25) brightness(1.1)',
           },
         };
       case 'cyber-neon':
