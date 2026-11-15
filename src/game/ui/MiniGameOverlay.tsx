@@ -232,11 +232,15 @@ function AntennaView({ onClose }: { onClose: () => void }) {
         {/* Frequency & Signal Readouts */}
         <div className="grid grid-cols-2 gap-3">
           <div className="p-3 rounded-lg bg-space-900 border border-space-border/60 text-center font-mono">
-            <span className="text-[10px] text-slate-400 uppercase">Tuned Frequency</span>
+            <span className="text-[10px] text-slate-400 uppercase">
+              {language === 'ar' ? 'التردد المُعايَر' : 'Tuned Frequency'}
+            </span>
             <div className="text-2xl font-bold text-cyan-300 mt-0.5">{freq.toFixed(3)} GHz</div>
           </div>
           <div className="p-3 rounded-lg bg-space-900 border border-space-border/60 text-center font-mono">
-            <span className="text-[10px] text-slate-400 uppercase">Signal Alignment</span>
+            <span className="text-[10px] text-slate-400 uppercase">
+              {language === 'ar' ? 'تطابق الإشارة' : 'Signal Alignment'}
+            </span>
             <div
               className={`text-2xl font-bold mt-0.5 ${
                 signalStrength >= 90 ? 'text-emerald-400 animate-pulse' : 'text-amber-400'
@@ -250,8 +254,8 @@ function AntennaView({ onClose }: { onClose: () => void }) {
         {/* Tuning Controls */}
         <div className="flex flex-col gap-2">
           <div className="flex items-center justify-between text-xs font-mono text-slate-400">
-            <span>Coarse & Fine Frequency Calibration:</span>
-            <span>Target: 8.415 GHz</span>
+            <span>{language === 'ar' ? 'معايرة التردد الدقيقة والتقريبية:' : 'Coarse & Fine Frequency Calibration:'}</span>
+            <span>{language === 'ar' ? 'الهدف: 8.415 جيجاهرتز' : 'Target: 8.415 GHz'}</span>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -290,7 +294,11 @@ function AntennaView({ onClose }: { onClose: () => void }) {
           <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 flex items-center justify-center gap-2 font-mono text-xs text-emerald-300">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
             {(inventory.items['energy-cell'] ?? 0) >= (COLLECTIBLE_LIMITS['energy-cell'] ?? 20)
-              ? 'CARRIER LOCKED // STORAGE FULL (20/20)'
+              ? language === 'ar'
+                ? 'تم قفل التردد // سعة المخزون ممتلئة (20/20)'
+                : 'CARRIER LOCKED // STORAGE FULL (20/20)'
+              : language === 'ar'
+              ? 'تم قفل التردد بنجاح // +2 خلايا طاقة أضيفت للمخزون'
               : 'CARRIER LOCKED // +2 ENERGY CELLS AWARDED'}
           </div>
         ) : (
@@ -299,18 +307,24 @@ function AntennaView({ onClose }: { onClose: () => void }) {
             disabled={signalStrength < 90}
             className={`w-full py-3 rounded-xl font-mono text-xs font-bold tracking-wider transition-all ${
               signalStrength >= 90
-                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-glow-green'
+                ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-glow-green cursor-pointer'
                 : 'bg-space-900 text-slate-500 border border-space-border cursor-not-allowed'
             }`}
           >
-            {signalStrength >= 90 ? 'ESTABLISH CARRIER LOCK' : 'ALIGN SIGNAL ABOVE 90%'}
+            {signalStrength >= 90
+              ? language === 'ar'
+                ? 'تثبيت وقفل تردد الموجة الحاملة'
+                : 'ESTABLISH CARRIER LOCK'
+              : language === 'ar'
+              ? 'اضبط الإشارة فوق 90% للقفل'
+              : 'ALIGN SIGNAL ABOVE 90%'}
           </button>
         )}
       </div>
 
       <div className="px-4 py-3 bg-space-900 border-t border-space-border/50 text-right">
-        <button onClick={onClose} className="text-xs font-mono text-slate-400 hover:text-white">
-          DISCONNECT [ESC]
+        <button onClick={onClose} className="text-xs font-mono text-slate-400 hover:text-white cursor-pointer">
+          {language === 'ar' ? 'فصل الاتصال [ESC]' : 'DISCONNECT [ESC]'}
         </button>
       </div>
     </div>
@@ -562,17 +576,17 @@ function SpacecraftView({ onClose }: { onClose: () => void }) {
         <div className="flex flex-wrap gap-2">
           {(
             [
-              ['bus', 'Structure & Hull'],
-              ['power', 'Power / Solar'],
-              ['comms', 'Comms Dish'],
-              ['propulsion', 'Propulsion'],
-              ['science', 'Science Bay'],
+              ['bus', language === 'ar' ? 'الهيكل والدرع' : 'Structure & Hull'],
+              ['power', language === 'ar' ? 'نظام الطاقة' : 'Power / Solar'],
+              ['comms', language === 'ar' ? 'هوائي الاتصال' : 'Comms Dish'],
+              ['propulsion', language === 'ar' ? 'محركات الدفع' : 'Propulsion'],
+              ['science', language === 'ar' ? 'الأجهزة العلمية' : 'Science Bay'],
             ] as const
           ).map(([key, label]) => (
             <button
               key={key}
               onClick={() => setSelectedSubsystem(key)}
-              className={`px-3 py-1.5 rounded-lg font-mono text-xs transition-colors ${
+              className={`px-3 py-1.5 rounded-lg font-mono text-xs transition-colors cursor-pointer ${
                 selectedSubsystem === key
                   ? 'bg-amber-600 text-white font-bold'
                   : 'bg-space-900 text-slate-400 hover:text-white border border-space-border/60'
@@ -584,36 +598,42 @@ function SpacecraftView({ onClose }: { onClose: () => void }) {
         </div>
 
         {/* Subsystem Details Card */}
-        <div className="p-3.5 rounded-xl bg-space-950/80 border border-space-border/60 font-mono text-xs">
-          <div className="text-amber-300 font-bold mb-1">{activeSubsystem.name}</div>
-          <div className="text-slate-300 leading-relaxed">{activeSubsystem.detail}</div>
+        <div className="p-3.5 rounded-xl bg-space-950/80 border border-space-border/60 text-xs">
+          <div className={`text-amber-300 font-bold mb-1 ${language === 'ar' ? 'font-sans' : 'font-mono'}`}>
+            {activeSubsystem.name}
+          </div>
+          <div className={`text-slate-300 leading-relaxed ${language === 'ar' ? 'font-sans' : 'font-mono'}`}>
+            {activeSubsystem.detail}
+          </div>
         </div>
 
         {/* Active Upgrades Installed Badge List */}
         <div className="flex items-center gap-2 text-xs font-mono text-slate-400">
-          <span>Crafted Upgrades Active:</span>
+          <span>{language === 'ar' ? 'الترقيات المثبتة حالياً:' : 'Crafted Upgrades Active:'}</span>
           {craftedList.length === 0 ? (
-            <span className="text-slate-500 italic">None (visit Hangar Workbench to craft)</span>
+            <span className="text-slate-500 italic">
+              {language === 'ar' ? 'لا توجد (توجه لطاولة الهندسة لتصنيع ترقيات)' : 'None (visit Hangar Workbench to craft)'}
+            </span>
           ) : (
             <div className="flex flex-wrap gap-1.5">
               {hasGoldenHull && (
                 <span className="px-2 py-0.5 rounded bg-amber-950 text-amber-300 border border-amber-700/50">
-                  Golden Hull
+                  {language === 'ar' ? 'درع ذهبي' : 'Golden Hull'}
                 </span>
               )}
               {hasPlasmaThrusters && (
                 <span className="px-2 py-0.5 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/50">
-                  Plasma Thrusters
+                  {language === 'ar' ? 'محركات بلازما' : 'Plasma Thrusters'}
                 </span>
               )}
               {hasAntennaUpgrade && (
                 <span className="px-2 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-700/50">
-                  High-Gain Dish
+                  {language === 'ar' ? 'هوائي عالي الكسب' : 'High-Gain Dish'}
                 </span>
               )}
               {hasScienceModule && (
                 <span className="px-2 py-0.5 rounded bg-teal-950 text-teal-300 border border-teal-700/50">
-                  Science Module
+                  {language === 'ar' ? 'وحدة مختبر علمي' : 'Science Module'}
                 </span>
               )}
             </div>
@@ -622,8 +642,8 @@ function SpacecraftView({ onClose }: { onClose: () => void }) {
       </div>
 
       <div className="px-4 py-3 bg-space-900 border-t border-space-border/50 text-right">
-        <button onClick={onClose} className="text-xs font-mono text-slate-400 hover:text-white">
-          CLOSE HANGAR BAY [ESC]
+        <button onClick={onClose} className="text-xs font-mono text-slate-400 hover:text-white cursor-pointer">
+          {language === 'ar' ? 'إغلاق حظيرة المركبات [ESC]' : 'CLOSE HANGAR BAY [ESC]'}
         </button>
       </div>
     </div>
@@ -635,37 +655,57 @@ function SpacecraftView({ onClose }: { onClose: () => void }) {
 // ================================================================
 
 function DisplayView({ onClose }: { onClose: () => void }) {
+  const language = useGameStore((s) => s.language);
+  const isAr = language === 'ar';
+
   return (
-    <div className="max-w-lg w-full glass-panel rounded-2xl border border-blue-500/50 overflow-hidden">
+    <div
+      className={`max-w-lg w-full glass-panel rounded-2xl border border-blue-500/50 overflow-hidden ${
+        isAr ? 'text-right' : 'text-left'
+      }`}
+      dir={isAr ? 'rtl' : 'ltr'}
+    >
       <div className="flex items-center justify-between px-4 py-3 bg-space-900 border-b border-blue-700/50">
         <div className="flex items-center gap-2">
           <Monitor className="w-4 h-4 text-blue-400" />
           <span className="font-mono text-sm text-blue-300 font-bold tracking-wider">
-            OBSERVATION DECK // FLIGHT STATUS
+            {isAr ? 'منصة المراقبة الفلكية // حالة الطيران' : 'OBSERVATION DECK // FLIGHT STATUS'}
           </span>
         </div>
-        <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
+        <button onClick={onClose} className="text-slate-400 hover:text-white p-1 cursor-pointer">
           <X className="w-4 h-4" />
         </button>
       </div>
-      <div className="p-6 text-sm text-slate-300 space-y-3 font-light leading-relaxed">
+      <div className={`p-6 text-sm text-slate-300 space-y-3 font-light leading-relaxed ${isAr ? 'font-sans' : ''}`}>
         <p>
-          You are aboard the <strong className="text-cyan-300 font-mono">NovaScript Orbital Station</strong>.
+          {isAr ? (
+            <>
+              أنت على متن <strong className="text-cyan-300 font-bold">محطة نوفا سكريبت المدارية</strong>.
+            </>
+          ) : (
+            <>
+              You are aboard the <strong className="text-cyan-300 font-mono">NovaScript Orbital Station</strong>.
+            </>
+          )}
         </p>
         <p>
-          From this vantage, engineers design and simulate deep-space missions across all 8 systems engineering stages:
-          Mission Planning, Spacecraft Design, Science Payload, Orbit Selection, Comms, Resource Ops, Launch Planning, and Flight Operations.
+          {isAr
+            ? 'من هذه المنصة، يقوم مهندسو الفضاء بتصميم ومحاكاة مهمات الفضاء السحيق عبر مراحل هندسة النظم الثماني: تخطيط المهمة، تصميم المركبة، الأجهزة العلمية، اختيار المدار، الاتصالات، إدارة الموارد، تخطيط الإطلاق، وعمليات الطيران.'
+            : 'From this vantage, engineers design and simulate deep-space missions across all 8 systems engineering stages: Mission Planning, Spacecraft Design, Science Payload, Orbit Selection, Comms, Resource Ops, Launch Planning, and Flight Operations.'}
         </p>
-        <div className="p-3 rounded-lg bg-space-950 border border-blue-800/30 text-xs text-slate-400 font-mono">
-          <strong>Tip:</strong> Click on the ground or use WASD/Arrows to walk. Collect materials and check the Codex (Tab) to review systems engineering takeaways.
+        <div className="p-3 rounded-lg bg-space-950 border border-blue-800/30 text-xs text-slate-400">
+          <strong>{isAr ? 'إرشاد:' : 'Tip:'}</strong>{' '}
+          {isAr
+            ? 'انقر على الأرض أو استخدم WASD / الأسهم للتحرك. اجمع المواد المسترجعة وافتح دليل الفضاء [TAB] لمراجعة مبادئ هندسة النظم الفضائية.'
+            : 'Click on the ground or use WASD/Arrows to walk. Collect materials and check the Codex (Tab) to review systems engineering takeaways.'}
         </div>
       </div>
       <div className="px-4 py-3 bg-space-900 border-t border-space-border/50 text-right">
         <button
           onClick={onClose}
-          className="px-5 py-2 rounded-lg bg-blue-700 hover:bg-blue-600 text-white font-mono text-xs tracking-wider"
+          className="px-5 py-2 rounded-lg bg-blue-700 hover:bg-blue-600 text-white font-mono text-xs tracking-wider cursor-pointer"
         >
-          CLOSE [ESC]
+          {isAr ? 'إغلاق [ESC]' : 'CLOSE [ESC]'}
         </button>
       </div>
     </div>

@@ -13,6 +13,9 @@ import React, { useRef, useEffect, useState } from 'react';
 import gsap from 'gsap';
 import type { MissionEnding } from '@/types/game';
 import { musicEngine } from '@/game/audio/music-engine';
+import { useGameStore } from '@/game/store';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
+import { getLocalizedEnding } from '@/lib/i18n/mission-translations-ar';
 
 interface LaunchCinematicProps {
   ending: MissionEnding;
@@ -25,6 +28,11 @@ export default function LaunchCinematic({
   destination,
   onComplete,
 }: LaunchCinematicProps) {
+  const language = useGameStore((s) => s.language);
+  const isAr = language === 'ar';
+  const t = TRANSLATIONS[language || 'en'];
+  const localizedEnding = getLocalizedEnding(ending, language || 'en');
+
   const containerRef = useRef<HTMLDivElement>(null);
   const countdownRef = useRef<HTMLDivElement>(null);
   const statusRef = useRef<HTMLDivElement>(null);
@@ -34,7 +42,9 @@ export default function LaunchCinematic({
   const messageRef = useRef<HTMLDivElement>(null);
 
   const [countdownNumber, setCountdownNumber] = useState(5);
-  const [statusText, setStatusText] = useState('INITIALIZING LAUNCH SEQUENCE');
+  const [statusText, setStatusText] = useState(
+    isAr ? 'تهيئة تسلسل الإطلاق الفضائي' : 'INITIALIZING LAUNCH SEQUENCE'
+  );
   const [showRocket, setShowRocket] = useState(false);
 
   const isSuccess =
@@ -57,10 +67,10 @@ export default function LaunchCinematic({
     });
 
     // Phase 1: Status messages (0-2s)
-    tl.call(() => setStatusText('FLIGHT SYSTEMS CHECK'), [], 0);
-    tl.call(() => setStatusText('PROPULSION NOMINAL'), [], 0.8);
-    tl.call(() => setStatusText('GUIDANCE COMPUTER ONLINE'), [], 1.6);
-    tl.call(() => setStatusText('INITIATING COUNTDOWN'), [], 2.4);
+    tl.call(() => setStatusText(t.statusCheckingSystems), [], 0);
+    tl.call(() => setStatusText(t.statusPropulsionNominal), [], 0.8);
+    tl.call(() => setStatusText(t.statusGuidanceOnline), [], 1.6);
+    tl.call(() => setStatusText(t.statusCountdownInitiated), [], 2.4);
 
     // Phase 2: Countdown (3-8s)
     for (let i = 5; i >= 1; i--) {
@@ -70,7 +80,7 @@ export default function LaunchCinematic({
     // Phase 3: Ignition
     tl.call(() => {
       setCountdownNumber(0);
-      setStatusText('IGNITION');
+      setStatusText(t.statusIgnition);
       setShowRocket(true);
     }, [], 8);
 
@@ -78,7 +88,7 @@ export default function LaunchCinematic({
     if (isSuccess || ending.status === 'partial_success' || ending.status === 'strategy_revision') {
       // Successful launch
       tl.call(() => {
-        setStatusText('LIFTOFF!');
+        setStatusText(t.statusLiftoff);
         musicEngine.setScene('victory', 0.32);
       }, [], 8.5);
 
@@ -110,16 +120,16 @@ export default function LaunchCinematic({
       }
 
       tl.call(() => {
-        const dest = destination === 'mars' ? 'MARS' : 'MOON';
-        setStatusText(`EN ROUTE TO ${dest}`);
+        const destName = destination === 'mars' ? (isAr ? 'المريخ' : 'MARS') : (isAr ? 'القمر' : 'MOON');
+        setStatusText(isAr ? `في المسار نحو ${destName}` : `EN ROUTE TO ${destName}`);
       }, [], 10);
 
-      tl.call(() => setStatusText(ending.title.toUpperCase()), [], 11.5);
+      tl.call(() => setStatusText(localizedEnding.title.toUpperCase()), [], 11.5);
 
     } else if (isLaunchFailure) {
       // Launch failure — rocket shakes and falls
       tl.call(() => {
-        setStatusText('WARNING: MASS OVERLOAD DETECTED');
+        setStatusText(isAr ? 'تحذير: تجاوز الوزن المسموح للحمولة' : 'WARNING: MASS OVERLOAD DETECTED');
         musicEngine.setScene('failure', 0.35);
       }, [], 8.5);
 
@@ -138,7 +148,7 @@ export default function LaunchCinematic({
         }, 9.5);
       }
 
-      tl.call(() => setStatusText('LAUNCH SCRUBBED — STRUCTURAL FAILURE'), [], 10);
+      tl.call(() => setStatusText(t.statusScrubbed), [], 10);
       if (flashRef.current) {
         tl.to(flashRef.current, {
           opacity: 0.6,
@@ -148,11 +158,11 @@ export default function LaunchCinematic({
           repeat: 2,
         }, 9.5);
       }
-      tl.call(() => setStatusText(ending.title.toUpperCase()), [], 11);
+      tl.call(() => setStatusText(localizedEnding.title.toUpperCase()), [], 11);
 
     } else if (isThermalFailure) {
       // Thermal failure — launch then burn up
-      tl.call(() => setStatusText('LIFTOFF'), [], 8.5);
+      tl.call(() => setStatusText(t.statusLiftoff), [], 8.5);
 
       if (rocketRef.current) {
         tl.to(rocketRef.current, {
@@ -163,7 +173,7 @@ export default function LaunchCinematic({
       }
 
       tl.call(() => {
-        setStatusText('THERMAL ANOMALY DETECTED');
+        setStatusText(isAr ? 'خلل حراري: ارتفاع درجة الحرارة' : 'THERMAL ANOMALY DETECTED');
         musicEngine.setScene('failure', 0.35);
       }, [], 10);
 
@@ -187,7 +197,7 @@ export default function LaunchCinematic({
         }, 10.5);
       }
 
-      tl.call(() => setStatusText('THERMAL PROTECTION FAILURE'), [], 11);
+      tl.call(() => setStatusText(localizedEnding.title.toUpperCase()), [], 11);
       tl.call(() => setStatusText(ending.title.toUpperCase()), [], 12);
 
     } else {
@@ -232,7 +242,7 @@ export default function LaunchCinematic({
         ref={statusRef}
         className="absolute top-12 left-0 right-0 text-center z-20"
       >
-        <span className="font-mono text-xs tracking-[0.4em] text-cyan-400 uppercase">
+        <span className={`text-xs tracking-[0.25em] text-cyan-400 font-bold ${isAr ? 'font-sans' : 'font-mono uppercase'}`}>
           {statusText}
         </span>
       </div>
@@ -279,8 +289,16 @@ export default function LaunchCinematic({
         ref={messageRef}
         className="absolute bottom-8 left-0 right-0 text-center z-20"
       >
-        <span className="font-mono text-xs text-slate-500 tracking-wider">
-          {destination ? `TARGET: ${destination.toUpperCase()}` : 'MISSION CONTROL'}
+        <span className={`text-xs text-slate-500 tracking-wider font-bold ${isAr ? 'font-sans' : 'font-mono'}`}>
+          {destination
+            ? isAr
+              ? destination === 'mars'
+                ? 'الوجهة الفضائية: المريخ'
+                : 'الوجهة الفضائية: القمر'
+              : `TARGET: ${destination.toUpperCase()}`
+            : isAr
+            ? 'مركز قيادة العمليات الفضائية'
+            : 'MISSION CONTROL'}
         </span>
       </div>
 

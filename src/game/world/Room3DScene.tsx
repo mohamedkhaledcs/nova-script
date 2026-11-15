@@ -769,6 +769,124 @@ function CollectibleMarker({
 }
 
 // ============================================================================
+// 5.5 Aesthetic Specialty Assemblies
+// ============================================================================
+
+function RoomAestheticDecorations({
+  roomId,
+  visualMode,
+}: {
+  roomId: RoomId;
+  visualMode: VisualMode;
+}) {
+  const ringRef1 = useRef<THREE.Mesh>(null);
+  const ringRef2 = useRef<THREE.Mesh>(null);
+
+  useFrame((state) => {
+    if (ringRef1.current) {
+      ringRef1.current.rotation.z = state.clock.elapsedTime * 0.8;
+      ringRef1.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.3;
+    }
+    if (ringRef2.current) {
+      ringRef2.current.rotation.z = -state.clock.elapsedTime * 0.6;
+      ringRef2.current.rotation.y = Math.cos(state.clock.elapsedTime * 0.5) * 0.3;
+    }
+  });
+
+  if (visualMode === 'retro-pixel') {
+    return (
+      <group>
+        {/* Minecraft Central Beacon in Central Hub */}
+        {roomId === 'hallway' && (
+          <group position={[0, 0, 0]}>
+            {/* Pyramid Base Block */}
+            <mesh position={[0, 0.12, 0]}>
+              <boxGeometry args={[1.8, 0.24, 1.8]} />
+              <meshStandardMaterial color="#E2E8F0" roughness={0.9} flatShading />
+            </mesh>
+            {/* Emerald Core Tier */}
+            <mesh position={[0, 0.36, 0]}>
+              <boxGeometry args={[1.2, 0.24, 1.2]} />
+              <meshStandardMaterial color="#10B981" roughness={0.8} flatShading />
+            </mesh>
+            {/* Glass Beacon Block */}
+            <mesh position={[0, 0.72, 0]}>
+              <boxGeometry args={[0.7, 0.48, 0.7]} />
+              <meshStandardMaterial color="#06B6D4" roughness={0.3} transparent opacity={0.85} flatShading />
+            </mesh>
+            {/* Vertical Skybeam Light Column */}
+            <mesh position={[0, 7.5, 0]}>
+              <cylinderGeometry args={[0.22, 0.22, 14, 16]} />
+              <meshBasicMaterial color="#38BDF8" transparent opacity={0.45} />
+            </mesh>
+            <pointLight position={[0, 1.5, 0]} intensity={1.8} color="#00F0FF" distance={16} decay={1.5} />
+          </group>
+        )}
+
+        {/* Minecraft Bookshelves in Science Lab */}
+        {roomId === 'science-lab' && (
+          <group position={[0, 1.2, -6.8]}>
+            {[-1.2, 0, 1.2].map((bx, idx) => (
+              <group key={idx} position={[bx, 0, 0]}>
+                <mesh position={[0, 0, 0]}>
+                  <boxGeometry args={[1.1, 1.1, 0.35]} />
+                  <meshStandardMaterial color="#78350F" roughness={0.9} flatShading />
+                </mesh>
+                <mesh position={[0, 0.24, 0.1]}>
+                  <boxGeometry args={[0.92, 0.32, 0.18]} />
+                  <meshStandardMaterial color="#EF4444" roughness={0.9} flatShading />
+                </mesh>
+                <mesh position={[0, -0.24, 0.1]}>
+                  <boxGeometry args={[0.92, 0.32, 0.18]} />
+                  <meshStandardMaterial color="#3B82F6" roughness={0.9} flatShading />
+                </mesh>
+              </group>
+            ))}
+          </group>
+        )}
+
+        {/* Minecraft Anvil in Hangar Bay */}
+        {roomId === 'hangar' && (
+          <group position={[-3.5, 0, -2.5]}>
+            <mesh position={[0, 0.1, 0]}>
+              <boxGeometry args={[0.9, 0.2, 0.6]} />
+              <meshStandardMaterial color="#334155" roughness={0.9} flatShading />
+            </mesh>
+            <mesh position={[0, 0.32, 0]}>
+              <boxGeometry args={[0.4, 0.25, 0.35]} />
+              <meshStandardMaterial color="#1E293B" roughness={0.9} flatShading />
+            </mesh>
+            <mesh position={[0, 0.52, 0]}>
+              <boxGeometry args={[1.1, 0.22, 0.5]} />
+              <meshStandardMaterial color="#475569" roughness={0.9} flatShading />
+            </mesh>
+          </group>
+        )}
+      </group>
+    );
+  }
+
+  if (visualMode === 'cyber-neon') {
+    return (
+      <group>
+        <group position={[0, 2.2, 0]}>
+          <mesh ref={ringRef1} rotation={[Math.PI / 4, 0, 0]}>
+            <torusGeometry args={[1.8, 0.04, 16, 64]} />
+            <meshBasicMaterial color="#00F0FF" />
+          </mesh>
+          <mesh ref={ringRef2} rotation={[-Math.PI / 4, 0, 0]}>
+            <torusGeometry args={[2.3, 0.04, 16, 64]} />
+            <meshBasicMaterial color="#FF007F" />
+          </mesh>
+        </group>
+      </group>
+    );
+  }
+
+  return null;
+}
+
+// ============================================================================
 // 6. Main Room Scene
 // ============================================================================
 
@@ -779,6 +897,9 @@ export default function Room3DScene({ roomId }: { roomId: RoomId }) {
 
   return (
     <group>
+      {/* Aesthetic Specialty Assemblies */}
+      <RoomAestheticDecorations roomId={roomId} visualMode={visualMode} />
+
       {/* Floor */}
       <RoomFloor
         width={room.size.width}

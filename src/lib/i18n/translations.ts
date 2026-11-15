@@ -187,6 +187,44 @@ export interface Translations {
 
   // Language
   language: string;
+
+  // Banner, Slogan & About Modal
+  bannerSubtitle: string;
+  gameSlogan: string;
+  educationalDisclaimer: string;
+  aboutModalTitle: string;
+  aboutParagraph1: string;
+  aboutParagraph2: string;
+  aboutAttribution: string;
+  close: string;
+
+  // Visual Mode HUD Badges
+  modeBadgeCinematic: string;
+  modeBadgeRetro: string;
+  modeBadgeCyber: string;
+  modeBadgePerf: string;
+  cycleVisualModeHint: string;
+
+  // Mission Report & Cinematics
+  reportHeaderBadge: string;
+  officialScoreLabel: string;
+  deterministicFormulaLabel: string;
+  outcomeNarrativeTitle: string;
+  engineeringRationaleTitle: string;
+  educationalTakeawayTitle: string;
+  finalReservesTitle: string;
+  decisionChronologyTitle: string;
+  restartMissionButton: string;
+  pointsUnit: string;
+  statusCheckingSystems: string;
+  statusPropulsionNominal: string;
+  statusGuidanceOnline: string;
+  statusCountdownInitiated: string;
+  statusIgnition: string;
+  statusLiftoff: string;
+  statusScrubbed: string;
+  statusAtmosphericEntry: string;
+  statusContactLost: string;
 }
 
 export const TRANSLATIONS: Record<'en' | 'ar', Translations> = {
@@ -360,6 +398,41 @@ export const TRANSLATIONS: Record<'en' | 'ar', Translations> = {
     stageLabel: 'Mission Stage',
 
     language: 'LANGUAGE / اللغة',
+
+    bannerSubtitle: 'SPACE MISSION DESIGN & OPERATIONS SIMULATOR',
+    gameSlogan: '"Design. Decide. Explore."',
+    educationalDisclaimer: 'NovaScript is an independent educational space simulation game. It is not an official NASA product, nor is it endorsed by or affiliated with NASA.',
+    aboutModalTitle: 'MISSION BRIEFING & CREDITS',
+    aboutParagraph1: 'In NovaScript, you are the Mission Commander in charge of designing, launching, and operating an interplanetary robotic spacecraft.',
+    aboutParagraph2: 'Explore 31 interconnected systems engineering trade-offs, managing normalized Budget, Mass, Power, Science, and Communication margins.',
+    aboutAttribution: 'Attribution: Based on the NASA Space Apps Challenge 2026 Space Mission Design Game and JPL Concept Maturity Level systems engineering methodologies.',
+    close: 'CLOSE',
+
+    modeBadgeCinematic: '3D CINEMA',
+    modeBadgeRetro: 'VOXEL 3D',
+    modeBadgeCyber: 'CYBER NEON',
+    modeBadgePerf: 'CAD BLUEPRINT',
+    cycleVisualModeHint: 'Cycle Visual Rendering Mode (3D / Voxel / Neon / CAD)',
+
+    reportHeaderBadge: 'FLIGHT COMMISSION // FINAL DEBRIEF DOSSIER',
+    officialScoreLabel: 'Official Mission Performance Score:',
+    deterministicFormulaLabel: 'Deterministic Formula:',
+    outcomeNarrativeTitle: 'MISSION OUTCOME NARRATIVE',
+    engineeringRationaleTitle: 'SYSTEMS ENGINEERING RATIONALE',
+    educationalTakeawayTitle: 'CORE EDUCATIONAL TAKEAWAY',
+    finalReservesTitle: 'Final Resource Reserves (Normalized Points):',
+    decisionChronologyTitle: 'MISSION DECISION CHRONOLOGY',
+    restartMissionButton: 'RESTART MISSION SIMULATION',
+    pointsUnit: 'PTS',
+    statusCheckingSystems: 'FLIGHT SYSTEMS CHECK',
+    statusPropulsionNominal: 'PROPULSION NOMINAL',
+    statusGuidanceOnline: 'GUIDANCE COMPUTER ONLINE',
+    statusCountdownInitiated: 'INITIATING COUNTDOWN',
+    statusIgnition: 'IGNITION',
+    statusLiftoff: 'LIFTOFF!',
+    statusScrubbed: 'HOLD COUNTDOWN - SCRUBBED',
+    statusAtmosphericEntry: 'ATMOSPHERIC ENTRY IN PROGRESS',
+    statusContactLost: 'TELEMETRY SIGNAL LOST',
   },
   ar: {
     enterStation: 'دخول المحطة الفضائية',
@@ -531,5 +604,40 @@ export const TRANSLATIONS: Record<'en' | 'ar', Translations> = {
     stageLabel: 'مرحلة الرحلة',
 
     language: 'اللغة / LANGUAGE',
+
+    bannerSubtitle: 'محاكي هندسة وتصميم المهمات والعمليات الفضائية',
+    gameSlogan: '"صمم. قرر. استكشف."',
+    educationalDisclaimer: 'نوفا سكريبت هي لعبة محاكاة فلكية تعليمية مستقلة، وليست منتجاً رسمياً لوكالة ناسا ولا تتبع لها.',
+    aboutModalTitle: 'ملخص المهمة والاعتمادات العلمية',
+    aboutParagraph1: 'في لعبة نوفا سكريبت، أنت قائد المهمة الفضائية المسؤول عن تصميم وبناء وإطلاق وإدارة مركبة آلية استكشافية بين الكواكب.',
+    aboutParagraph2: 'استكشف 31 قراراً هندسياً متبادلاً مع موازنة الميزانية، والكتلة، والطاقة، والقيمة العلمية، وهوامش الاتصال اللاسلكي.',
+    aboutAttribution: 'المرجع العلمي: مستوحى من تحدي تطبيقات الفضاء لوكالة ناسا 2026 ومنهجية مستويات نضج المفاهيم الهندسية لمختبر الدفع النفاث (JPL).',
+    close: 'إغلاق',
+
+    modeBadgeCinematic: 'سينمائي 3D',
+    modeBadgeRetro: 'فوكسل 3D',
+    modeBadgeCyber: 'سايبر نيون',
+    modeBadgePerf: 'مخطط CAD',
+    cycleVisualModeHint: 'تبديل نمط العرض الفني (سينمائي / فوكسل ماين كرافت / سايبر نيون / مخطط CAD)',
+
+    reportHeaderBadge: 'لجنة الطيران الفضائي // التقرير الختامي للرحلة',
+    officialScoreLabel: 'النقاط الرسمية لأداء المهمة الفضائية:',
+    deterministicFormulaLabel: 'المعادلة الحسابية المحددة:',
+    outcomeNarrativeTitle: 'سرد النتيجة الختامية للمهمة',
+    engineeringRationaleTitle: 'التحليل الهندسي للنظم الفضائية',
+    educationalTakeawayTitle: 'المبدأ العلمي والتعليمي المستفاد',
+    finalReservesTitle: 'احتياطي الموارد الختامي (نقاط معيارية):',
+    decisionChronologyTitle: 'التسلسل الزمني لقرارات المهمة',
+    restartMissionButton: 'إعادة تشغيل محاكي المهمة',
+    pointsUnit: 'نقطة',
+    statusCheckingSystems: 'فحص أنظمة الطيران المداري',
+    statusPropulsionNominal: 'أنظمة الدفع الصاروخي في الوضع الاسمي',
+    statusGuidanceOnline: 'حاسوب التوجيه والملاحة متصل',
+    statusCountdownInitiated: 'بدء العد التنازلي للإطلاق',
+    statusIgnition: 'إشعال المحركات الصاروخية',
+    statusLiftoff: 'الانطلاق نحو المدار الفضائي!',
+    statusScrubbed: 'إيقاف العد التنازلي - إلغاء الإطلاق',
+    statusAtmosphericEntry: 'بدء مناورة اختراق الغلاف الجوي',
+    statusContactLost: 'انقطاع إشارة القياس عن بُعد',
   },
 };

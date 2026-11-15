@@ -22,14 +22,22 @@ import {
   Radio,
   Globe,
   Sparkles,
+  Layers,
 } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { getRoomDefinition } from '@/game/world/rooms';
 import { COLLECTIBLE_INFO } from '@/game/types';
-import type { CollectibleType } from '@/game/types';
+import type { CollectibleType, VisualMode } from '@/game/types';
 import { TRANSLATIONS } from '@/lib/i18n/translations';
 import { audio } from '@/lib/audio/audio-manager';
 import StationMinimap from './StationMinimap';
+
+const VISUAL_MODES_CYCLE: VisualMode[] = [
+  'cinematic-3d',
+  'retro-pixel',
+  'cyber-neon',
+  'performance',
+];
 
 export default function ExplorationHUD() {
   const {
@@ -42,6 +50,8 @@ export default function ExplorationHUD() {
     interactionTarget,
     language,
     setLanguage,
+    visualMode,
+    setVisualMode,
     toggleInventory,
     togglePause,
     toggleCodex,
@@ -52,6 +62,38 @@ export default function ExplorationHUD() {
 
   const t = TRANSLATIONS[language || 'en'];
   const room = getRoomDefinition(currentRoom);
+
+  const cycleVisualMode = () => {
+    const currentIndex = VISUAL_MODES_CYCLE.indexOf(visualMode);
+    const nextMode = VISUAL_MODES_CYCLE[(currentIndex + 1) % VISUAL_MODES_CYCLE.length];
+    setVisualMode(nextMode);
+    audio.select();
+  };
+
+  const visualModeBadge = React.useMemo(() => {
+    switch (visualMode) {
+      case 'retro-pixel':
+        return {
+          label: t.modeBadgeRetro,
+          color: 'text-amber-300 border-amber-500/40 bg-amber-950/70 shadow-glow-amber',
+        };
+      case 'cyber-neon':
+        return {
+          label: t.modeBadgeCyber,
+          color: 'text-pink-300 border-pink-500/40 bg-pink-950/70 shadow-[0_0_15px_rgba(255,0,127,0.3)]',
+        };
+      case 'performance':
+        return {
+          label: t.modeBadgePerf,
+          color: 'text-sky-300 border-sky-500/40 bg-slate-900/90',
+        };
+      default:
+        return {
+          label: t.modeBadgeCinematic,
+          color: 'text-cyan-300 border-cyan-500/30 bg-space-950/90 shadow-glow-cyan',
+        };
+    }
+  }, [visualMode, t]);
 
   // Localized room name with natural typography
   const localizedRoomName = React.useMemo(() => {
@@ -110,6 +152,16 @@ export default function ExplorationHUD() {
 
           {/* Right: Quick Action Controls */}
           <div className="flex items-center gap-2 pointer-events-auto">
+            {/* 1-Click Quick Visual Mode Switcher */}
+            <button
+              onClick={cycleVisualMode}
+              className={`glass-panel rounded-xl px-2.5 py-1.5 flex items-center gap-1.5 transition-all border hover:scale-105 active:scale-95 font-bold text-xs ${visualModeBadge.color}`}
+              title={t.cycleVisualModeHint}
+            >
+              <Layers className="w-3.5 h-3.5" />
+              <span className={isArabic ? 'font-sans' : 'font-mono'}>{visualModeBadge.label}</span>
+            </button>
+
             {/* 1-Click Instant Language Switcher */}
             <button
               onClick={() => {

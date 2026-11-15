@@ -65,7 +65,9 @@ export default function MissionSelector({
               setHoveredMission('moon');
             }}
             onMouseLeave={() => setHoveredMission(null)}
-            className="group relative glass-panel rounded-2xl border border-slate-600/50 hover:border-cyan-400/80 p-6 text-left transition-all duration-300 overflow-hidden cursor-pointer"
+            className={`group relative glass-panel rounded-2xl border border-slate-600/50 hover:border-cyan-400/80 p-6 transition-all duration-300 overflow-hidden cursor-pointer ${
+              language === 'ar' ? 'text-right' : 'text-left'
+            }`}
           >
             {/* Glow effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-slate-700/10 to-cyan-700/10 opacity-0 group-hover:opacity-100 transition-opacity" />
@@ -113,7 +115,9 @@ export default function MissionSelector({
               setHoveredMission('mars');
             }}
             onMouseLeave={() => setHoveredMission(null)}
-            className="group relative glass-panel rounded-2xl border border-slate-600/50 hover:border-orange-400/80 p-6 text-left transition-all duration-300 overflow-hidden cursor-pointer"
+            className={`group relative glass-panel rounded-2xl border border-slate-600/50 hover:border-orange-400/80 p-6 transition-all duration-300 overflow-hidden cursor-pointer ${
+              language === 'ar' ? 'text-right' : 'text-left'
+            }`}
           >
             <div className="absolute inset-0 bg-gradient-to-br from-red-900/10 to-orange-700/10 opacity-0 group-hover:opacity-100 transition-opacity" />
 

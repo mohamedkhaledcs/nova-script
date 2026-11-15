@@ -79,9 +79,9 @@ export default function MainMenu({
       <div className="relative z-10 max-w-2xl w-full flex flex-col items-center text-center">
         {/* Animated Brand Banner */}
         <div className="mb-8 flex flex-col items-center">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs font-mono mb-4 tracking-wider">
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-950/60 border border-cyan-500/30 text-cyan-300 text-xs mb-4 tracking-wider font-semibold">
             <Rocket className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            SPACE MISSION DESIGN & OPERATIONS SIMULATOR
+            <span>{t.bannerSubtitle}</span>
           </div>
 
           <h1 className="text-5xl sm:text-7xl font-extrabold tracking-tight font-mono text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-400 drop-shadow-[0_4px_24px_rgba(0,240,255,0.4)]">
@@ -89,7 +89,7 @@ export default function MainMenu({
           </h1>
 
           <p className="mt-3 text-lg sm:text-xl font-light text-slate-300 italic tracking-wide">
-            &ldquo;Design. Decide. Explore.&rdquo;
+            &ldquo;{t.gameSlogan.replace(/^"|"$/g, '')}&rdquo;
           </p>
         </div>
 
@@ -219,18 +219,22 @@ export default function MainMenu({
 
         {/* Educational Disclaimer Footer */}
         <p className="mt-8 text-xs text-slate-500 max-w-lg leading-relaxed">
-          NovaScript is an independent educational space simulation game. It is not an official NASA product, nor is it endorsed by or affiliated with NASA.
+          {t.educationalDisclaimer}
         </p>
       </div>
 
       {/* About Modal */}
       {showAbout && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-          <div className="max-w-lg w-full glass-panel p-6 rounded-2xl border border-cyan-500/40 text-left">
+          <div
+            className={`max-w-lg w-full glass-panel p-6 rounded-2xl border border-cyan-500/40 ${
+              language === 'ar' ? 'text-right' : 'text-left'
+            }`}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-slate-700">
               <h3 className="text-lg font-mono font-bold text-cyan-glow flex items-center gap-2">
                 <ShieldCheck className="w-5 h-5 text-cyan-400" />
-                MISSION BRIEFING & CREDITS
+                {t.aboutModalTitle}
               </h3>
               <button
                 onClick={() => setShowAbout(false)}
@@ -242,14 +246,10 @@ export default function MainMenu({
             </div>
 
             <div className="mt-4 text-sm text-slate-300 space-y-3 font-light leading-relaxed">
-              <p>
-                In <strong>NovaScript</strong>, you are the Mission Commander in charge of designing, launching, and operating an interplanetary robotic spacecraft.
-              </p>
-              <p>
-                Explore 31 interconnected systems engineering trade-offs, managing normalized Budget, Mass, Power, Science, and Communication margins.
-              </p>
+              <p>{t.aboutParagraph1}</p>
+              <p>{t.aboutParagraph2}</p>
               <div className="p-3 rounded-lg bg-space-900/90 border border-slate-800 text-xs text-slate-400">
-                <strong>Attribution:</strong> Based on the NASA Space Apps Challenge 2026 Space Mission Design Game and JPL Concept Maturity Level systems engineering methodologies.
+                {t.aboutAttribution}
               </div>
             </div>
 
@@ -257,7 +257,7 @@ export default function MainMenu({
               onClick={() => setShowAbout(false)}
               className="mt-6 w-full py-2.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white font-mono text-xs font-bold tracking-wider"
             >
-              CLOSE
+              {t.close}
             </button>
           </div>
         </div>

@@ -15,6 +15,8 @@ import {
 import { audio } from '@/lib/audio/audio-manager';
 import type { MissionEnding, Resources, DecisionRecord } from '@/types/game';
 import { useGameStore } from '@/game/store';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
+import { getLocalizedEnding, ARABIC_QUESTIONS } from '@/lib/i18n/mission-translations-ar';
 
 interface MissionReportProps {
   ending: MissionEnding;
@@ -119,14 +121,20 @@ export default function MissionReport({
 }: MissionReportProps) {
   const language = useGameStore((s) => s.language);
   const isAr = language === 'ar';
+  const t = TRANSLATIONS[language || 'en'];
+
+  const activeEnding = React.useMemo(() => {
+    return getLocalizedEnding(ending, language || 'en');
+  }, [ending, language]);
+
   const statusConfigs = isAr ? STATUS_CONFIGS_AR : STATUS_CONFIGS_EN;
-  const statusInfo = statusConfigs[ending.status] || {
-    label: ending.status.toUpperCase(),
+  const statusInfo = statusConfigs[activeEnding.status] || {
+    label: activeEnding.status.toUpperCase(),
     color: 'text-slate-300',
     badge: 'bg-slate-900 border-slate-700 text-slate-300',
   };
 
-  const isSuccess = ending.status.includes('success') || ending.status === 'scientific_discovery';
+  const isSuccess = activeEnding.status.includes('success') || activeEnding.status === 'scientific_discovery';
 
   useEffect(() => {
     if (isSuccess && typeof window !== 'undefined') {
@@ -144,17 +152,17 @@ export default function MissionReport({
   }, [isSuccess]);
 
   return (
-    <div className="max-w-4xl w-full mx-auto p-4 sm:p-6 select-none animate-in fade-in duration-300 pb-16">
+    <div className={`max-w-4xl w-full mx-auto p-4 sm:p-6 select-none animate-in fade-in duration-300 pb-16 ${isAr ? 'text-right' : 'text-left'}`}>
       <div className="glass-panel rounded-2xl border border-cyan-500/40 p-6 sm:p-10 shadow-2xl relative overflow-hidden">
         {/* Top Header Badge */}
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-space-border/60">
           <div>
             <div className="flex items-center gap-2 text-xs font-mono text-cyan-400 tracking-widest uppercase mb-1">
               <Trophy className="w-4 h-4" />
-              FLIGHT COMMISSION // FINAL DEBRIEF DOSSIER
+              <span>{t.reportHeaderBadge}</span>
             </div>
-            <h2 className="text-2xl sm:text-4xl font-extrabold font-mono text-white tracking-tight">
-              {ending.title}
+            <h2 className={`text-2xl sm:text-4xl font-extrabold text-white tracking-tight ${isAr ? 'font-sans' : 'font-mono'}`}>
+              {activeEnding.title}
             </h2>
           </div>
 
@@ -173,18 +181,18 @@ export default function MissionReport({
             </div>
             <div>
               <div className="text-xs font-mono text-slate-400 uppercase tracking-wider">
-                Official Mission Performance Score:
+                {t.officialScoreLabel}
               </div>
               <div className="text-3xl sm:text-5xl font-mono font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white via-cyan-100 to-cyan-400">
-                {finalScore.toFixed(1)} <span className="text-sm font-normal text-slate-400">PTS</span>
+                {finalScore.toFixed(1)} <span className="text-sm font-normal text-slate-400">{t.pointsUnit}</span>
               </div>
             </div>
           </div>
 
-          <div className="text-right">
-            <div className="text-[11px] font-mono text-slate-400">Deterministic Formula:</div>
+          <div className={isAr ? 'text-left' : 'text-right'}>
+            <div className="text-[11px] font-mono text-slate-400">{t.deterministicFormulaLabel}</div>
             <div className="text-xs font-mono text-cyan-300/90 max-w-xs break-words">
-              {ending.final_score_formula}
+              {activeEnding.final_score_formula}
             </div>
           </div>
         </div>
@@ -194,30 +202,30 @@ export default function MissionReport({
           <div className="p-5 rounded-xl bg-space-900/90 border border-space-border/80">
             <h4 className="text-xs font-mono text-cyan-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <FileText className="w-4 h-4" />
-              MISSION OUTCOME NARRATIVE
+              <span>{t.outcomeNarrativeTitle}</span>
             </h4>
-            <p className="text-sm sm:text-base text-slate-200 font-light leading-relaxed">
-              {ending.description}
+            <p className={`text-sm sm:text-base text-slate-200 font-light leading-relaxed ${isAr ? 'font-sans' : ''}`}>
+              {activeEnding.description}
             </p>
           </div>
 
           <div className="p-5 rounded-xl bg-space-900/90 border border-space-border/80">
             <h4 className="text-xs font-mono text-amber-400 uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <AlertTriangle className="w-4 h-4" />
-              SYSTEMS ENGINEERING RATIONALE
+              <span>{t.engineeringRationaleTitle}</span>
             </h4>
-            <p className="text-sm sm:text-base text-slate-200 font-light leading-relaxed">
-              {ending.scientific_explanation}
+            <p className={`text-sm sm:text-base text-slate-200 font-light leading-relaxed ${isAr ? 'font-sans' : ''}`}>
+              {activeEnding.scientific_explanation}
             </p>
           </div>
 
           <div className="p-5 rounded-xl bg-cyan-950/40 border border-cyan-800/40">
             <h4 className="text-xs font-mono text-cyan-300 uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Sparkles className="w-4 h-4" />
-              CORE EDUCATIONAL TAKEAWAY
+              <span>{t.educationalTakeawayTitle}</span>
             </h4>
-            <p className="text-sm sm:text-base text-cyan-100 font-light leading-relaxed">
-              {ending.learning_point}
+            <p className={`text-sm sm:text-base text-cyan-100 font-light leading-relaxed ${isAr ? 'font-sans' : ''}`}>
+              {activeEnding.learning_point}
             </p>
           </div>
         </div>
@@ -225,7 +233,7 @@ export default function MissionReport({
         {/* Final Resource Telemetry Summary */}
         <div className="mt-8">
           <h4 className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-3">
-            Final Resource Reserves (Normalized Points):
+            {t.finalReservesTitle}
           </h4>
           <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center font-mono">
             <div className="p-3 rounded-lg bg-space-950 border border-amber-500/30">
@@ -255,31 +263,39 @@ export default function MissionReport({
         <div className="mt-8 pt-6 border-t border-space-border/60">
           <h4 className="text-xs font-mono text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-1.5">
             <Clock className="w-4 h-4" />
-            MISSION DECISION CHRONOLOGY ({history.length} STEPS):
+            <span>
+              {t.decisionChronologyTitle} ({history.length} {isAr ? 'خطوات' : 'STEPS'}):
+            </span>
           </h4>
 
           <div className="space-y-3 max-h-80 overflow-y-auto pr-2">
-            {history.map((record, idx) => (
-              <div
-                key={idx}
-                className="p-3.5 rounded-lg bg-space-950/70 border border-space-border/50 text-xs font-mono flex flex-col gap-1.5"
-              >
-                <div className="flex items-center justify-between text-slate-400">
-                  <span className="text-cyan-400 font-bold">
-                    STEP {record.stepIndex}: {record.questionId} [{record.stage}]
-                  </span>
-                  <span className="text-[11px] text-emerald-400 flex items-center gap-1">
-                    <CheckCircle2 className="w-3 h-3" /> CHOSEN: {record.selectedAnswerId}
-                  </span>
+            {history.map((record, idx) => {
+              const arAnswer = isAr ? ARABIC_QUESTIONS[record.questionId]?.answers[record.selectedAnswerId] : null;
+              const displayText = arAnswer?.text || record.selectedAnswerText;
+              const displayConsequence = arAnswer?.consequence_summary || record.consequenceSummary;
+
+              return (
+                <div
+                  key={idx}
+                  className="p-3.5 rounded-lg bg-space-950/70 border border-space-border/50 text-xs font-mono flex flex-col gap-1.5"
+                >
+                  <div className="flex items-center justify-between text-slate-400">
+                    <span className="text-cyan-400 font-bold">
+                      {isAr ? `الخطوة ${record.stepIndex}` : `STEP ${record.stepIndex}`}: {record.questionId} [{record.stage}]
+                    </span>
+                    <span className="text-[11px] text-emerald-400 flex items-center gap-1">
+                      <CheckCircle2 className="w-3 h-3" /> {isAr ? 'الخيار' : 'CHOSEN'}: {record.selectedAnswerId}
+                    </span>
+                  </div>
+                  <div className={`text-slate-200 font-medium text-xs ${isAr ? 'font-sans' : 'font-mono'}`}>
+                    {displayText}
+                  </div>
+                  <div className={`text-slate-400 text-[11px] italic ${isAr ? 'font-sans' : 'font-mono'}`}>
+                    {displayConsequence}
+                  </div>
                 </div>
-                <div className="text-slate-200 font-sans font-medium text-xs">
-                  {record.selectedAnswerText}
-                </div>
-                <div className="text-slate-400 text-[11px] italic font-sans">
-                  {record.consequenceSummary}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
 

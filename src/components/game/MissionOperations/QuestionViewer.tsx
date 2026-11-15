@@ -14,6 +14,7 @@ import { audio } from '@/lib/audio/audio-manager';
 import type { Question, AnswerOption, Resources, ResourceKey } from '@/types/game';
 import { useGameStore } from '@/game/store';
 import { TRANSLATIONS } from '@/lib/i18n/translations';
+import { getLocalizedQuestion } from '@/lib/i18n/mission-translations-ar';
 
 interface QuestionViewerProps {
   question: Question;
@@ -46,6 +47,10 @@ export default function QuestionViewer({
   const t = TRANSLATIONS[language || 'en'];
   const resourceLabels = isAr ? RESOURCE_LABELS_AR : RESOURCE_LABELS_EN;
 
+  const activeQuestion = React.useMemo(() => {
+    return getLocalizedQuestion(question, language || 'en');
+  }, [question, language]);
+
   const [selectedAnswer, setSelectedAnswer] = useState<AnswerOption | null>(null);
   const [showConsequenceModal, setShowConsequenceModal] = useState<boolean>(false);
 
@@ -71,7 +76,7 @@ export default function QuestionViewer({
   };
 
   return (
-    <div className="max-w-4xl w-full mx-auto p-4 sm:p-6 select-none">
+    <div className={`max-w-4xl w-full mx-auto p-4 sm:p-6 select-none ${isAr ? 'text-right' : 'text-left'}`}>
       {/* Top Question Context Card */}
       <div className="glass-panel rounded-2xl border border-cyan-500/30 p-6 sm:p-8 shadow-2xl relative overflow-hidden">
         {/* Subtle Accent Glow */}
@@ -81,46 +86,46 @@ export default function QuestionViewer({
         <div className="flex flex-wrap items-center justify-between gap-2 pb-4 border-b border-space-border/50 text-xs font-mono">
           <div className="flex items-center gap-2">
             <span className="px-2.5 py-1 rounded bg-cyan-950 text-cyan-300 border border-cyan-700/50 font-bold">
-              {question.id}
+              {activeQuestion.id}
             </span>
             <span className="px-2.5 py-1 rounded bg-slate-900 text-slate-300 border border-slate-700 uppercase">
-              {question.stage.replace('_', ' ')}
+              {activeQuestion.stage.replace('_', ' ')}
             </span>
           </div>
 
-          {question.source && (
+          {activeQuestion.source && (
             <a
-              href={question.source.url}
+              href={activeQuestion.source.url}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center gap-1.5 text-slate-400 hover:text-cyan-300 transition-colors text-[11px]"
-              title={`Source: ${question.source.title} (${question.source.section})`}
+              title={`Source: ${activeQuestion.source.title} (${activeQuestion.source.section})`}
             >
               <BookOpen className="w-3.5 h-3.5" />
-              <span className="truncate max-w-[200px] sm:max-w-xs">{question.source.section}</span>
+              <span className="truncate max-w-[200px] sm:max-w-xs">{activeQuestion.source.section}</span>
               <ExternalLink className="w-3 h-3 ml-0.5" />
             </a>
           )}
         </div>
 
         {/* Story Context Narrative */}
-        <div className="mt-5 text-sm sm:text-base text-slate-300 leading-relaxed font-light">
-          {question.story}
+        <div className={`mt-5 text-sm sm:text-base text-slate-300 leading-relaxed font-light ${isAr ? 'font-sans' : 'font-mono'}`}>
+          {activeQuestion.story}
         </div>
 
         {/* Primary Question Prompt */}
         <div className="mt-4 pt-4 border-t border-space-border/30">
           <div className="flex items-start gap-3">
             <Compass className="w-6 h-6 text-cyan-400 shrink-0 mt-0.5 animate-pulse" />
-            <h3 className="text-xl sm:text-2xl font-bold font-mono text-white tracking-tight leading-snug">
-              {question.question}
+            <h3 className={`text-xl sm:text-2xl font-bold text-white tracking-tight leading-snug ${isAr ? 'font-sans' : 'font-mono'}`}>
+              {activeQuestion.question}
             </h3>
           </div>
         </div>
 
         {/* Binary Answer Options (Choice A & Choice B) */}
         <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
-          {question.answers.map((option, idx) => {
+          {activeQuestion.answers.map((option, idx) => {
             const effectsEntries = Object.entries(option.effects).filter(([, val]) => val !== 0);
 
             return (
@@ -128,7 +133,9 @@ export default function QuestionViewer({
                 key={option.id}
                 onClick={() => handleSelectOption(option)}
                 onMouseEnter={() => audio.hover()}
-                className="group relative flex flex-col justify-between text-left p-5 sm:p-6 rounded-xl glass-panel glass-panel-hover border border-space-border/80 hover:border-cyan-400/80 transition-all duration-200"
+                className={`group relative flex flex-col justify-between p-5 sm:p-6 rounded-xl glass-panel glass-panel-hover border border-space-border/80 hover:border-cyan-400/80 transition-all duration-200 ${
+                  isAr ? 'text-right' : 'text-left'
+                }`}
               >
                 <div>
                   {/* Option Header */}
@@ -185,7 +192,11 @@ export default function QuestionViewer({
       {/* Decision Consequence & Learning Point Modal */}
       {showConsequenceModal && selectedAnswer && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-150">
-          <div className="max-w-xl w-full glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-400/50 shadow-glow-cyan text-left">
+          <div
+            className={`max-w-xl w-full glass-panel p-6 sm:p-8 rounded-2xl border border-cyan-400/50 shadow-glow-cyan ${
+              isAr ? 'text-right' : 'text-left'
+            }`}
+          >
             {/* Modal Header */}
             <div className="flex items-center gap-2 pb-3 border-b border-slate-700">
               {selectedAnswer.ending_id ? (
