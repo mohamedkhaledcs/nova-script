@@ -14,11 +14,13 @@ import {
   Move,
   KeyRound,
   User,
+  Radio,
 } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { getRoomDefinition } from '@/game/world/rooms';
 import { COLLECTIBLE_INFO } from '@/game/types';
 import type { CollectibleType } from '@/game/types';
+import StationMinimap from './StationMinimap';
 
 export default function ExplorationHUD() {
   const {
@@ -124,9 +126,15 @@ export default function ExplorationHUD() {
             <span className="flex items-center gap-1">
               <User className="w-3 h-3" /> [P] Profile
             </span>
+            <span className="hidden sm:flex items-center gap-1 text-cyan-400">
+              <Radio className="w-3 h-3" /> [M] Radar
+            </span>
           </div>
         </div>
       </div>
+
+      {/* Real-time Orbital Station Minimap Radar */}
+      <StationMinimap />
 
       {/* Inventory mini-bar (bottom-left) */}
       <div className="fixed bottom-14 left-4 z-30 pointer-events-none">

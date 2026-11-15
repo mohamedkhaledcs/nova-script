@@ -36,6 +36,8 @@ export default function PlayerProfileModal() {
     setPlayerGender,
     playerName,
     setPlayerName,
+    suitScheme,
+    setSuitScheme,
     inventory,
     missionsCompleted,
     endingsDiscovered,
@@ -145,6 +147,21 @@ export default function PlayerProfileModal() {
       ? '/assets/characters/player-female.png'
       : '/assets/characters/player.png';
 
+  const avatarFilter = (() => {
+    switch (suitScheme) {
+      case 'solar-amber':
+        return 'drop-shadow(0 0 10px rgba(251,191,36,0.6)) hue-rotate(25deg)';
+      case 'cosmic-violet':
+        return 'drop-shadow(0 0 10px rgba(192,132,252,0.6)) hue-rotate(240deg)';
+      case 'cyber-teal':
+        return 'drop-shadow(0 0 10px rgba(45,212,191,0.6)) hue-rotate(150deg)';
+      case 'crimson-alpha':
+        return 'drop-shadow(0 0 10px rgba(244,63,94,0.6)) hue-rotate(320deg)';
+      default:
+        return 'drop-shadow(0 0 10px rgba(0,240,255,0.6))';
+    }
+  })();
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-md p-4 animate-in fade-in duration-200 select-none overflow-y-auto">
       <div className="max-w-3xl w-full glass-panel rounded-2xl border border-cyan-500/40 shadow-2xl overflow-hidden flex flex-col my-8 max-h-[90vh]">
@@ -188,7 +205,8 @@ export default function PlayerProfileModal() {
                 <img
                   src={avatarSrc}
                   alt="Commander Avatar"
-                  className="w-full h-full object-contain pixel-art drop-shadow-[0_4px_12px_rgba(0,240,255,0.6)] animate-float"
+                  className="w-full h-full object-contain pixel-art animate-float"
+                  style={{ filter: avatarFilter }}
                   draggable={false}
                 />
               </div>
@@ -210,13 +228,43 @@ export default function PlayerProfileModal() {
                   onClick={() => handleSelectGender('female')}
                   className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
                     playerGender === 'female'
-                      ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-glow-amber'
+                      ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-glow-amber'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-space-850'
                   }`}
                   title="Select Female Astronaut (Commander Maya)"
                 >
                   ♀ MAYA
                 </button>
+              </div>
+
+              {/* EVA Suit Customization Swatches */}
+              <div className="mt-2 flex items-center gap-1.5 px-2 py-1 rounded-xl bg-space-950/80 border border-space-border/60">
+                <span className="text-[10px] font-mono text-slate-400">SUIT:</span>
+                {[
+                  {
+                    id: 'default',
+                    label: playerGender === 'female' ? 'Solar Amber' : 'Titanium White',
+                    bg: playerGender === 'female' ? 'bg-amber-500' : 'bg-slate-200',
+                  },
+                  { id: 'solar-amber', label: 'Mars Amber', bg: 'bg-amber-400' },
+                  { id: 'cosmic-violet', label: 'Cosmic Violet', bg: 'bg-purple-500' },
+                  { id: 'cyber-teal', label: 'Quantum Teal', bg: 'bg-teal-400' },
+                  { id: 'crimson-alpha', label: 'Crimson Alpha', bg: 'bg-rose-500' },
+                ].map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => {
+                      setSuitScheme(s.id as any);
+                      audio.select();
+                    }}
+                    title={s.label}
+                    className={`w-3.5 h-3.5 rounded-full ${s.bg} transition-all ${
+                      suitScheme === s.id
+                        ? 'scale-125 ring-2 ring-cyan-400 ring-offset-1 ring-offset-space-950 shadow-glow-cyan'
+                        : 'opacity-60 hover:opacity-100'
+                    }`}
+                  />
+                ))}
               </div>
             </div>
 

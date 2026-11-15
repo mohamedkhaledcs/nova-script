@@ -21,10 +21,17 @@ export interface Vec3 {
 
 export type PlayerFacing = 'left' | 'right';
 export type PlayerGender = 'male' | 'female';
+export type SuitScheme =
+  | 'default'
+  | 'solar-amber'
+  | 'cosmic-violet'
+  | 'cyber-teal'
+  | 'crimson-alpha';
 
 export interface PlayerProfile {
   name: string;
   gender: PlayerGender;
+  suitScheme: SuitScheme;
   title: string;
 }
 

@@ -15,6 +15,7 @@ import type {
   RoomId,
   PlayerFacing,
   PlayerGender,
+  SuitScheme,
   Vec3,
   Inventory,
   CollectibleType,
@@ -56,8 +57,10 @@ export interface GameStore {
   // Player Profile & Customization
   playerGender: PlayerGender;
   playerName: string;
+  suitScheme: SuitScheme;
   setPlayerGender: (gender: PlayerGender) => void;
   setPlayerName: (name: string) => void;
+  setSuitScheme: (scheme: SuitScheme) => void;
   isProfileOpen: boolean;
   toggleProfile: () => void;
   setProfileOpen: (open: boolean) => void;
@@ -103,6 +106,9 @@ export interface GameStore {
   setInventoryOpen: (open: boolean) => void;
   isCodexOpen: boolean;
   toggleCodex: () => void;
+  isMinimapOpen: boolean;
+  toggleMinimap: () => void;
+  setMinimapOpen: (open: boolean) => void;
   isPaused: boolean;
   togglePause: () => void;
 
@@ -145,9 +151,11 @@ export const useGameStore = create<GameStore>()(
       // Player Profile & Character
       playerGender: 'male',
       playerName: 'Commander Nova',
+      suitScheme: 'default',
       isProfileOpen: false,
       setPlayerGender: (gender) => set({ playerGender: gender }),
       setPlayerName: (name) => set({ playerName: name }),
+      setSuitScheme: (scheme) => set({ suitScheme: scheme }),
       toggleProfile: () => set((s) => ({ isProfileOpen: !s.isProfileOpen })),
       setProfileOpen: (open) => set({ isProfileOpen: open }),
 
@@ -292,6 +300,9 @@ export const useGameStore = create<GameStore>()(
       setInventoryOpen: (open) => set({ isInventoryOpen: open }),
       isCodexOpen: false,
       toggleCodex: () => set((s) => ({ isCodexOpen: !s.isCodexOpen })),
+      isMinimapOpen: false,
+      toggleMinimap: () => set((s) => ({ isMinimapOpen: !s.isMinimapOpen })),
+      setMinimapOpen: (open) => set({ isMinimapOpen: open }),
       isPaused: false,
       togglePause: () => set((s) => ({ isPaused: !s.isPaused })),
 
@@ -392,6 +403,7 @@ export const useGameStore = create<GameStore>()(
           isInventoryOpen: false,
           isCodexOpen: false,
           isProfileOpen: false,
+          isMinimapOpen: false,
           isPaused: false,
         }),
     }),
@@ -406,6 +418,7 @@ export const useGameStore = create<GameStore>()(
         playerFacing: state.playerFacing,
         playerGender: state.playerGender,
         playerName: state.playerName,
+        suitScheme: state.suitScheme,
         roomsVisited: state.roomsVisited,
         totalItemsCrafted: state.totalItemsCrafted,
         missionsCompleted: state.missionsCompleted,

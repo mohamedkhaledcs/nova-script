@@ -140,6 +140,10 @@ export default function GamePage() {
       if (key === 'p') {
         store.toggleProfile();
       }
+
+      if (key === 'm') {
+        store.toggleMinimap();
+      }
     };
 
     window.addEventListener('keydown', handleGlobalKeyDown);
@@ -219,16 +223,19 @@ export default function GamePage() {
         saveMissionToStorage(updated);
 
         // Record learning point in codex
-        if (currentQuestion) {
-          const selectedAnswer = currentQuestion.answers.find((a) => a.id === answerId);
+        const answeredQ = missionState.currentQuestionId
+          ? getQuestionById(missionState.currentQuestionId)
+          : null;
+        if (answeredQ) {
+          const selectedAnswer = answeredQ.answers.find((a) => a.id === answerId);
           if (selectedAnswer) {
             addCodexEntry({
-              questionId: currentQuestion.id,
-              questionText: currentQuestion.question,
+              questionId: answeredQ.id,
+              questionText: answeredQ.question,
               answerId: selectedAnswer.id,
               answerText: selectedAnswer.text,
               learningPoint: selectedAnswer.learning_point,
-              stage: currentQuestion.stage,
+              stage: answeredQ.stage,
             });
           }
         }

@@ -30,6 +30,7 @@ export default function Player3D() {
     playerPosition,
     playerFacing,
     playerGender,
+    suitScheme,
     isMoving,
     showInteractionPrompt,
   } = useGameStore();
@@ -43,6 +44,22 @@ export default function Player3D() {
   femaleTexture.minFilter = THREE.NearestFilter;
 
   const texture = playerGender === 'female' ? femaleTexture : maleTexture;
+
+  // Custom suit scheme tinting
+  const suitColor = useMemo(() => {
+    switch (suitScheme) {
+      case 'solar-amber':
+        return '#FFB300';
+      case 'cosmic-violet':
+        return '#E0AAFF';
+      case 'cyber-teal':
+        return '#64DFDF';
+      case 'crimson-alpha':
+        return '#FF758F';
+      default:
+        return '#FFFFFF';
+    }
+  }, [suitScheme]);
 
   // Dust particles geometry (40 particles)
   const dustData = useMemo(() => {
@@ -157,6 +174,7 @@ export default function Player3D() {
           <planeGeometry args={[1.2, 1.2]} />
           <meshBasicMaterial
             map={texture}
+            color={suitColor}
             transparent
             alphaTest={0.08}
             side={THREE.DoubleSide}

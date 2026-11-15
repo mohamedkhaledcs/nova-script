@@ -25,6 +25,7 @@ import {
   RotateCw,
 } from 'lucide-react';
 import { useGameStore } from '@/game/store';
+import { COLLECTIBLE_LIMITS } from '@/game/types';
 import { audio } from '@/lib/audio/audio-manager';
 
 // Dynamically import 3D viewer to avoid SSR issues
@@ -135,7 +136,7 @@ function TerminalView({ onClose }: { onClose: () => void }) {
 // ================================================================
 
 function AntennaView({ onClose }: { onClose: () => void }) {
-  const { collectItem } = useGameStore();
+  const { collectItem, inventory } = useGameStore();
   const targetFreq = 8.415; // 8.415 GHz DSN X-Band Downlink
   const [freq, setFreq] = useState(7.85);
   const [locked, setLocked] = useState(false);
@@ -276,7 +277,9 @@ function AntennaView({ onClose }: { onClose: () => void }) {
         {locked ? (
           <div className="p-3 rounded-xl bg-emerald-950/60 border border-emerald-500/50 flex items-center justify-center gap-2 font-mono text-xs text-emerald-300">
             <CheckCircle2 className="w-4 h-4 text-emerald-400" />
-            CARRIER LOCKED // +2 ENERGY CELLS AWARDED
+            {(inventory.items['energy-cell'] ?? 0) >= (COLLECTIBLE_LIMITS['energy-cell'] ?? 20)
+              ? 'CARRIER LOCKED // STORAGE FULL (20/20)'
+              : 'CARRIER LOCKED // +2 ENERGY CELLS AWARDED'}
           </div>
         ) : (
           <button
@@ -307,7 +310,7 @@ function AntennaView({ onClose }: { onClose: () => void }) {
 // ================================================================
 
 function ScannerView({ onClose }: { onClose: () => void }) {
-  const { collectItem } = useGameStore();
+  const { collectItem, inventory } = useGameStore();
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
   const [sampleType, setSampleType] = useState<'basalt' | 'regolith' | 'ice'>('basalt');
@@ -418,7 +421,9 @@ function ScannerView({ onClose }: { onClose: () => void }) {
         {analyzed ? (
           <div className="p-3 rounded-xl bg-cyan-950/60 border border-cyan-500/50 flex items-center justify-center gap-2 font-mono text-xs text-cyan-300">
             <CheckCircle2 className="w-4 h-4 text-cyan-400" />
-            SPECTRAL SIGNATURE RECORDED // +2 SCIENCE SAMPLES
+            {(inventory.items['science-sample'] ?? 0) >= (COLLECTIBLE_LIMITS['science-sample'] ?? 15)
+              ? 'SPECTRAL SIGNATURE RECORDED // STORAGE FULL (15/15)'
+              : 'SPECTRAL SIGNATURE RECORDED // +2 SCIENCE SAMPLES'}
           </div>
         ) : (
           <button
