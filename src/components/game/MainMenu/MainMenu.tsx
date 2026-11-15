@@ -1,9 +1,10 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck } from 'lucide-react';
+import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck, User } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
 import { musicEngine } from '@/game/audio/music-engine';
+import { useGameStore } from '@/game/store';
 
 interface MainMenuProps {
   hasSavedMission: boolean;
@@ -19,6 +20,12 @@ export default function MainMenu({
   onOpenSettings,
 }: MainMenuProps) {
   const [showAbout, setShowAbout] = useState(false);
+  const { playerGender, setPlayerGender, playerName, toggleProfile } = useGameStore();
+
+  const avatarSrc =
+    playerGender === 'female'
+      ? '/assets/characters/player-female.png'
+      : '/assets/characters/player.png';
 
   useEffect(() => {
     const handleFirstInteraction = () => {
@@ -60,17 +67,56 @@ export default function MainMenu({
           </p>
         </div>
 
-        {/* Player astronaut preview */}
-        <div className="mb-6 animate-float">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/assets/characters/player.png"
-            alt="Astronaut"
-            width={80}
-            height={80}
-            className="pixel-art drop-shadow-[0_4px_20px_rgba(0,240,255,0.5)]"
-            draggable={false}
-          />
+        {/* Player astronaut preview with 1-click gender selector */}
+        <div className="mb-6 flex flex-col items-center gap-2.5">
+          <div
+            className="animate-float cursor-pointer group relative p-1 rounded-2xl"
+            onClick={() => {
+              setPlayerGender(playerGender === 'male' ? 'female' : 'male');
+              audio.click();
+            }}
+            title="Click to toggle character (Alex / Maya)"
+          >
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={avatarSrc}
+              alt="Astronaut"
+              width={86}
+              height={86}
+              className="pixel-art drop-shadow-[0_4px_24px_rgba(0,240,255,0.6)] group-hover:scale-105 transition-transform"
+              draggable={false}
+            />
+          </div>
+
+          {/* Quick Gender / Identity Pills */}
+          <div className="flex items-center gap-1.5 p-1 rounded-full bg-space-950/80 border border-cyan-500/30 shadow-lg">
+            <button
+              onClick={() => {
+                setPlayerGender('male');
+                audio.select();
+              }}
+              className={`px-3 py-0.5 rounded-full text-[11px] font-mono font-bold transition-all ${
+                playerGender === 'male'
+                  ? 'bg-cyan-600 text-white shadow-glow-cyan'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              ♂ ALEX
+            </button>
+            <button
+              onClick={() => {
+                setPlayerGender('female');
+                audio.select();
+              }}
+              className={`px-3 py-0.5 rounded-full text-[11px] font-mono font-bold transition-all ${
+                playerGender === 'female'
+                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-glow-amber'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              ♀ MAYA
+            </button>
+          </div>
         </div>
 
         {/* Action Panel */}
@@ -105,14 +151,26 @@ export default function MainMenu({
             <span>ENTER STATION</span>
           </button>
 
-          <div className="grid grid-cols-2 gap-3 mt-2">
+          <div className="grid grid-cols-3 gap-2.5 mt-2">
+            <button
+              onClick={() => {
+                audio.click();
+                toggleProfile();
+              }}
+              onMouseEnter={() => audio.hover()}
+              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-cyan-300 border border-space-border hover:border-cyan-500/40 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+            >
+              <User className="w-4 h-4 text-cyan-400" />
+              <span>PROFILE</span>
+            </button>
+
             <button
               onClick={() => {
                 audio.click();
                 onOpenSettings();
               }}
               onMouseEnter={() => audio.hover()}
-              className="py-3 px-4 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-white border border-space-border text-xs font-mono flex items-center justify-center gap-2 transition-colors"
+              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-white border border-space-border text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
             >
               <Sliders className="w-4 h-4 text-cyan-400" />
               <span>SETTINGS</span>
@@ -124,7 +182,7 @@ export default function MainMenu({
                 setShowAbout(!showAbout);
               }}
               onMouseEnter={() => audio.hover()}
-              className="py-3 px-4 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-white border border-space-border text-xs font-mono flex items-center justify-center gap-2 transition-colors"
+              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-white border border-space-border text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
             >
               <Info className="w-4 h-4 text-cyan-400" />
               <span>ABOUT</span>

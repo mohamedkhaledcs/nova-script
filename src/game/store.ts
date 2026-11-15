@@ -14,10 +14,12 @@ import type {
   GamePhase,
   RoomId,
   PlayerFacing,
+  PlayerGender,
   Vec3,
   Inventory,
   CollectibleType,
 } from '@/game/types';
+import { COLLECTIBLE_LIMITS } from '@/game/types';
 import { checkAchievements } from '@/game/progression/achievements';
 import { musicEngine } from '@/game/audio/music-engine';
 
@@ -36,6 +38,9 @@ export interface CollectibleToast {
   id: string;
   type: CollectibleType;
   amount: number;
+  currentTotal: number;
+  maxLimit: number;
+  timestamp: number;
 }
 
 export interface AchievementToast {
@@ -47,6 +52,15 @@ export interface GameStore {
   // Phase
   phase: GamePhase;
   setPhase: (phase: GamePhase) => void;
+
+  // Player Profile & Customization
+  playerGender: PlayerGender;
+  playerName: string;
+  setPlayerGender: (gender: PlayerGender) => void;
+  setPlayerName: (name: string) => void;
+  isProfileOpen: boolean;
+  toggleProfile: () => void;
+  setProfileOpen: (open: boolean) => void;
 
   // Player
   playerPosition: Vec3;
@@ -68,7 +82,8 @@ export interface GameStore {
 
   // Inventory (supplementary, no effect on canonical resources)
   inventory: Inventory;
-  collectItem: (type: CollectibleType, amount?: number) => void;
+  collectItem: (type: CollectibleType, amount?: number) => boolean;
+  canCollect: (type: CollectibleType) => boolean;
   removeItem: (type: CollectibleType, amount?: number) => boolean;
   hasItems: (type: CollectibleType, amount: number) => boolean;
 
@@ -127,6 +142,15 @@ export const useGameStore = create<GameStore>()(
         get().checkAchievementsTrigger();
       },
 
+      // Player Profile & Character
+      playerGender: 'male',
+      playerName: 'Commander Nova',
+      isProfileOpen: false,
+      setPlayerGender: (gender) => set({ playerGender: gender }),
+      setPlayerName: (name) => set({ playerName: name }),
+      toggleProfile: () => set((s) => ({ isProfileOpen: !s.isProfileOpen })),
+      setProfileOpen: (open) => set({ isProfileOpen: open }),
+
       // Player
       playerPosition: { x: 0, y: 0, z: 0 },
       playerFacing: 'right',
@@ -166,27 +190,70 @@ export const useGameStore = create<GameStore>()(
       // Inventory
       inventory: { ...DEFAULT_INVENTORY },
       collectItem: (type, amount = 1) => {
-        const toastId = `toast-${Date.now()}-${Math.random()}`;
-        set((state) => ({
+        const state = get();
+        const limit = COLLECTIBLE_LIMITS[type] ?? 20;
+        const current = state.inventory.items[type] ?? 0;
+        if (current >= limit) {
+          return false;
+        }
+
+        const actualAdd = Math.min(amount, limit - current);
+        const newTotal = current + actualAdd;
+
+        // Group / Merge toasts: update existing toast if present, otherwise append
+        const existingToastIndex = state.collectibleToasts.findIndex((t) => t.type === type);
+        let nextToasts: CollectibleToast[];
+
+        if (existingToastIndex >= 0) {
+          const existing = state.collectibleToasts[existingToastIndex];
+          const updated: CollectibleToast = {
+            ...existing,
+            amount: existing.amount + actualAdd,
+            currentTotal: newTotal,
+            timestamp: Date.now(),
+          };
+          nextToasts = [...state.collectibleToasts];
+          nextToasts[existingToastIndex] = updated;
+        } else {
+          nextToasts = [
+            ...state.collectibleToasts,
+            {
+              id: `toast-${type}-${Date.now()}`,
+              type,
+              amount: actualAdd,
+              currentTotal: newTotal,
+              maxLimit: limit,
+              timestamp: Date.now(),
+            },
+          ];
+        }
+
+        set({
           inventory: {
             ...state.inventory,
             items: {
               ...state.inventory.items,
-              [type]: Math.min(
-                state.inventory.items[type] + amount,
-                state.inventory.maxCapacity
-              ),
+              [type]: newTotal,
             },
           },
-          totalCollectiblesCount: state.totalCollectiblesCount + amount,
-          collectibleToasts: [...state.collectibleToasts, { id: toastId, type, amount }],
-        }));
+          totalCollectiblesCount: state.totalCollectiblesCount + actualAdd,
+          collectibleToasts: nextToasts,
+        });
 
+        const targetType = type;
         setTimeout(() => {
-          get().dismissCollectibleToast(toastId);
-        }, 2200);
+          set((s) => ({
+            collectibleToasts: s.collectibleToasts.filter((t) => t.type !== targetType),
+          }));
+        }, 2500);
 
         get().checkAchievementsTrigger();
+        return true;
+      },
+      canCollect: (type) => {
+        const state = get();
+        const limit = COLLECTIBLE_LIMITS[type] ?? 20;
+        return (state.inventory.items[type] ?? 0) < limit;
       },
       removeItem: (type, amount = 1) => {
         const current = get().inventory.items[type];
@@ -324,6 +391,7 @@ export const useGameStore = create<GameStore>()(
           activeMiniGame: null,
           isInventoryOpen: false,
           isCodexOpen: false,
+          isProfileOpen: false,
           isPaused: false,
         }),
     }),
@@ -336,6 +404,8 @@ export const useGameStore = create<GameStore>()(
         currentRoom: state.currentRoom,
         playerPosition: state.playerPosition,
         playerFacing: state.playerFacing,
+        playerGender: state.playerGender,
+        playerName: state.playerName,
         roomsVisited: state.roomsVisited,
         totalItemsCrafted: state.totalItemsCrafted,
         missionsCompleted: state.missionsCompleted,

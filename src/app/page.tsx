@@ -30,6 +30,7 @@ import PauseMenu from '@/game/ui/PauseMenu';
 import MiniGameOverlay from '@/game/ui/MiniGameOverlay';
 import CraftingPanel from '@/game/ui/CraftingPanel';
 import CodexPanel from '@/game/ui/CodexPanel';
+import PlayerProfileModal from '@/game/ui/PlayerProfileModal';
 import LaunchCinematic from '@/game/cinematics/LaunchCinematic';
 import MissionSelector from '@/game/ui/MissionSelector';
 import CollectibleNotifications from '@/game/ui/CollectibleNotifications';
@@ -116,6 +117,10 @@ export default function GamePage() {
           store.toggleCodex();
           return;
         }
+        if (store.isProfileOpen) {
+          store.setProfileOpen(false);
+          return;
+        }
         if (store.activeMiniGame) {
           store.setActiveMiniGame(null);
           store.setPhase('exploring');
@@ -130,6 +135,10 @@ export default function GamePage() {
 
       if (key === 'i') {
         store.toggleInventory();
+      }
+
+      if (key === 'p') {
+        store.toggleProfile();
       }
     };
 
@@ -462,6 +471,9 @@ export default function GamePage() {
       {/* ===== GLOBAL NOTIFICATION TOASTS ===== */}
       <CollectibleNotifications />
       <AchievementNotifications />
+
+      {/* ===== PLAYER PROFILE MODAL (always available) ===== */}
+      <PlayerProfileModal />
 
       {/* ===== SETTINGS MODAL (always available) ===== */}
       <SettingsModal

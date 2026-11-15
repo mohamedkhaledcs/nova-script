@@ -29,14 +29,20 @@ export default function Player3D() {
   const {
     playerPosition,
     playerFacing,
+    playerGender,
     isMoving,
     showInteractionPrompt,
   } = useGameStore();
 
-  // Load astronaut pixel art texture
-  const texture = useLoader(THREE.TextureLoader, '/assets/characters/player.png');
-  texture.magFilter = THREE.NearestFilter;
-  texture.minFilter = THREE.NearestFilter;
+  // Load both male & female astronaut textures for instantaneous switching
+  const maleTexture = useLoader(THREE.TextureLoader, '/assets/characters/player.png');
+  const femaleTexture = useLoader(THREE.TextureLoader, '/assets/characters/player-female.png');
+  maleTexture.magFilter = THREE.NearestFilter;
+  maleTexture.minFilter = THREE.NearestFilter;
+  femaleTexture.magFilter = THREE.NearestFilter;
+  femaleTexture.minFilter = THREE.NearestFilter;
+
+  const texture = playerGender === 'female' ? femaleTexture : maleTexture;
 
   // Dust particles geometry (40 particles)
   const dustData = useMemo(() => {

@@ -4,6 +4,7 @@ import React from 'react';
 import { Rocket, Sparkles, CheckCircle2 } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
 import type { Resources } from '@/types/game';
+import { useGameStore } from '@/game/store';
 
 interface MissionControlProps {
   initialResources: Resources;
@@ -14,6 +15,13 @@ export default function MissionControl({
   initialResources,
   onProceedToPlanning,
 }: MissionControlProps) {
+  const { playerGender, playerName } = useGameStore();
+
+  const avatarSrc =
+    playerGender === 'female'
+      ? '/assets/characters/player-female.png'
+      : '/assets/characters/player.png';
+
   return (
     <div className="relative min-h-[calc(100vh-65px)] flex items-center justify-center p-4 sm:p-6 deep-space-bg stars-pattern select-none">
       <div className="max-w-4xl w-full glass-panel rounded-2xl border border-cyan-500/30 p-6 sm:p-10 shadow-2xl flex flex-col md:flex-row items-center gap-8">
@@ -26,7 +34,7 @@ export default function MissionControl({
             {/* Astronaut Avatar Image */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src="/assets/characters/player.png"
+              src={avatarSrc}
               alt="Mission Commander"
               width={220}
               height={220}
@@ -36,7 +44,7 @@ export default function MissionControl({
           </div>
 
           <div className="mt-3 px-3 py-1 rounded-full bg-cyan-950 border border-cyan-500/40 text-cyan-300 font-mono text-xs font-bold tracking-widest uppercase">
-            COMMANDER ON DECK
+            {playerName.toUpperCase()} // ON DECK
           </div>
         </div>
 

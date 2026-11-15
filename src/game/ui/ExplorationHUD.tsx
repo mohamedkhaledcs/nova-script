@@ -13,6 +13,7 @@ import {
   BookOpen,
   Move,
   KeyRound,
+  User,
 } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { getRoomDefinition } from '@/game/world/rooms';
@@ -24,10 +25,12 @@ export default function ExplorationHUD() {
     currentRoom,
     inventory,
     phase,
-    isInventoryOpen,
+    playerGender,
+    playerName,
     toggleInventory,
     togglePause,
     toggleCodex,
+    toggleProfile,
   } = useGameStore();
 
   if (phase !== 'exploring') return null;
@@ -35,6 +38,10 @@ export default function ExplorationHUD() {
   const room = getRoomDefinition(currentRoom);
 
   const totalItems = Object.values(inventory.items).reduce((a, b) => a + b, 0);
+  const avatarSrc =
+    playerGender === 'female'
+      ? '/assets/characters/player-female.png'
+      : '/assets/characters/player.png';
 
   return (
     <>
@@ -58,6 +65,23 @@ export default function ExplorationHUD() {
 
           {/* Right: Quick actions */}
           <div className="flex items-center gap-2 pointer-events-auto">
+            {/* Commander Profile Button */}
+            <button
+              onClick={toggleProfile}
+              className="glass-panel rounded-lg px-2.5 py-1.5 flex items-center gap-2 hover:border-cyan-400 transition-colors border border-cyan-500/30 group"
+              title="Commander Profile [P]"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={avatarSrc}
+                alt="Avatar"
+                className="w-5 h-5 rounded-full object-contain pixel-art drop-shadow group-hover:scale-110 transition-transform"
+              />
+              <span className="hidden md:inline font-mono text-xs text-cyan-300 font-bold max-w-[100px] truncate">
+                {playerName}
+              </span>
+            </button>
+
             <button
               onClick={toggleInventory}
               className="glass-panel rounded-lg px-3 py-2 flex items-center gap-2 hover:border-cyan-400 transition-colors border border-transparent"
@@ -96,6 +120,9 @@ export default function ExplorationHUD() {
             </span>
             <span className="flex items-center gap-1">
               <Package className="w-3 h-3" /> [I] Inventory
+            </span>
+            <span className="flex items-center gap-1">
+              <User className="w-3 h-3" /> [P] Profile
             </span>
           </div>
         </div>

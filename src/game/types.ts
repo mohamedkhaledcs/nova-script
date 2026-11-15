@@ -20,6 +20,13 @@ export interface Vec3 {
 }
 
 export type PlayerFacing = 'left' | 'right';
+export type PlayerGender = 'male' | 'female';
+
+export interface PlayerProfile {
+  name: string;
+  gender: PlayerGender;
+  title: string;
+}
 
 export interface PlayerState {
   position: Vec3;
@@ -93,6 +100,14 @@ export interface Inventory {
   items: Record<CollectibleType, number>;
   maxCapacity: number;
 }
+
+export const COLLECTIBLE_LIMITS: Record<CollectibleType, number> = {
+  'metal-scrap': 20,
+  'energy-cell': 20,
+  'science-sample': 15,
+  'blueprint-fragment': 10,
+  'rare-mineral': 8,
+};
 
 export const COLLECTIBLE_INFO: Record<
   CollectibleType,

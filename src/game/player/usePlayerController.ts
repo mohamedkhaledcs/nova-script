@@ -30,6 +30,8 @@ export function usePlayerController() {
   const footstepTimerRef = useRef(0);
   const footstepCountRef = useRef(0);
   const prevInteractionTargetRef = useRef<string | null>(null);
+  const spawnCooldownsRef = useRef<Map<string, number>>(new Map());
+  const lastPickupAudioRef = useRef(0);
 
   const {
     playerPosition,
@@ -49,6 +51,7 @@ export function usePlayerController() {
     collectiblesFound,
     markCollectibleFound,
     collectItem,
+    canCollect,
   } = useGameStore();
 
   useFrame((_, delta) => {
@@ -162,13 +165,32 @@ export function usePlayerController() {
     }
 
     // Collectible proximity detection & auto-pickup
+    const now = Date.now();
     for (const spawn of room.collectibleSpawns) {
       if (collectiblesFound.includes(spawn.id) && !spawn.respawn) continue;
+
+      // Respawn cooldown check
+      const cooldownEnd = spawnCooldownsRef.current.get(spawn.id) || 0;
+      if (now < cooldownEnd) continue;
+
+      // Token capacity limit check
+      if (!canCollect(spawn.type)) continue;
+
       const dist = distance2D(playerPosition, spawn.position);
-      if (dist < 1.5) {
-        markCollectibleFound(spawn.id);
-        collectItem(spawn.type, 1);
-        playPickup(0.3, spawn.type);
+      if (dist < 1.4) {
+        const collected = collectItem(spawn.type, 1);
+        if (collected) {
+          markCollectibleFound(spawn.id);
+          // Set cooldown for respawning nodes (15s)
+          if (spawn.respawn) {
+            spawnCooldownsRef.current.set(spawn.id, now + 15000);
+          }
+          // Throttle pickup sound: play crisp and clear once per harvest
+          if (now - lastPickupAudioRef.current > 350) {
+            playPickup(0.28, spawn.type);
+            lastPickupAudioRef.current = now;
+          }
+        }
       }
     }
 
