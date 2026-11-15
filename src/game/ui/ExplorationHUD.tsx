@@ -29,6 +29,7 @@ export default function ExplorationHUD() {
     phase,
     playerGender,
     playerName,
+    showInteractionPrompt,
     toggleInventory,
     togglePause,
     toggleCodex,
@@ -110,6 +111,22 @@ export default function ExplorationHUD() {
           </div>
         </div>
       </div>
+
+      {/* On-screen Clickable / Touch Interaction Pill */}
+      {showInteractionPrompt && (
+        <div className="fixed bottom-24 left-1/2 -translate-x-1/2 z-40 animate-bounce pointer-events-auto">
+          <button
+            onClick={() => {
+              window.dispatchEvent(new CustomEvent('novascript:interact'));
+            }}
+            className="px-5 py-2.5 rounded-full bg-gradient-to-r from-cyan-600 via-blue-600 to-cyan-500 text-white font-mono text-xs font-bold shadow-glow-cyan border border-cyan-400 flex items-center gap-2 hover:scale-105 active:scale-95 transition-all cursor-pointer"
+            title="Click or Double-Click / Tap to interact"
+          >
+            <KeyRound className="w-4 h-4 text-cyan-200 animate-pulse" />
+            <span>[E] INTERACT // DOUBLE-CLICK</span>
+          </button>
+        </div>
+      )}
 
       {/* Bottom bar — controls hint */}
       <div className="fixed bottom-0 left-0 right-0 z-30 pointer-events-none">

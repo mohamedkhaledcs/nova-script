@@ -9,19 +9,21 @@
  * - Resource Bay (RES-05) to the South-West (Bottom-Left)
  * - Mission Launch Board (MSN-06) to the South-East (Bottom-Right)
  * - Real-time Player Position & Heading Blip with Compass
- * - Expandable Blueprint Mode [M]
+ * - Animated Radar Scanning Sweep Beam
+ * - Facility Glyphs & Interactive Waypoint Navigation
  */
 
 'use client';
 
 import React, { useState } from 'react';
-import { Compass, Maximize2, Minimize2, Radio } from 'lucide-react';
+import { Compass, Maximize2, Minimize2, Radio, Navigation } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { getRoomDefinition } from '@/game/world/rooms';
 import type { RoomId } from '@/game/types';
 import { audio } from '@/lib/audio/audio-manager';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
 
-// True physical topological blueprint layout
+// True physical topological blueprint layout with facility glyphs
 const ROOM_MAP_LAYOUT: Record<
   RoomId,
   {
@@ -31,6 +33,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: number;
     label: string;
     code: string;
+    glyph: string;
     direction: string;
     description: string;
   }
@@ -43,6 +46,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: 28,
     label: 'Central Hub',
     code: 'HUB-TRN',
+    glyph: '🌐',
     direction: 'CENTER',
     description: 'Central transit corridor linking all 6 orbital modules',
   },
@@ -54,6 +58,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: 48,
     label: 'Command Center',
     code: 'CMD-00',
+    glyph: '🖥️',
     direction: 'WEST (←)',
     description: 'Flight telemetry, station displays, and main observation deck',
   },
@@ -65,6 +70,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: 52,
     label: 'Vehicle Hangar',
     code: 'HNG-02',
+    glyph: '🛸',
     direction: 'EAST (→)',
     description: '3D Spacecraft assembly bay & engineering workbench',
   },
@@ -76,6 +82,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: 40,
     label: 'Science Lab',
     code: 'LAB-01',
+    glyph: '🔬',
     direction: 'NORTH-WEST (↖)',
     description: 'Raman spectrometer & planetary geology analysis',
   },
@@ -87,6 +94,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: 40,
     label: 'Comms Array',
     code: 'COM-03',
+    glyph: '📡',
     direction: 'NORTH-EAST (↗)',
     description: 'Deep Space Network antenna dish calibration',
   },
@@ -98,6 +106,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: 40,
     label: 'Resource Bay',
     code: 'RES-05',
+    glyph: '📦',
     direction: 'SOUTH-WEST (↙)',
     description: 'Material storage lockers & salvaged component crates',
   },
@@ -109,6 +118,7 @@ const ROOM_MAP_LAYOUT: Record<
     h: 40,
     label: 'Mission Board',
     code: 'MSN-06',
+    glyph: '🚀',
     direction: 'SOUTH-EAST (↘)',
     description: 'Mission target selection & launch authorization terminal',
   },
@@ -121,11 +131,14 @@ export default function StationMinimap() {
     playerFacing,
     collectiblesFound,
     roomsVisited,
+    language,
   } = useGameStore();
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [hoveredRoom, setHoveredRoom] = useState<RoomId | null>(null);
+  const [waypointRoom, setWaypointRoom] = useState<RoomId | null>(null);
 
+  const t = TRANSLATIONS[language || 'en'];
   const activeRoomDef = getRoomDefinition(currentRoom);
   const activeLayout = ROOM_MAP_LAYOUT[currentRoom];
 
@@ -139,12 +152,17 @@ export default function StationMinimap() {
   const playerDotX = activeLayout.x + normX * activeLayout.w;
   const playerDotY = activeLayout.y + normY * activeLayout.h;
 
+  const handleSelectWaypoint = (rId: RoomId) => {
+    audio.select();
+    setWaypointRoom((prev) => (prev === rId ? null : rId));
+  };
+
   return (
     <div className="fixed bottom-14 right-4 z-30 select-none">
       {/* Radar Panel */}
       <div
         className={`glass-panel rounded-2xl border border-cyan-500/40 shadow-glow-cyan bg-space-950/95 backdrop-blur-md transition-all duration-300 overflow-hidden flex flex-col ${
-          isExpanded ? 'w-84 sm:w-96 h-96' : 'w-52 h-52'
+          isExpanded ? 'w-84 sm:w-96 h-96' : 'w-56 h-56'
         }`}
       >
         {/* Radar Header */}
@@ -152,7 +170,7 @@ export default function StationMinimap() {
           <div className="flex items-center gap-1.5">
             <Radio className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
             <span className="font-mono text-[10px] text-cyan-300 font-bold tracking-wider">
-              STATION RADAR
+              {t.stationRadar}
             </span>
           </div>
 
@@ -183,11 +201,29 @@ export default function StationMinimap() {
             viewBox="0 0 200 165"
             className="w-full h-full filter drop-shadow-[0_0_8px_rgba(0,240,255,0.25)]"
           >
+            <defs>
+              {/* Radial radar sweep gradient */}
+              <linearGradient id="radarSweepGrad" x1="0" y1="1" x2="0" y2="0">
+                <stop offset="0%" stopColor="#00F0FF" stopOpacity="0" />
+                <stop offset="100%" stopColor="#00F0FF" stopOpacity="0.8" />
+              </linearGradient>
+              <linearGradient id="radarConeGrad" x1="0" y1="1" x2="1" y2="0">
+                <stop offset="0%" stopColor="#00F0FF" stopOpacity="0" />
+                <stop offset="100%" stopColor="#00F0FF" stopOpacity="0.35" />
+              </linearGradient>
+            </defs>
+
             {/* Background Radar Scanner Circles & Crosshairs */}
             <circle cx="100" cy="82" r="78" fill="none" stroke="#06B6D4" strokeWidth="0.5" strokeOpacity="0.15" strokeDasharray="3 3" />
             <circle cx="100" cy="82" r="45" fill="none" stroke="#06B6D4" strokeWidth="0.5" strokeOpacity="0.2" />
             <line x1="10" y1="82" x2="190" y2="82" stroke="#06B6D4" strokeWidth="0.5" strokeOpacity="0.12" />
             <line x1="100" y1="5" x2="100" y2="160" stroke="#06B6D4" strokeWidth="0.5" strokeOpacity="0.12" />
+
+            {/* Animated Rotating Radar Sweep Beam */}
+            <g className="origin-[100px_82px] animate-[spin_5s_linear_infinite] pointer-events-none opacity-30">
+              <line x1="100" y1="82" x2="100" y2="4" stroke="url(#radarSweepGrad)" strokeWidth="1.5" strokeLinecap="round" />
+              <polygon points="100,82 100,4 124,10" fill="url(#radarConeGrad)" />
+            </g>
 
             {/* Compass Cardinal Points */}
             <text x="100" y="8" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">N</text>
@@ -195,24 +231,19 @@ export default function StationMinimap() {
             <text x="5" y="84" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">W</text>
             <text x="195" y="84" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">E</text>
 
-            {/* Connecting Pressurized Transit Tunnels */}
-            {/* West Tunnel (Hub to Command Center) */}
+            {/* Pressurized Transit Tunnels */}
             <path d="M 64 82 L 56 82" stroke="#38BDF8" strokeWidth="3.5" strokeLinecap="round" strokeOpacity="0.5" />
-            {/* East Tunnel (Hub to Hangar) */}
             <path d="M 136 82 L 144 82" stroke="#38BDF8" strokeWidth="3.5" strokeLinecap="round" strokeOpacity="0.5" />
-            {/* North-West Tunnel (Hub to Science Lab) */}
             <path d="M 78 68 L 78 52" stroke="#38BDF8" strokeWidth="3" strokeLinecap="round" strokeOpacity="0.5" />
-            {/* North-East Tunnel (Hub to Comms Array) */}
             <path d="M 122 68 L 122 52" stroke="#38BDF8" strokeWidth="3" strokeLinecap="round" strokeOpacity="0.5" />
-            {/* South-West Tunnel (Hub to Resource Bay) */}
             <path d="M 78 96 L 78 112" stroke="#38BDF8" strokeWidth="3" strokeLinecap="round" strokeOpacity="0.5" />
-            {/* South-East Tunnel (Hub to Mission Board) */}
             <path d="M 122 96 L 122 112" stroke="#38BDF8" strokeWidth="3" strokeLinecap="round" strokeOpacity="0.5" />
 
             {/* Station Room Modules */}
             {(Object.entries(ROOM_MAP_LAYOUT) as [RoomId, typeof activeLayout][]).map(([rId, layout]) => {
               const isCurrent = rId === currentRoom;
               const isVisited = roomsVisited.includes(rId);
+              const isWaypoint = waypointRoom === rId;
               const isHub = rId === 'hallway';
 
               return (
@@ -221,6 +252,7 @@ export default function StationMinimap() {
                   className="cursor-pointer transition-all"
                   onMouseEnter={() => setHoveredRoom(rId)}
                   onMouseLeave={() => setHoveredRoom(null)}
+                  onClick={() => handleSelectWaypoint(rId)}
                 >
                   {/* Module Boundary */}
                   <rect
@@ -234,12 +266,16 @@ export default function StationMinimap() {
                         ? isHub
                           ? '#022C43'
                           : '#003B46'
+                        : isWaypoint
+                        ? '#3B1F04'
                         : isVisited
                         ? '#021B2A'
                         : '#010B13'
                     }
                     stroke={
-                      isCurrent
+                      isWaypoint
+                        ? '#F59E0B'
+                        : isCurrent
                         ? '#00F0FF'
                         : isVisited
                         ? isHub
@@ -247,16 +283,26 @@ export default function StationMinimap() {
                           : '#0E7490'
                         : '#1E293B'
                     }
-                    strokeWidth={isCurrent ? '1.8' : '1'}
+                    strokeWidth={isWaypoint || isCurrent ? '1.8' : '1'}
                     className="transition-colors"
                   />
 
+                  {/* Room Facility Glyph Icon */}
+                  <text
+                    x={layout.x + (isExpanded ? 10 : 8)}
+                    y={layout.y + (isExpanded ? 14 : 12)}
+                    fontSize={isExpanded ? '8' : '6.5'}
+                    opacity={isCurrent || isVisited ? '0.9' : '0.4'}
+                  >
+                    {layout.glyph}
+                  </text>
+
                   {/* Room Short Code */}
                   <text
-                    x={layout.x + layout.w / 2}
+                    x={layout.x + layout.w / 2 + (isExpanded ? 4 : 2)}
                     y={layout.y + layout.h / 2 + (isExpanded ? -2 : 3)}
                     textAnchor="middle"
-                    fill={isCurrent ? '#00F0FF' : isVisited ? '#7DD3FC' : '#475569'}
+                    fill={isWaypoint ? '#FCD34D' : isCurrent ? '#00F0FF' : isVisited ? '#7DD3FC' : '#475569'}
                     fontSize={isExpanded ? '7' : '7.5'}
                     fontFamily="monospace"
                     fontWeight="bold"
@@ -306,7 +352,6 @@ export default function StationMinimap() {
 
             {/* Real-time Player Position & Heading Blip */}
             <g className="transition-all duration-75">
-              {/* Outer Pulse Ring */}
               <circle
                 cx={playerDotX}
                 cy={playerDotY}
@@ -317,7 +362,6 @@ export default function StationMinimap() {
                 className="animate-ping"
                 opacity="0.75"
               />
-              {/* Core Dot */}
               <circle
                 cx={playerDotX}
                 cy={playerDotY}
@@ -326,7 +370,6 @@ export default function StationMinimap() {
                 stroke="#FFFFFF"
                 strokeWidth="0.8"
               />
-              {/* Direction Indicator */}
               <line
                 x1={playerDotX}
                 y1={playerDotY}
@@ -347,7 +390,12 @@ export default function StationMinimap() {
 
         {/* Hover / Active Module Info Bar (Bottom Bar) */}
         <div className="px-3 py-1.5 border-t border-cyan-900/40 bg-space-950 flex items-center justify-between text-[9px] font-mono">
-          {hoveredRoom ? (
+          {waypointRoom ? (
+            <div className="flex items-center gap-1 text-amber-300 font-bold truncate">
+              <Navigation className="w-3 h-3 text-amber-400 shrink-0" />
+              <span>WAYPOINT: {ROOM_MAP_LAYOUT[waypointRoom].label} ({ROOM_MAP_LAYOUT[waypointRoom].direction})</span>
+            </div>
+          ) : hoveredRoom ? (
             <div className="truncate text-slate-300">
               <span className="text-cyan-400 font-bold">{ROOM_MAP_LAYOUT[hoveredRoom].direction}: </span>
               {ROOM_MAP_LAYOUT[hoveredRoom].label} — {ROOM_MAP_LAYOUT[hoveredRoom].description}

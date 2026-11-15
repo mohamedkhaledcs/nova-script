@@ -5,6 +5,8 @@
 
 import { useEffect, useRef, useCallback, useState } from 'react';
 import type { Vec2 } from '@/game/types';
+import { useGameStore } from '@/game/store';
+import { DEFAULT_KEYBINDINGS } from '@/game/types';
 
 export interface InputState {
   /** Normalized movement direction based on WASD/Arrow keys */
@@ -30,6 +32,7 @@ export interface InputState {
 export function useInput(): InputState {
   const heldKeysRef = useRef<Set<string>>(new Set());
   const [, forceUpdate] = useState(0);
+  const keybindings = useGameStore((s) => s.keybindings) || DEFAULT_KEYBINDINGS;
   
   // Edge-detected action flags
   const justPressedRef = useRef({
@@ -39,27 +42,37 @@ export function useInput(): InputState {
     codex: false,
   });
 
+  const matchesAction = useCallback(
+    (action: keyof typeof DEFAULT_KEYBINDINGS, key: string) => {
+      const list = keybindings[action] || DEFAULT_KEYBINDINGS[action] || [];
+      return list.includes(key);
+    },
+    [keybindings]
+  );
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
     const key = e.key.toLowerCase();
     
-    // Prevent default for game keys
-    if (['w', 'a', 's', 'd', 'e', 'i', 'tab', 'escape',
-         'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
-      e.preventDefault();
+    // Check if key is used in any game action
+    const isGameKey = Object.values(keybindings).some((list) => list.includes(key));
+    if (isGameKey && !['input', 'textarea'].includes((e.target as HTMLElement)?.tagName?.toLowerCase())) {
+      if (['tab', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '].includes(key)) {
+        e.preventDefault();
+      }
     }
 
     if (!heldKeysRef.current.has(key)) {
       heldKeysRef.current.add(key);
 
       // Edge detection for action keys
-      if (key === 'e') justPressedRef.current.interact = true;
-      if (key === 'i') justPressedRef.current.inventory = true;
-      if (key === 'escape') justPressedRef.current.pause = true;
-      if (key === 'tab') justPressedRef.current.codex = true;
+      if (matchesAction('interact', key)) justPressedRef.current.interact = true;
+      if (matchesAction('inventory', key)) justPressedRef.current.inventory = true;
+      if (matchesAction('pause', key)) justPressedRef.current.pause = true;
+      if (matchesAction('handbook', key)) justPressedRef.current.codex = true;
 
       forceUpdate((n) => n + 1);
     }
-  }, []);
+  }, [keybindings, matchesAction]);
 
   const handleKeyUp = useCallback((e: KeyboardEvent) => {
     const key = e.key.toLowerCase();
@@ -85,15 +98,20 @@ export function useInput(): InputState {
     };
   }, [handleKeyDown, handleKeyUp, handleBlur]);
 
-  // Compute movement vector from held keys
+  // Compute movement vector from held keys based on custom keybindings
   const held = heldKeysRef.current;
   let mx = 0;
   let mz = 0;
 
-  if (held.has('w') || held.has('arrowup')) mz -= 1;
-  if (held.has('s') || held.has('arrowdown')) mz += 1;
-  if (held.has('a') || held.has('arrowleft')) mx -= 1;
-  if (held.has('d') || held.has('arrowright')) mx += 1;
+  const fwdKeys = keybindings.moveForward || DEFAULT_KEYBINDINGS.moveForward;
+  const backKeys = keybindings.moveBackward || DEFAULT_KEYBINDINGS.moveBackward;
+  const leftKeys = keybindings.moveLeft || DEFAULT_KEYBINDINGS.moveLeft;
+  const rightKeys = keybindings.moveRight || DEFAULT_KEYBINDINGS.moveRight;
+
+  if (fwdKeys.some((k) => held.has(k))) mz -= 1;
+  if (backKeys.some((k) => held.has(k))) mz += 1;
+  if (leftKeys.some((k) => held.has(k))) mx -= 1;
+  if (rightKeys.some((k) => held.has(k))) mx += 1;
 
   // Normalize diagonal movement
   const length = Math.sqrt(mx * mx + mz * mz);
@@ -108,10 +126,13 @@ export function useInput(): InputState {
     justPressedRef.current.codex = false;
   }, []);
 
+  const interactKeys = keybindings.interact || DEFAULT_KEYBINDINGS.interact;
+  const isInteractHeld = interactKeys.some((k) => held.has(k));
+
   return {
     moveDirection,
     isMoving: length > 0,
-    isInteractHeld: held.has('e'),
+    isInteractHeld,
     justPressedInteract: justPressedRef.current.interact,
     justPressedInventory: justPressedRef.current.inventory,
     justPressedPause: justPressedRef.current.pause,

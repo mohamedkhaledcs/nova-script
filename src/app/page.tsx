@@ -37,6 +37,7 @@ import CollectibleNotifications from '@/game/ui/CollectibleNotifications';
 import AchievementNotifications from '@/game/ui/AchievementNotifications';
 import InteractionHandler from '@/game/interactions/InteractionHandler';
 import { useGameStore } from '@/game/store';
+import { DEFAULT_KEYBINDINGS, type GameAction } from '@/game/types';
 import { addCodexEntry } from '@/game/ui/CodexPanel';
 import { musicEngine } from '@/game/audio/music-engine';
 
@@ -67,6 +68,8 @@ export default function GamePage() {
   const setGamePhase = useGameStore((s) => s.setPhase);
   const resetExploration = useGameStore((s) => s.resetExplorationState);
   const addEndingDiscovered = useGameStore((s) => s.addEndingDiscovered);
+  const visualMode = useGameStore((s) => s.visualMode);
+  const language = useGameStore((s) => s.language);
 
   // Initialize on mount
   useEffect(() => {
@@ -91,8 +94,13 @@ export default function GamePage() {
 
       const key = e.key.toLowerCase();
       const store = useGameStore.getState();
+      const bindings = store.keybindings || DEFAULT_KEYBINDINGS;
+      const isAction = (action: GameAction) => {
+        const list = bindings[action] || DEFAULT_KEYBINDINGS[action] || [];
+        return list.includes(key);
+      };
 
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' || isAction('pause')) {
         if (isSettingsOpen) {
           setIsSettingsOpen(false);
           return;
@@ -128,20 +136,20 @@ export default function GamePage() {
         }
       }
 
-      if (key === 'tab') {
+      if (isAction('handbook') || key === 'tab') {
         e.preventDefault();
         store.toggleCodex();
       }
 
-      if (key === 'i') {
+      if (isAction('inventory')) {
         store.toggleInventory();
       }
 
-      if (key === 'p') {
+      if (isAction('profile')) {
         store.toggleProfile();
       }
 
-      if (key === 'm') {
+      if (isAction('minimap')) {
         store.toggleMinimap();
       }
     };
@@ -325,11 +333,29 @@ export default function GamePage() {
   const isExploring = screen === 'exploring';
   const isMissionActive = screen === 'gameplay' || screen === 'briefing';
 
+  const visualModeClass = React.useMemo(() => {
+    switch (visualMode) {
+      case 'retro-pixel':
+        return 'contrast-125 saturate-110 [image-rendering:pixelated]';
+      case 'cyber-neon':
+        return 'contrast-125 saturate-150 drop-shadow-[0_0_12px_rgba(0,240,255,0.3)]';
+      case 'performance':
+        return '';
+      default:
+        return '';
+    }
+  }, [visualMode]);
+
   return (
     <main
-      className="min-h-screen flex flex-col select-none relative overflow-hidden"
+      className={`min-h-screen flex flex-col select-none relative overflow-hidden transition-all duration-300 ${visualModeClass}`}
       style={{ cursor: 'none' }}
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
     >
+      {/* Retro Pixel CRT Scanlines Overlay */}
+      {visualMode === 'retro-pixel' && (
+        <div className="fixed inset-0 pointer-events-none z-50 bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.18)_0px,rgba(0,0,0,0.18)_1px,transparent_1px,transparent_2px)] opacity-70" />
+      )}
       {/* ===== MAIN MENU ===== */}
       {screen === 'menu' && (
         <div className="flex-1 flex flex-col items-center justify-center">

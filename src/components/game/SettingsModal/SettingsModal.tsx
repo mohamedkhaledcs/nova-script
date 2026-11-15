@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Sliders,
   Volume2,
@@ -11,9 +11,15 @@ import {
   Keyboard,
   BookOpen,
   Sparkles,
+  RotateCcw,
+  Globe,
+  Radio,
+  Zap,
 } from 'lucide-react';
 import { audio, type AudioSettings } from '@/lib/audio/audio-manager';
 import { useGameStore } from '@/game/store';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
+import { type GameAction, type VisualMode, type Language } from '@/game/types';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -22,11 +28,43 @@ interface SettingsModalProps {
 
 export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
   const [settings, setSettings] = useState<AudioSettings>(() => audio.getSettings());
-  const [bloomEnabled, setBloomEnabled] = useState(true);
-  const [smoothCamera, setSmoothCamera] = useState(true);
   const [activeTab, setActiveTab] = useState<'audio' | 'display' | 'controls'>('audio');
+  const [rebindingAction, setRebindingAction] = useState<GameAction | null>(null);
 
-  const { toggleCodex } = useGameStore();
+  const {
+    keybindings,
+    setKeybinding,
+    resetKeybindings,
+    visualMode,
+    setVisualMode,
+    language,
+    setLanguage,
+    toggleCodex,
+  } = useGameStore();
+
+  const t = TRANSLATIONS[language || 'en'];
+
+  // Listen for keyboard input when in rebinding mode
+  useEffect(() => {
+    if (!rebindingAction) return;
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const key = e.key.toLowerCase();
+      // Ignore alone modifiers unless user specifically presses space
+      if (['control', 'shift', 'alt', 'meta'].includes(key)) return;
+
+      audio.select();
+      // Replace or set as primary key
+      setKeybinding(rebindingAction, [key]);
+      setRebindingAction(null);
+    };
+
+    window.addEventListener('keydown', handleKeyDown, { capture: true });
+    return () => window.removeEventListener('keydown', handleKeyDown, { capture: true });
+  }, [rebindingAction, setKeybinding]);
 
   if (!isOpen) return null;
 
@@ -39,79 +77,141 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
     }
   };
 
+  const actionList: { id: GameAction; label: string }[] = [
+    { id: 'moveForward', label: t.actionMoveForward },
+    { id: 'moveBackward', label: t.actionMoveBackward },
+    { id: 'moveLeft', label: t.actionMoveLeft },
+    { id: 'moveRight', label: t.actionMoveRight },
+    { id: 'interact', label: t.actionInteract },
+    { id: 'inventory', label: t.actionInventory },
+    { id: 'profile', label: t.actionProfile },
+    { id: 'minimap', label: t.actionMinimap },
+    { id: 'handbook', label: t.actionHandbook },
+    { id: 'pause', label: t.actionPause },
+  ];
+
+  const visualModes: { id: VisualMode; title: string; desc: string; icon: string }[] = [
+    {
+      id: 'cinematic-3d',
+      title: t.modeCinematic,
+      desc: t.modeCinematicDesc,
+      icon: '🛸',
+    },
+    {
+      id: 'retro-pixel',
+      title: t.modeRetro,
+      desc: t.modeRetroDesc,
+      icon: '👾',
+    },
+    {
+      id: 'cyber-neon',
+      title: t.modeCyber,
+      desc: t.modeCyberDesc,
+      icon: '⚡',
+    },
+    {
+      id: 'performance',
+      title: t.modePerf,
+      desc: t.modePerfDesc,
+      icon: '🔋',
+    },
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-4 animate-in fade-in duration-150 select-none">
-      <div className="max-w-lg w-full glass-panel p-6 sm:p-7 rounded-2xl border border-cyan-500/40 shadow-glow-cyan text-left flex flex-col max-h-[90vh] overflow-hidden bg-space-950/95">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/85 backdrop-blur-md p-3 sm:p-4 animate-in fade-in duration-150 select-none">
+      <div
+        className={`max-w-xl w-full glass-panel p-6 rounded-2xl border border-cyan-500/40 shadow-glow-cyan text-left flex flex-col max-h-[92vh] overflow-hidden bg-space-950/95 ${
+          language === 'ar' ? 'font-sans' : 'font-mono'
+        }`}
+        dir={language === 'ar' ? 'rtl' : 'ltr'}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-cyan-900/60">
+        <div className="flex items-center justify-between pb-3.5 border-b border-cyan-900/60">
           <div className="flex items-center gap-2.5">
             <div className="p-2 rounded-lg bg-cyan-950/70 border border-cyan-500/30">
               <Sliders className="w-5 h-5 text-cyan-400" />
             </div>
             <div>
-              <h3 className="text-base font-mono font-bold text-white tracking-wider">
-                STATION SYSTEM SETTINGS
+              <h3 className="text-base font-bold text-white tracking-wider">
+                {t.settings}
               </h3>
-              <p className="text-[11px] font-mono text-slate-400">
-                AUDIO, TELEMETRY DISPLAY & CONTROL MATRIX
+              <p className="text-[11px] text-slate-400">
+                NOVASCRIPT ENGINE CONFIGURATION & PREFERENCES
               </p>
             </div>
           </div>
-          <button
-            onClick={onClose}
-            className="text-slate-400 hover:text-white font-mono text-sm px-2 py-1 rounded hover:bg-space-850"
-          >
-            ✕
-          </button>
+
+          <div className="flex items-center gap-2">
+            {/* Language Switcher Button */}
+            <button
+              onClick={() => {
+                audio.select();
+                setLanguage(language === 'en' ? 'ar' : 'en');
+              }}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-space-900 border border-cyan-500/30 text-xs font-bold text-cyan-300 hover:bg-space-850 transition-colors shadow-glow-cyan"
+              title="Toggle English / Arabic Language"
+            >
+              <Globe className="w-3.5 h-3.5" />
+              <span>{language === 'en' ? 'EN / عربي' : 'عربي / EN'}</span>
+            </button>
+
+            <button
+              onClick={onClose}
+              className="text-slate-400 hover:text-white font-mono text-sm px-2 py-1 rounded hover:bg-space-850"
+            >
+              ✕
+            </button>
+          </div>
         </div>
 
         {/* Sub-tabs */}
-        <div className="flex gap-1.5 mt-4 p-1 rounded-xl bg-space-900 border border-space-border/60">
+        <div className="flex gap-1.5 mt-3.5 p-1 rounded-xl bg-space-900 border border-space-border/60">
           <button
             onClick={() => {
               audio.click();
               setActiveTab('audio');
             }}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'audio'
                 ? 'bg-cyan-600 text-white shadow-glow-cyan'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            AUDIO ENGINE
+            {t.audioEngine}
           </button>
           <button
             onClick={() => {
               audio.click();
               setActiveTab('display');
             }}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'display'
                 ? 'bg-cyan-600 text-white shadow-glow-cyan'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            GRAPHICS & FX
+            {t.graphicsMood}
           </button>
           <button
             onClick={() => {
               audio.click();
               setActiveTab('controls');
             }}
-            className={`flex-1 py-1.5 rounded-lg text-xs font-mono font-bold transition-all ${
+            className={`flex-1 py-1.5 rounded-lg text-xs font-bold transition-all ${
               activeTab === 'controls'
                 ? 'bg-cyan-600 text-white shadow-glow-cyan'
                 : 'text-slate-400 hover:text-white'
             }`}
           >
-            KEYBINDINGS
+            {t.keybindings}
           </button>
         </div>
 
         {/* Content Body */}
-        <div className="mt-5 space-y-5 overflow-y-auto pr-1 flex-1">
+        <div className="mt-4 space-y-4 overflow-y-auto pr-1 flex-1">
+          {/* TAB 1: AUDIO */}
           {activeTab === 'audio' && (
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {/* Mute Toggle */}
               <div className="flex items-center justify-between p-3 rounded-xl bg-space-900/90 border border-slate-800">
                 <div className="flex items-center gap-2.5">
@@ -120,7 +220,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                   ) : (
                     <Volume2 className="w-5 h-5 text-cyan-400" />
                   )}
-                  <span className="text-xs font-mono text-slate-200 font-bold">MUTE ALL AUDIO</span>
+                  <span className="text-xs text-slate-200 font-bold">MUTE ALL AUDIO</span>
                 </div>
                 <button
                   onClick={() => updateSettings({ isMuted: !settings.isMuted })}
@@ -138,7 +238,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
               {/* Master Volume */}
               <div className="p-3 rounded-xl bg-space-900/60 border border-space-border/50">
-                <div className="flex justify-between text-xs font-mono text-slate-300 mb-2">
+                <div className="flex justify-between text-xs text-slate-300 mb-2 font-mono">
                   <span>MASTER VOLUME</span>
                   <span className="text-cyan-300 font-bold">{Math.round(settings.masterVolume * 100)}%</span>
                 </div>
@@ -156,7 +256,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
               {/* SFX Volume */}
               <div className="p-3 rounded-xl bg-space-900/60 border border-space-border/50">
-                <div className="flex justify-between text-xs font-mono text-slate-300 mb-2">
+                <div className="flex justify-between text-xs text-slate-300 mb-2 font-mono">
                   <span>SOUND EFFECTS (SFX)</span>
                   <span className="text-cyan-300 font-bold">{Math.round(settings.sfxVolume * 100)}%</span>
                 </div>
@@ -174,8 +274,8 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
 
               {/* Music Volume */}
               <div className="p-3 rounded-xl bg-space-900/60 border border-space-border/50">
-                <div className="flex justify-between text-xs font-mono text-slate-300 mb-2">
-                  <span>PROCEDURAL SYNTHESIZER MUSIC</span>
+                <div className="flex justify-between text-xs text-slate-300 mb-2 font-mono">
+                  <span>AMBIENT SYNTHESIZER MUSIC</span>
                   <span className="text-cyan-300 font-bold">{Math.round(settings.musicVolume * 100)}%</span>
                 </div>
                 <input
@@ -192,68 +292,49 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
           )}
 
+          {/* TAB 2: GRAPHICS & VISUAL MOODS */}
           {activeTab === 'display' && (
-            <div className="space-y-4">
-              {/* Bloom / Glow Toggle */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-space-900/90 border border-slate-800">
-                <div className="flex items-center gap-2.5">
-                  <Sparkles className="w-4 h-4 text-cyan-400" />
-                  <div>
-                    <div className="text-xs font-mono text-slate-200 font-bold">HOLOGRAPHIC BLOOM & GLOW</div>
-                    <div className="text-[10px] font-mono text-slate-400">Post-processing neon visual effects</div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    audio.click();
-                    setBloomEnabled(!bloomEnabled);
-                  }}
-                  className={`w-12 h-6 rounded-full p-1 transition-colors ${
-                    bloomEnabled ? 'bg-cyan-600' : 'bg-slate-700'
-                  }`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                      bloomEnabled ? 'translate-x-6' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
+            <div className="space-y-3.5">
+              <div className="text-xs font-bold text-slate-300 mb-1">{t.visualModeTitle}</div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                {visualModes.map((vm) => {
+                  const isSelected = visualMode === vm.id;
+                  return (
+                    <button
+                      key={vm.id}
+                      onClick={() => {
+                        audio.select();
+                        setVisualMode(vm.id);
+                      }}
+                      className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                        isSelected
+                          ? 'bg-cyan-950/80 border-cyan-400 shadow-glow-cyan text-white'
+                          : 'bg-space-900/80 border-space-border/60 hover:border-slate-500 text-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full mb-1">
+                        <span className="text-lg">{vm.icon}</span>
+                        {isSelected && (
+                          <span className="px-1.5 py-0.2 rounded bg-cyan-600 text-white font-mono text-[9px] font-bold">
+                            ACTIVE
+                          </span>
+                        )}
+                      </div>
+                      <div className="text-xs font-bold text-cyan-300">{vm.title}</div>
+                      <div className="text-[10px] text-slate-400 mt-1 leading-snug">{vm.desc}</div>
+                    </button>
+                  );
+                })}
               </div>
 
-              {/* Smooth Camera */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-space-900/90 border border-slate-800">
-                <div className="flex items-center gap-2.5">
-                  <Eye className="w-4 h-4 text-cyan-400" />
-                  <div>
-                    <div className="text-xs font-mono text-slate-200 font-bold">SMOOTH CAMERA TRACKING</div>
-                    <div className="text-[10px] font-mono text-slate-400">Interpolated camera dampening</div>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    audio.click();
-                    setSmoothCamera(!smoothCamera);
-                  }}
-                  className={`w-12 h-6 rounded-full p-1 transition-colors ${
-                    smoothCamera ? 'bg-cyan-600' : 'bg-slate-700'
-                  }`}
-                >
-                  <div
-                    className={`w-4 h-4 rounded-full bg-white transition-transform ${
-                      smoothCamera ? 'translate-x-6' : 'translate-x-0'
-                    }`}
-                  />
-                </button>
-              </div>
-
-              {/* Open Space Handbook Shortcut */}
-              <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/40 space-y-2">
-                <div className="flex items-center gap-2 text-xs font-mono font-bold text-cyan-300">
+              {/* Space Handbook Shortcut Banner */}
+              <div className="p-3 rounded-xl bg-cyan-950/40 border border-cyan-500/40 space-y-2 mt-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-cyan-300">
                   <BookOpen className="w-4 h-4 text-cyan-400" />
-                  <span>DEEP SPACE HANDBOOK & ENCYCLOPEDIA</span>
+                  <span>DEEP SPACE HANDBOOK & OPERATIONS ARCHIVE</span>
                 </div>
-                <p className="text-[11px] font-mono text-slate-400">
-                  Read complete scientific guides to planetary destinations, orbital mechanics, spacecraft subsystems, and salvage materials.
+                <p className="text-[11px] text-slate-400">
+                  Interactive operational manual with destination briefings, physics formulas, and spacecraft engineering.
                 </p>
                 <button
                   onClick={() => {
@@ -261,7 +342,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
                     onClose();
                     toggleCodex();
                   }}
-                  className="w-full py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-mono text-xs font-bold transition-all shadow-glow-cyan"
+                  className="w-full py-2 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white text-xs font-bold transition-all shadow-glow-cyan"
                 >
                   OPEN SPACE HANDBOOK [TAB]
                 </button>
@@ -269,30 +350,75 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
             </div>
           )}
 
+          {/* TAB 3: KEYBOARD CONTROLS & REBINDING */}
           {activeTab === 'controls' && (
-            <div className="space-y-3 font-mono text-xs">
-              <div className="text-slate-400 text-[11px] mb-1">STATION EXPLORATION HOTKEYS:</div>
-              {[
-                { key: 'W / A / S / D', action: 'Move Astronaut in 3D Space' },
-                { key: 'Arrow Keys', action: 'Alternative Directional Movement' },
-                { key: 'Left Mouse Click', action: 'Click-to-Move Target Beacon' },
-                { key: 'E', action: 'Interact with Consoles, Terminals & Workbenches' },
-                { key: 'I', action: 'Open Materials & Salvage Inventory' },
-                { key: 'P', action: 'Open Commander Profile & Suit Customizer' },
-                { key: 'M', action: 'Toggle Station Holographic Radar Minimap' },
-                { key: 'Tab', action: 'Open Deep Space Handbook & Encyclopedia' },
-                { key: 'Esc', action: 'Pause Menu / Close Active Overlay' },
-              ].map((ctrl, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between p-2.5 rounded-lg bg-space-900 border border-space-border/50"
+            <div className="space-y-3">
+              <div className="flex items-center justify-between text-xs text-slate-400">
+                <span>{t.keybindingsDesc}</span>
+                <button
+                  onClick={() => {
+                    audio.click();
+                    resetKeybindings();
+                  }}
+                  className="flex items-center gap-1 text-[11px] text-amber-300 hover:text-amber-200 underline font-mono"
+                  title="Reset all bindings to default"
                 >
-                  <span className="px-2 py-0.5 rounded bg-space-950 text-cyan-300 border border-cyan-500/30 font-bold text-[11px]">
-                    {ctrl.key}
-                  </span>
-                  <span className="text-slate-300 text-[11px]">{ctrl.action}</span>
+                  <RotateCcw className="w-3 h-3" />
+                  <span>{t.resetDefaults}</span>
+                </button>
+              </div>
+
+              {rebindingAction && (
+                <div className="p-3 rounded-xl bg-cyan-950 border border-cyan-400 text-center text-xs font-bold text-cyan-300 animate-pulse shadow-glow-cyan font-mono">
+                  {t.rebindPrompt}
                 </div>
-              ))}
+              )}
+
+              <div className="space-y-2">
+                {actionList.map((act) => {
+                  const currentKeys = keybindings[act.id] || [];
+                  const isRebindingThis = rebindingAction === act.id;
+
+                  return (
+                    <div
+                      key={act.id}
+                      className={`flex items-center justify-between p-2.5 rounded-xl border transition-all ${
+                        isRebindingThis
+                          ? 'bg-cyan-950/90 border-cyan-400 shadow-glow-cyan'
+                          : 'bg-space-900 border-space-border/60 hover:border-slate-600'
+                      }`}
+                    >
+                      <span className="text-xs text-slate-200 font-bold">{act.label}</span>
+
+                      <div className="flex items-center gap-1.5">
+                        {currentKeys.map((k, i) => (
+                          <button
+                            key={i}
+                            onClick={() => {
+                              audio.select();
+                              setRebindingAction(act.id);
+                            }}
+                            className={`px-2.5 py-1 rounded-lg text-xs font-mono font-bold uppercase transition-all ${
+                              isRebindingThis
+                                ? 'bg-cyan-500 text-black animate-pulse'
+                                : 'bg-space-950 text-cyan-300 border border-cyan-500/40 hover:border-cyan-300'
+                            }`}
+                            title="Click to rebind"
+                          >
+                            {k === ' ' ? 'SPACE' : k}
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* Mobile / Touch Note */}
+              <div className="p-3 rounded-xl bg-space-900/60 border border-space-border/50 text-[11px] text-slate-400 leading-relaxed font-mono">
+                <span className="text-cyan-400 font-bold">TOUCH & MOUSE SHORTCUTS: </span>
+                Double-click with left mouse or double-tap on touch screens when near an interactable object to interact immediately without keyboard input.
+              </div>
             </div>
           )}
         </div>
@@ -300,10 +426,10 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
         {/* Footer */}
         <button
           onClick={onClose}
-          className="mt-5 w-full py-3 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono text-xs font-bold tracking-wider flex items-center justify-center gap-2 shadow-glow-cyan"
+          className="mt-4 w-full py-2.5 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white text-xs font-bold tracking-wider flex items-center justify-center gap-2 shadow-glow-cyan"
         >
           <Check className="w-4 h-4" />
-          <span>SAVE & CLOSE</span>
+          <span>{t.saveAndClose}</span>
         </button>
       </div>
     </div>

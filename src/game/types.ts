@@ -28,6 +28,47 @@ export type SuitScheme =
   | 'cyber-teal'
   | 'crimson-alpha';
 
+export type VisualMode = 'cinematic-3d' | 'retro-pixel' | 'cyber-neon' | 'performance';
+export type Language = 'en' | 'ar';
+
+export type GameAction =
+  | 'moveForward'
+  | 'moveBackward'
+  | 'moveLeft'
+  | 'moveRight'
+  | 'interact'
+  | 'inventory'
+  | 'profile'
+  | 'minimap'
+  | 'handbook'
+  | 'pause';
+
+export interface Keybindings {
+  moveForward: string[];
+  moveBackward: string[];
+  moveLeft: string[];
+  moveRight: string[];
+  interact: string[];
+  inventory: string[];
+  profile: string[];
+  minimap: string[];
+  handbook: string[];
+  pause: string[];
+}
+
+export const DEFAULT_KEYBINDINGS: Keybindings = {
+  moveForward: ['w', 'arrowup'],
+  moveBackward: ['s', 'arrowdown'],
+  moveLeft: ['a', 'arrowleft'],
+  moveRight: ['d', 'arrowright'],
+  interact: ['e', 'enter'],
+  inventory: ['i', 'b'],
+  profile: ['p', 'c'],
+  minimap: ['m'],
+  handbook: ['tab', 'h'],
+  pause: ['escape'],
+};
+
 export interface PlayerProfile {
   name: string;
   gender: PlayerGender;

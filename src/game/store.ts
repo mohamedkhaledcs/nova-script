@@ -16,11 +16,15 @@ import type {
   PlayerFacing,
   PlayerGender,
   SuitScheme,
+  VisualMode,
+  Language,
+  GameAction,
+  Keybindings,
   Vec3,
   Inventory,
   CollectibleType,
 } from '@/game/types';
-import { COLLECTIBLE_LIMITS } from '@/game/types';
+import { COLLECTIBLE_LIMITS, DEFAULT_KEYBINDINGS } from '@/game/types';
 import { checkAchievements } from '@/game/progression/achievements';
 import { musicEngine } from '@/game/audio/music-engine';
 
@@ -64,6 +68,15 @@ export interface GameStore {
   isProfileOpen: boolean;
   toggleProfile: () => void;
   setProfileOpen: (open: boolean) => void;
+
+  // Keybindings, Graphics Mood & Localization
+  keybindings: Keybindings;
+  setKeybinding: (action: GameAction, keys: string[]) => void;
+  resetKeybindings: () => void;
+  visualMode: VisualMode;
+  setVisualMode: (mode: VisualMode) => void;
+  language: Language;
+  setLanguage: (lang: Language) => void;
 
   // Player
   playerPosition: Vec3;
@@ -158,6 +171,18 @@ export const useGameStore = create<GameStore>()(
       setSuitScheme: (scheme) => set({ suitScheme: scheme }),
       toggleProfile: () => set((s) => ({ isProfileOpen: !s.isProfileOpen })),
       setProfileOpen: (open) => set({ isProfileOpen: open }),
+
+      // Keybindings, Graphics Mood & Localization
+      keybindings: { ...DEFAULT_KEYBINDINGS },
+      setKeybinding: (action, keys) =>
+        set((s) => ({
+          keybindings: { ...s.keybindings, [action]: keys.map((k) => k.toLowerCase()) },
+        })),
+      resetKeybindings: () => set({ keybindings: { ...DEFAULT_KEYBINDINGS } }),
+      visualMode: 'cinematic-3d',
+      setVisualMode: (mode) => set({ visualMode: mode }),
+      language: 'en',
+      setLanguage: (lang) => set({ language: lang }),
 
       // Player
       playerPosition: { x: 0, y: 0, z: 0 },
@@ -419,6 +444,9 @@ export const useGameStore = create<GameStore>()(
         playerGender: state.playerGender,
         playerName: state.playerName,
         suitScheme: state.suitScheme,
+        keybindings: state.keybindings,
+        visualMode: state.visualMode,
+        language: state.language,
         roomsVisited: state.roomsVisited,
         totalItemsCrafted: state.totalItemsCrafted,
         missionsCompleted: state.missionsCompleted,

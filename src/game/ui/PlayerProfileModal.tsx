@@ -22,6 +22,7 @@ import {
   RefreshCcw,
   Zap,
   BookOpen,
+  Globe,
 } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { COLLECTIBLE_INFO, COLLECTIBLE_LIMITS } from '@/game/types';
@@ -39,6 +40,8 @@ export default function PlayerProfileModal() {
     setPlayerName,
     suitScheme,
     setSuitScheme,
+    language,
+    setLanguage,
     inventory,
     missionsCompleted,
     endingsDiscovered,
@@ -183,6 +186,18 @@ export default function PlayerProfileModal() {
           </div>
 
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                audio.select();
+                setLanguage(language === 'en' ? 'ar' : 'en');
+              }}
+              className="px-2.5 py-1 rounded-lg bg-space-900 border border-cyan-500/30 text-xs font-bold text-cyan-300 hover:bg-space-850 transition-colors flex items-center gap-1 shadow-glow-cyan"
+              title="Toggle English / Arabic Language"
+            >
+              <Globe className="w-3.5 h-3.5 text-cyan-400" />
+              <span>{language === 'en' ? 'EN / عربي' : 'عربي / EN'}</span>
+            </button>
+
             <button
               onClick={() => {
                 audio.select();

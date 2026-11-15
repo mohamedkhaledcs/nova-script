@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck, User, BookOpen } from 'lucide-react';
+import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck, User, BookOpen, Globe } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
 import { musicEngine } from '@/game/audio/music-engine';
 import { useGameStore } from '@/game/store';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
 
 interface MainMenuProps {
   hasSavedMission: boolean;
@@ -20,7 +21,17 @@ export default function MainMenu({
   onOpenSettings,
 }: MainMenuProps) {
   const [showAbout, setShowAbout] = useState(false);
-  const { playerGender, setPlayerGender, playerName, toggleProfile, toggleCodex } = useGameStore();
+  const {
+    playerGender,
+    setPlayerGender,
+    playerName,
+    language,
+    setLanguage,
+    toggleProfile,
+    toggleCodex,
+  } = useGameStore();
+
+  const t = TRANSLATIONS[language || 'en'];
 
   const avatarSrc =
     playerGender === 'female'
@@ -45,6 +56,21 @@ export default function MainMenu({
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center deep-space-bg stars-pattern px-4 py-12 select-none overflow-hidden">
+      {/* Language Switcher in Top Right */}
+      <div className="absolute top-6 right-6 z-20">
+        <button
+          onClick={() => {
+            audio.select();
+            setLanguage(language === 'en' ? 'ar' : 'en');
+          }}
+          className="glass-panel px-3 py-1.5 rounded-xl border border-cyan-500/30 text-xs font-bold text-cyan-300 hover:border-cyan-400 flex items-center gap-1.5 shadow-glow-cyan transition-all cursor-pointer"
+          title="Toggle English / Arabic Language"
+        >
+          <Globe className="w-3.5 h-3.5 text-cyan-400" />
+          <span>{language === 'en' ? 'EN / عربي' : 'عربي / EN'}</span>
+        </button>
+      </div>
+
       {/* Background Orbital Glow Effect */}
       <div className="absolute w-[600px] h-[600px] rounded-full bg-cyan-600/10 blur-[120px] pointer-events-none -top-40 -left-40" />
       <div className="absolute w-[500px] h-[500px] rounded-full bg-blue-600/10 blur-[100px] pointer-events-none -bottom-20 -right-20" />
@@ -128,10 +154,10 @@ export default function MainMenu({
                 onResumeMission();
               }}
               onMouseEnter={() => audio.hover()}
-              className="group relative w-full py-4 px-6 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-bold tracking-wider shadow-glow-cyan transition-all duration-200 flex items-center justify-center gap-3"
+              className="group relative w-full py-4 px-6 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold tracking-wider shadow-glow-cyan transition-all duration-200 flex items-center justify-center gap-3"
             >
               <RotateCcw className="w-5 h-5 text-cyan-200 group-hover:-rotate-45 transition-transform" />
-              <span>CONTINUE</span>
+              <span>{t.resumeMission}</span>
             </button>
           )}
 
@@ -141,14 +167,14 @@ export default function MainMenu({
               onStartNewMission();
             }}
             onMouseEnter={() => audio.hover()}
-            className={`group w-full py-4 px-6 rounded-xl font-mono font-bold tracking-wider transition-all duration-200 flex items-center justify-center gap-3 ${
+            className={`group w-full py-4 px-6 rounded-xl font-bold tracking-wider transition-all duration-200 flex items-center justify-center gap-3 ${
               hasSavedMission
                 ? 'bg-space-850 hover:bg-space-800 text-cyan-300 border border-cyan-700/50 hover:border-cyan-400'
                 : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-glow-cyan'
             }`}
           >
             <Play className="w-5 h-5 text-cyan-300 group-hover:scale-110 transition-transform fill-current" />
-            <span>ENTER STATION</span>
+            <span>{t.enterStation}</span>
           </button>
 
           <div className="grid grid-cols-3 gap-2.5 mt-2">
@@ -158,10 +184,10 @@ export default function MainMenu({
                 toggleProfile();
               }}
               onMouseEnter={() => audio.hover()}
-              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-cyan-300 border border-space-border hover:border-cyan-500/40 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-cyan-300 border border-space-border hover:border-cyan-500/40 text-xs flex items-center justify-center gap-1.5 transition-colors font-bold"
             >
               <User className="w-4 h-4 text-cyan-400" />
-              <span>PROFILE</span>
+              <span>{t.profile}</span>
             </button>
 
             <button
@@ -170,10 +196,10 @@ export default function MainMenu({
                 onOpenSettings();
               }}
               onMouseEnter={() => audio.hover()}
-              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-white border border-space-border text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-white border border-space-border text-xs flex items-center justify-center gap-1.5 transition-colors font-bold"
             >
               <Sliders className="w-4 h-4 text-cyan-400" />
-              <span>SETTINGS</span>
+              <span>{t.settings}</span>
             </button>
 
             <button
@@ -182,11 +208,11 @@ export default function MainMenu({
                 toggleCodex();
               }}
               onMouseEnter={() => audio.hover()}
-              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-cyan-300 border border-space-border hover:border-cyan-500/40 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-cyan-300 border border-space-border hover:border-cyan-500/40 text-xs flex items-center justify-center gap-1.5 transition-colors font-bold"
               title="Open Space Mission Handbook & Scientific Archive"
             >
               <BookOpen className="w-4 h-4 text-cyan-400" />
-              <span>HANDBOOK</span>
+              <span>{t.handbook}</span>
             </button>
           </div>
         </div>
