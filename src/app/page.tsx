@@ -29,7 +29,7 @@ import InventoryPanel from '@/game/ui/InventoryPanel';
 import PauseMenu from '@/game/ui/PauseMenu';
 import MiniGameOverlay from '@/game/ui/MiniGameOverlay';
 import CraftingPanel from '@/game/ui/CraftingPanel';
-import CodexPanel from '@/game/ui/CodexPanel';
+import SpaceHandbookModal from '@/game/ui/SpaceHandbookModal';
 import PlayerProfileModal from '@/game/ui/PlayerProfileModal';
 import LaunchCinematic from '@/game/cinematics/LaunchCinematic';
 import MissionSelector from '@/game/ui/MissionSelector';
@@ -375,9 +375,6 @@ export default function GamePage() {
             }}
           />
 
-          {/* Codex panel */}
-          <CodexPanel />
-
           {/* Mission selector overlay */}
           <MissionSelector
             isOpen={isMissionSelectorOpen}
@@ -481,6 +478,9 @@ export default function GamePage() {
 
       {/* ===== PLAYER PROFILE MODAL (always available) ===== */}
       <PlayerProfileModal />
+
+      {/* ===== SPACE HANDBOOK & ENCYCLOPEDIA MODAL (always available) ===== */}
+      <SpaceHandbookModal />
 
       {/* ===== SETTINGS MODAL (always available) ===== */}
       <SettingsModal

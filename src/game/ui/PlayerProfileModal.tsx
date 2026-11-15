@@ -21,6 +21,7 @@ import {
   Check,
   RefreshCcw,
   Zap,
+  BookOpen,
 } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { COLLECTIBLE_INFO, COLLECTIBLE_LIMITS } from '@/game/types';
@@ -181,15 +182,30 @@ export default function PlayerProfileModal() {
             </div>
           </div>
 
-          <button
-            onClick={() => {
-              audio.click();
-              setProfileOpen(false);
-            }}
-            className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-space-850 transition-colors"
-          >
-            <X className="w-5 h-5" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                audio.select();
+                setProfileOpen(false);
+                useGameStore.getState().toggleCodex();
+              }}
+              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-cyan-950/70 border border-cyan-500/30 text-cyan-300 font-mono text-xs hover:bg-cyan-900/60 transition-colors shadow-glow-cyan"
+              title="Open Space Exploration Handbook & Scientific Archive"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>SPACE HANDBOOK</span>
+            </button>
+
+            <button
+              onClick={() => {
+                audio.click();
+                setProfileOpen(false);
+              }}
+              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-space-850 transition-colors"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
         </div>
 
         {/* Content Body */}

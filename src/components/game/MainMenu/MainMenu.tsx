@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck, User } from 'lucide-react';
+import { Rocket, Play, RotateCcw, Sliders, Info, ShieldCheck, User, BookOpen } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
 import { musicEngine } from '@/game/audio/music-engine';
 import { useGameStore } from '@/game/store';
@@ -20,7 +20,7 @@ export default function MainMenu({
   onOpenSettings,
 }: MainMenuProps) {
   const [showAbout, setShowAbout] = useState(false);
-  const { playerGender, setPlayerGender, playerName, toggleProfile } = useGameStore();
+  const { playerGender, setPlayerGender, playerName, toggleProfile, toggleCodex } = useGameStore();
 
   const avatarSrc =
     playerGender === 'female'
@@ -179,13 +179,14 @@ export default function MainMenu({
             <button
               onClick={() => {
                 audio.click();
-                setShowAbout(!showAbout);
+                toggleCodex();
               }}
               onMouseEnter={() => audio.hover()}
-              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-white border border-space-border text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+              className="py-3 px-3 rounded-xl bg-space-900/90 hover:bg-space-800 text-slate-300 hover:text-cyan-300 border border-space-border hover:border-cyan-500/40 text-xs font-mono flex items-center justify-center gap-1.5 transition-colors"
+              title="Open Space Mission Handbook & Scientific Archive"
             >
-              <Info className="w-4 h-4 text-cyan-400" />
-              <span>ABOUT</span>
+              <BookOpen className="w-4 h-4 text-cyan-400" />
+              <span>HANDBOOK</span>
             </button>
           </div>
         </div>

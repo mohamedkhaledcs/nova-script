@@ -94,10 +94,11 @@ export default function ExplorationHUD() {
             </button>
             <button
               onClick={toggleCodex}
-              className="glass-panel rounded-lg p-2 hover:border-cyan-400 transition-colors border border-transparent"
-              title="Codex [Tab]"
+              className="glass-panel rounded-lg px-2.5 py-1.5 flex items-center gap-1.5 hover:border-cyan-400 transition-colors border border-transparent"
+              title="Space Handbook & Mission Info [Tab]"
             >
               <BookOpen className="w-4 h-4 text-cyan-400" />
+              <span className="hidden sm:inline font-mono text-xs text-cyan-300 font-bold">INFO</span>
             </button>
             <button
               onClick={togglePause}

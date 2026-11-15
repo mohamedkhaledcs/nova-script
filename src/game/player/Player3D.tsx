@@ -159,8 +159,21 @@ export default function Player3D() {
       {/* Ground Navigation & Hotspot Ring */}
       <mesh ref={ringRef} rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.02, 0]}>
         <ringGeometry args={[0.45, 0.65, 32]} />
-        <meshBasicMaterial color="#00F0FF" transparent opacity={0.3} side={THREE.DoubleSide} />
+        <meshBasicMaterial
+          color={playerGender === 'female' ? '#F59E0B' : '#00F0FF'}
+          transparent
+          opacity={0.35}
+          side={THREE.DoubleSide}
+        />
       </mesh>
+
+      {/* Visor & Suit Headlight Glow */}
+      <pointLight
+        position={[0, 0.85, 0.35]}
+        distance={2.2}
+        intensity={0.45}
+        color={playerGender === 'female' ? '#FBBF24' : '#38BDF8'}
+      />
 
       {/* Ground Contact Shadow */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
