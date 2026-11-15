@@ -184,24 +184,18 @@ nova-script/
 ## Authors & Team Collaborators
 
 ### Core Team & Collaborators
-- **Mohamed Khaled** — *Lead Architect & Author*  
-  Front-End Track Leader @ IEEE OCS SB | Full-Stack .NET Developer | ITI Trainee | Competitive Programmer
-- **Mohamed Ahmed** — *Data Analysis & Insights*  
-  Data Analysis Instructor @ GDG On Campus – Obour Institute | Aspiring Data Analyst | Python, SQL, Power BI
-- **Mohamed Fares** — *Backend & Algorithmic Engineering*  
-  2× ECPC Finalist | Team Leader @ DEPI | Mentors Leader @ ICPC Obour Community | Backend Developer (.NET)
-- **Mahmoud Abdullah** — *Front-End & AI Engineering*  
-  Front-End Developer | Front-End AI Engineer @ FlayRank AI | React Frontend Web Development @ DEPI | Front-End Instructor @ GDG
-- **Mohamed Sobhy** — *Product Development & UI/UX*  
-  Computer Science | AI & AI-Powered Product Development | UI/UX Design | Hardware Prototyping & Digital Fabrication
-- **Abdullatif Walid** — *UI/UX Design & Media*  
-  UI/UX Designer & Video Editor | UI/UX Track Instructor @ GDG | AI Content Creator & CS Senior
+- **Mohamed Khaled**
+- **Mohamed Ahmed**
+- **Mohamed Fares**
+- **Mahmoud Abdullah**
+- **Mohamed Sobhy**
+- **Abdullatif Walid**
 
 ### AI Systems Co-Engineering
-- **Antigravity** (Autonomous Agentic Assistant, Google DeepMind)
+- **Antigravity** (Google DeepMind)
 
 ### Event
-- Built for the **NASA Space Apps Challenge 2026** (*Space Mission Design Game*)
+- Built for the NASA Space Apps Challenge 2026 (Space Mission Design Game)
 
 ---
 
