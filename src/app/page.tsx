@@ -336,9 +336,9 @@ export default function GamePage() {
   const visualModeClass = React.useMemo(() => {
     switch (visualMode) {
       case 'retro-pixel':
-        return 'contrast-125 saturate-110 [image-rendering:pixelated]';
+        return 'contrast-125 saturate-120 font-mono';
       case 'cyber-neon':
-        return 'contrast-125 saturate-150 drop-shadow-[0_0_12px_rgba(0,240,255,0.3)]';
+        return 'contrast-115 saturate-125';
       case 'performance':
         return '';
       default:
@@ -352,9 +352,26 @@ export default function GamePage() {
       style={{ cursor: 'none' }}
       dir={language === 'ar' ? 'rtl' : 'ltr'}
     >
-      {/* Retro Pixel CRT Scanlines Overlay */}
+      {/* Retro Pixel CRT Scanlines & Phosphor Vignette Overlay */}
       {visualMode === 'retro-pixel' && (
-        <div className="fixed inset-0 pointer-events-none z-50 bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.18)_0px,rgba(0,0,0,0.18)_1px,transparent_1px,transparent_2px)] opacity-70" />
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+          <div className="absolute inset-0 bg-[repeating-linear-gradient(0deg,rgba(0,0,0,0.32)_0px,rgba(0,0,0,0.32)_1px,transparent_1px,transparent_3px)] opacity-60" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,transparent_60%,rgba(0,0,0,0.65)_100%)] pointer-events-none" />
+          <div className="absolute top-2 left-3 text-[10px] font-mono text-emerald-400/70 tracking-widest uppercase">
+            [16-BIT RENDER MATRIX // CRT-01]
+          </div>
+        </div>
+      )}
+
+      {/* Cyberpunk Neon Glow Accents */}
+      {visualMode === 'cyber-neon' && (
+        <div className="fixed inset-0 pointer-events-none z-50">
+          <div className="absolute inset-0 border-2 border-cyan-500/20 shadow-[inset_0_0_50px_rgba(0,240,255,0.08)]" />
+          <div className="absolute top-2 left-3 text-[10px] font-mono text-cyan-400/80 tracking-widest uppercase flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-cyan-400 animate-ping inline-block" />
+            [CYBER NEON MATRIX // SATURATED]
+          </div>
+        </div>
       )}
       {/* ===== MAIN MENU ===== */}
       {screen === 'menu' && (

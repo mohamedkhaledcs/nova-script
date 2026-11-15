@@ -95,25 +95,25 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       id: 'cinematic-3d',
       title: t.modeCinematic,
       desc: t.modeCinematicDesc,
-      icon: '🛸',
+      icon: '[3D-CINEMA]',
     },
     {
       id: 'retro-pixel',
       title: t.modeRetro,
       desc: t.modeRetroDesc,
-      icon: '👾',
+      icon: '[16-BIT]',
     },
     {
       id: 'cyber-neon',
       title: t.modeCyber,
       desc: t.modeCyberDesc,
-      icon: '⚡',
+      icon: '[CYBER]',
     },
     {
       id: 'performance',
       title: t.modePerf,
       desc: t.modePerfDesc,
-      icon: '🔋',
+      icon: '[PERF]',
     },
   ];
 

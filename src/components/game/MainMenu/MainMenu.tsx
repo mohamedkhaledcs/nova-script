@@ -127,7 +127,7 @@ export default function MainMenu({
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              ♂ ALEX
+              {t.alexDesignation}
             </button>
             <button
               onClick={() => {
@@ -136,11 +136,11 @@ export default function MainMenu({
               }}
               className={`px-3 py-0.5 rounded-full text-[11px] font-mono font-bold transition-all ${
                 playerGender === 'female'
-                  ? 'bg-gradient-to-r from-pink-600 to-purple-600 text-white shadow-glow-amber'
+                  ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-glow-amber'
                   : 'text-slate-400 hover:text-white'
               }`}
             >
-              ♀ MAYA
+              {t.mayaDesignation}
             </button>
           </div>
         </div>

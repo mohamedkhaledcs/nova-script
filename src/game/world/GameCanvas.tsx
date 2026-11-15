@@ -8,6 +8,7 @@
 
 import React from 'react';
 import dynamic from 'next/dynamic';
+import { AlertTriangle } from 'lucide-react';
 
 const GameCanvasInner = dynamic(() => import('./GameCanvasInner'), {
   ssr: false,
@@ -50,7 +51,7 @@ class WebGLErrorBoundary extends React.Component<
       return (
         <div className="w-full h-full flex items-center justify-center bg-space-950 p-8">
           <div className="max-w-md text-center glass-panel p-8 rounded-2xl border border-red-500/40">
-            <div className="text-4xl mb-4">⚠️</div>
+            <AlertTriangle className="w-10 h-10 text-red-400 mx-auto mb-4 animate-pulse" />
             <h3 className="text-lg font-mono font-bold text-red-400 mb-2">
               GRAPHICS SUBSYSTEM FAILURE
             </h3>

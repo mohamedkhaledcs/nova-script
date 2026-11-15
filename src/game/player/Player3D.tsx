@@ -33,6 +33,8 @@ export default function Player3D() {
     suitScheme,
     isMoving,
     showInteractionPrompt,
+    visualMode,
+    language,
   } = useGameStore();
 
   // Load both male & female astronaut textures for instantaneous switching
@@ -168,12 +170,22 @@ export default function Player3D() {
       </mesh>
 
       {/* Visor & Suit Headlight Glow */}
-      <pointLight
-        position={[0, 0.85, 0.35]}
-        distance={2.2}
-        intensity={0.45}
-        color={playerGender === 'female' ? '#FBBF24' : '#38BDF8'}
-      />
+      {visualMode !== 'performance' && (
+        <pointLight
+          position={[0, 0.85, 0.35]}
+          distance={visualMode === 'cyber-neon' ? 3.5 : 2.4}
+          intensity={visualMode === 'cyber-neon' ? 1.4 : visualMode === 'retro-pixel' ? 0.7 : 0.5}
+          color={
+            visualMode === 'cyber-neon'
+              ? '#00F0FF'
+              : visualMode === 'retro-pixel'
+              ? '#FFAA33'
+              : playerGender === 'female'
+              ? '#FBBF24'
+              : '#38BDF8'
+          }
+        />
+      )}
 
       {/* Ground Contact Shadow */}
       <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
@@ -228,7 +240,7 @@ export default function Player3D() {
             anchorY="middle"
             font={undefined}
           >
-            {'[E] INTERACT'}
+            {language === 'ar' ? '[E] تفاعل' : '[E] INTERACT'}
           </Text>
           <mesh position={[0, 0, -0.01]}>
             <planeGeometry args={[2.1, 0.45]} />

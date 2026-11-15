@@ -163,31 +163,31 @@ export const COLLECTIBLE_INFO: Record<
 > = {
   'metal-scrap': {
     label: 'Metal Scrap',
-    icon: '🔩',
+    icon: 'SCRAP',
     color: '#94A3B8',
     description: 'Salvaged spacecraft alloy fragments for repairs and upgrades.',
   },
   'energy-cell': {
     label: 'Energy Cell',
-    icon: '⚡',
+    icon: 'ENERGY',
     color: '#FBBF24',
     description: 'Compact fusion micro-cells powering station subsystems.',
   },
   'science-sample': {
     label: 'Science Sample',
-    icon: '🔬',
+    icon: 'SAMPLE',
     color: '#06B6D4',
     description: 'Analyzed specimens from planetary simulations.',
   },
   'blueprint-fragment': {
     label: 'Blueprint Fragment',
-    icon: '📐',
+    icon: 'BLUEPRINT',
     color: '#818CF8',
     description: 'Partial design schematics for advanced spacecraft modules.',
   },
   'rare-mineral': {
     label: 'Rare Mineral',
-    icon: '💎',
+    icon: 'CRYSTAL',
     color: '#F472B6',
     description: 'Exotic crystalline compounds with unique thermal properties.',
   },

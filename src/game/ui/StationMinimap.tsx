@@ -23,7 +23,7 @@ import type { RoomId } from '@/game/types';
 import { audio } from '@/lib/audio/audio-manager';
 import { TRANSLATIONS } from '@/lib/i18n/translations';
 
-// True physical topological blueprint layout with facility glyphs
+// True physical topological blueprint layout with tactical indicators
 const ROOM_MAP_LAYOUT: Record<
   RoomId,
   {
@@ -31,11 +31,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: number;
     w: number;
     h: number;
-    label: string;
+    labelKey: keyof typeof TRANSLATIONS.en;
     code: string;
     glyph: string;
-    direction: string;
-    description: string;
+    dirKey: keyof typeof TRANSLATIONS.en;
+    descKey: keyof typeof TRANSLATIONS.en;
   }
 > = {
   // Center: The central transit corridor connecting all station modules
@@ -44,11 +44,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: 68,
     w: 72,
     h: 28,
-    label: 'Central Hub',
+    labelKey: 'centralHub',
     code: 'HUB-TRN',
-    glyph: '🌐',
-    direction: 'CENTER',
-    description: 'Central transit corridor linking all 6 orbital modules',
+    glyph: '⊕',
+    dirKey: 'dirCenter',
+    descKey: 'centralHubDesc',
   },
   // West (Left)
   'command-center': {
@@ -56,11 +56,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: 58,
     w: 48,
     h: 48,
-    label: 'Command Center',
+    labelKey: 'commandCenter',
     code: 'CMD-00',
-    glyph: '🖥️',
-    direction: 'WEST (←)',
-    description: 'Flight telemetry, station displays, and main observation deck',
+    glyph: '⌗',
+    dirKey: 'dirWest',
+    descKey: 'commandCenterDesc',
   },
   // East (Right)
   hangar: {
@@ -68,11 +68,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: 56,
     w: 48,
     h: 52,
-    label: 'Vehicle Hangar',
+    labelKey: 'vehicleHangar',
     code: 'HNG-02',
-    glyph: '🛸',
-    direction: 'EAST (→)',
-    description: '3D Spacecraft assembly bay & engineering workbench',
+    glyph: '▲',
+    dirKey: 'dirEast',
+    descKey: 'vehicleHangarDesc',
   },
   // North-West (Top-Left)
   'science-lab': {
@@ -80,11 +80,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: 12,
     w: 54,
     h: 40,
-    label: 'Science Lab',
+    labelKey: 'scienceLab',
     code: 'LAB-01',
-    glyph: '🔬',
-    direction: 'NORTH-WEST (↖)',
-    description: 'Raman spectrometer & planetary geology analysis',
+    glyph: 'LAB',
+    dirKey: 'dirNorthWest',
+    descKey: 'scienceLabDesc',
   },
   // North-East (Top-Right)
   'comms-array': {
@@ -92,11 +92,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: 12,
     w: 54,
     h: 40,
-    label: 'Comms Array',
+    labelKey: 'commsArray',
     code: 'COM-03',
-    glyph: '📡',
-    direction: 'NORTH-EAST (↗)',
-    description: 'Deep Space Network antenna dish calibration',
+    glyph: '∿',
+    dirKey: 'dirNorthEast',
+    descKey: 'commsArrayDesc',
   },
   // South-West (Bottom-Left)
   'resource-bay': {
@@ -104,11 +104,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: 112,
     w: 54,
     h: 40,
-    label: 'Resource Bay',
+    labelKey: 'resourceBay',
     code: 'RES-05',
-    glyph: '📦',
-    direction: 'SOUTH-WEST (↙)',
-    description: 'Material storage lockers & salvaged component crates',
+    glyph: '◆',
+    dirKey: 'dirSouthWest',
+    descKey: 'resourceBayDesc',
   },
   // South-East (Bottom-Right)
   'mission-board': {
@@ -116,11 +116,11 @@ const ROOM_MAP_LAYOUT: Record<
     y: 112,
     w: 54,
     h: 40,
-    label: 'Mission Board',
+    labelKey: 'missionBoard',
     code: 'MSN-06',
-    glyph: '🚀',
-    direction: 'SOUTH-EAST (↘)',
-    description: 'Mission target selection & launch authorization terminal',
+    glyph: '⌖',
+    dirKey: 'dirSouthEast',
+    descKey: 'missionBoardDesc',
   },
 };
 
@@ -226,10 +226,18 @@ export default function StationMinimap() {
             </g>
 
             {/* Compass Cardinal Points */}
-            <text x="100" y="8" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">N</text>
-            <text x="100" y="162" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">S</text>
-            <text x="5" y="84" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">W</text>
-            <text x="195" y="84" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">E</text>
+            <text x="100" y="8" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">
+              {language === 'ar' ? 'ش' : 'N'}
+            </text>
+            <text x="100" y="162" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">
+              {language === 'ar' ? 'ج' : 'S'}
+            </text>
+            <text x="5" y="84" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">
+              {language === 'ar' ? 'غ' : 'W'}
+            </text>
+            <text x="195" y="84" textAnchor="middle" fill="#38BDF8" fontSize="5" fontFamily="monospace" opacity="0.6">
+              {language === 'ar' ? 'ق' : 'E'}
+            </text>
 
             {/* Pressurized Transit Tunnels */}
             <path d="M 64 82 L 56 82" stroke="#38BDF8" strokeWidth="3.5" strokeLinecap="round" strokeOpacity="0.5" />
@@ -317,10 +325,10 @@ export default function StationMinimap() {
                       y={layout.y + layout.h / 2 + 7.5}
                       textAnchor="middle"
                       fill={isCurrent ? '#E0F2FE' : '#94A3B8'}
-                      fontSize="5"
+                      fontSize="4.5"
                       fontFamily="monospace"
                     >
-                      {layout.label}
+                      {t[layout.labelKey] as string}
                     </text>
                   )}
                 </g>
@@ -393,17 +401,21 @@ export default function StationMinimap() {
           {waypointRoom ? (
             <div className="flex items-center gap-1 text-amber-300 font-bold truncate">
               <Navigation className="w-3 h-3 text-amber-400 shrink-0" />
-              <span>WAYPOINT: {ROOM_MAP_LAYOUT[waypointRoom].label} ({ROOM_MAP_LAYOUT[waypointRoom].direction})</span>
+              <span>
+                {t.targetWaypoint}: {t[ROOM_MAP_LAYOUT[waypointRoom].labelKey] as string} ({t[ROOM_MAP_LAYOUT[waypointRoom].dirKey] as string})
+              </span>
             </div>
           ) : hoveredRoom ? (
             <div className="truncate text-slate-300">
-              <span className="text-cyan-400 font-bold">{ROOM_MAP_LAYOUT[hoveredRoom].direction}: </span>
-              {ROOM_MAP_LAYOUT[hoveredRoom].label} — {ROOM_MAP_LAYOUT[hoveredRoom].description}
+              <span className="text-cyan-400 font-bold">
+                {t[ROOM_MAP_LAYOUT[hoveredRoom].dirKey] as string}:{' '}
+              </span>
+              {t[ROOM_MAP_LAYOUT[hoveredRoom].labelKey] as string} — {t[ROOM_MAP_LAYOUT[hoveredRoom].descKey] as string}
             </div>
           ) : (
             <div className="flex items-center justify-between w-full text-slate-400">
-              <span className="text-cyan-300 font-bold">{activeLayout.label}</span>
-              <span className="text-slate-500">Press [M] to Toggle</span>
+              <span className="text-cyan-300 font-bold">{t[activeLayout.labelKey] as string}</span>
+              <span className="text-slate-500">{t.radarToggle}</span>
             </div>
           )}
         </div>

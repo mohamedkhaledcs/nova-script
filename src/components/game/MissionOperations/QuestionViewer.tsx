@@ -12,6 +12,8 @@ import {
 } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
 import type { Question, AnswerOption, Resources, ResourceKey } from '@/types/game';
+import { useGameStore } from '@/game/store';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
 
 interface QuestionViewerProps {
   question: Question;
@@ -19,7 +21,7 @@ interface QuestionViewerProps {
   onCommitAnswer: (answerId: string) => void;
 }
 
-const RESOURCE_LABELS: Record<ResourceKey, { label: string; color: string }> = {
+const RESOURCE_LABELS_EN: Record<ResourceKey, { label: string; color: string }> = {
   budget: { label: 'Budget', color: 'text-amber-400 bg-amber-950/60 border-amber-600/40' },
   mass: { label: 'Mass', color: 'text-purple-400 bg-purple-950/60 border-purple-600/40' },
   power: { label: 'Power', color: 'text-yellow-400 bg-yellow-950/60 border-yellow-600/40' },
@@ -27,10 +29,23 @@ const RESOURCE_LABELS: Record<ResourceKey, { label: string; color: string }> = {
   communication: { label: 'Comms', color: 'text-emerald-400 bg-emerald-950/60 border-emerald-600/40' },
 };
 
+const RESOURCE_LABELS_AR: Record<ResourceKey, { label: string; color: string }> = {
+  budget: { label: 'الميزانية', color: 'text-amber-400 bg-amber-950/60 border-amber-600/40' },
+  mass: { label: 'الكتلة', color: 'text-purple-400 bg-purple-950/60 border-purple-600/40' },
+  power: { label: 'الطاقة', color: 'text-yellow-400 bg-yellow-950/60 border-yellow-600/40' },
+  scientific_value: { label: 'العلوم', color: 'text-cyan-400 bg-cyan-950/60 border-cyan-600/40' },
+  communication: { label: 'الاتصالات', color: 'text-emerald-400 bg-emerald-950/60 border-emerald-600/40' },
+};
+
 export default function QuestionViewer({
   question,
   onCommitAnswer,
 }: QuestionViewerProps) {
+  const language = useGameStore((s) => s.language);
+  const isAr = language === 'ar';
+  const t = TRANSLATIONS[language || 'en'];
+  const resourceLabels = isAr ? RESOURCE_LABELS_AR : RESOURCE_LABELS_EN;
+
   const [selectedAnswer, setSelectedAnswer] = useState<AnswerOption | null>(null);
   const [showConsequenceModal, setShowConsequenceModal] = useState<boolean>(false);
 
@@ -119,10 +134,10 @@ export default function QuestionViewer({
                   {/* Option Header */}
                   <div className="flex items-center justify-between pb-3 border-b border-slate-800/80 mb-3">
                     <span className="font-mono text-xs font-bold px-2 py-0.5 rounded bg-space-950 text-cyan-400 border border-cyan-800/40">
-                      OPTION {idx === 0 ? 'A' : 'B'} [{option.id}]
+                      {isAr ? (idx === 0 ? t.optionA : t.optionB) : `OPTION ${idx === 0 ? 'A' : 'B'}`} [{option.id}]
                     </span>
-                    <span className="text-[11px] font-mono text-slate-500 group-hover:text-cyan-300 transition-colors flex items-center gap-1">
-                      CHOOSE <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
+                    <span className="text-[11px] font-mono text-slate-500 group-hover:text-cyan-300 transition-colors flex items-center gap-1 font-bold">
+                      {isAr ? t.chooseOption : 'CHOOSE'} <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" />
                     </span>
                   </div>
 
@@ -135,12 +150,12 @@ export default function QuestionViewer({
                 {/* Anticipated Resource Effects Badges */}
                 <div className="mt-5 pt-3 border-t border-slate-800/60">
                   <div className="text-[10px] font-mono text-slate-400 uppercase tracking-wider mb-1.5">
-                    Engineering Impact:
+                    {t.engineeringImpact}
                   </div>
                   <div className="flex flex-wrap gap-1.5">
                     {effectsEntries.length > 0 ? (
                       effectsEntries.map(([resKey, deltaVal]) => {
-                        const info = RESOURCE_LABELS[resKey as ResourceKey];
+                        const info = resourceLabels[resKey as ResourceKey];
                         const isPositive = (deltaVal as number) > 0;
                         return (
                           <span
@@ -156,7 +171,7 @@ export default function QuestionViewer({
                       })
                     ) : (
                       <span className="text-[11px] font-mono text-slate-500 italic">
-                        Neutral resource margins
+                        {isAr ? 'تأثير متوازن على الموارد' : 'Neutral resource margins'}
                       </span>
                     )}
                   </div>
@@ -179,14 +194,14 @@ export default function QuestionViewer({
                 <CheckCircle className="w-5 h-5 text-cyan-400 shrink-0" />
               )}
               <h4 className="text-lg font-mono font-bold text-white tracking-wide">
-                ENGINEERING TRADE-OFF ANALYSIS
+                {isAr ? 'تحليل الموازنات الهندسية الفضائية' : 'ENGINEERING TRADE-OFF ANALYSIS'}
               </h4>
             </div>
 
             {/* Selected Decision Summary */}
             <div className="mt-4">
               <span className="text-xs font-mono text-cyan-400 uppercase tracking-wider">
-                Confirmed Action:
+                {isAr ? 'القرار المحدد:' : 'Confirmed Action:'}
               </span>
               <p className="mt-1 text-sm font-medium text-slate-200">
                 {selectedAnswer.text}
@@ -197,7 +212,7 @@ export default function QuestionViewer({
             <div className="mt-4 p-4 rounded-xl bg-space-950/80 border border-slate-800">
               <span className="text-xs font-mono text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
                 <AlertCircle className="w-3.5 h-3.5" />
-                Operational Consequence:
+                {isAr ? 'التبعات والنتائج التشغيلية:' : 'Operational Consequence:'}
               </span>
               <p className="mt-1.5 text-sm text-slate-200 font-light leading-relaxed">
                 {selectedAnswer.consequence_summary}
@@ -208,7 +223,7 @@ export default function QuestionViewer({
             <div className="mt-4 p-4 rounded-xl bg-cyan-950/40 border border-cyan-800/40">
               <span className="text-xs font-mono text-cyan-300 uppercase tracking-wider flex items-center gap-1.5">
                 <HelpCircle className="w-3.5 h-3.5" />
-                Systems Engineering Takeaway:
+                {isAr ? 'المبدأ العلمي والهندسي المستفاد:' : 'Systems Engineering Takeaway:'}
               </span>
               <p className="mt-1.5 text-sm text-cyan-100 font-light leading-relaxed">
                 {selectedAnswer.learning_point}
@@ -218,7 +233,7 @@ export default function QuestionViewer({
             {/* Proceed Action Button */}
             <button
               onClick={handleConfirmDecision}
-              className={`mt-6 w-full py-3.5 px-6 rounded-xl font-mono font-bold text-sm tracking-wider flex items-center justify-center gap-2 transition-all ${
+              className={`mt-6 w-full py-3.5 px-6 rounded-xl font-mono font-bold text-sm tracking-wider flex items-center justify-center gap-2 transition-all cursor-pointer ${
                 selectedAnswer.ending_id
                   ? 'bg-gradient-to-r from-amber-600 to-red-600 hover:from-amber-500 hover:to-red-500 text-white shadow-glow-amber'
                   : 'bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white shadow-glow-cyan'
@@ -226,7 +241,11 @@ export default function QuestionViewer({
             >
               <span>
                 {selectedAnswer.ending_id
-                  ? 'COMMENCE MISSION OUTCOME EVALUATION'
+                  ? isAr
+                    ? 'تقييم نتيجة المهمة النهائية'
+                    : 'COMMENCE MISSION OUTCOME EVALUATION'
+                  : isAr
+                  ? 'تأكيد القرار ومتابعة الرحلة'
                   : 'COMMIT DECISION & ADVANCE MISSION'}
               </span>
               <ArrowRight className="w-4 h-4" />

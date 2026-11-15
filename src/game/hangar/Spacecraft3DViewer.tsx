@@ -208,8 +208,8 @@ export default function Spacecraft3DViewer(props: Spacecraft3DViewerProps) {
           autoRotate={false}
         />
       </Canvas>
-      <div className="absolute bottom-2 left-3 text-[10px] font-mono text-slate-500 pointer-events-none">
-        🖱️ Click & Drag to Rotate | Scroll to Zoom
+      <div className="absolute bottom-2 left-3 text-[10px] font-mono text-cyan-400/70 pointer-events-none uppercase tracking-wider">
+        [CLICK & DRAG TO ROTATE // SCROLL TO ZOOM]
       </div>
     </div>
   );

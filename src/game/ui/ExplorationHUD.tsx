@@ -20,6 +20,7 @@ import { useGameStore } from '@/game/store';
 import { getRoomDefinition } from '@/game/world/rooms';
 import { COLLECTIBLE_INFO } from '@/game/types';
 import type { CollectibleType } from '@/game/types';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
 import StationMinimap from './StationMinimap';
 
 export default function ExplorationHUD() {
@@ -30,15 +31,34 @@ export default function ExplorationHUD() {
     playerGender,
     playerName,
     showInteractionPrompt,
+    language,
     toggleInventory,
     togglePause,
     toggleCodex,
     toggleProfile,
   } = useGameStore();
 
-  if (phase !== 'exploring') return null;
-
+  const t = TRANSLATIONS[language || 'en'];
   const room = getRoomDefinition(currentRoom);
+
+  // Localized room name
+  const localizedRoomName = React.useMemo(() => {
+    if (language === 'ar') {
+      const roomMap: Record<string, string> = {
+        hallway: t.centralHub,
+        'command-center': t.commandCenter,
+        hangar: t.vehicleHangar,
+        'science-lab': t.scienceLab,
+        'comms-array': t.commsArray,
+        'resource-bay': t.resourceBay,
+        'mission-board': t.missionBoard,
+      };
+      return roomMap[currentRoom] || room.name;
+    }
+    return room.name.toUpperCase();
+  }, [currentRoom, language, room.name, t]);
+
+  if (phase !== 'exploring') return null;
 
   const totalItems = Object.values(inventory.items).reduce((a, b) => a + b, 0);
   const avatarSrc =
@@ -55,7 +75,7 @@ export default function ExplorationHUD() {
           <div className="glass-panel rounded-lg px-4 py-2 flex items-center gap-2 pointer-events-auto">
             <MapPin className="w-4 h-4 text-cyan-400" />
             <span className="font-mono text-sm text-cyan-300 tracking-wider font-bold">
-              {room.name.toUpperCase()}
+              {localizedRoomName}
             </span>
           </div>
 
@@ -72,7 +92,7 @@ export default function ExplorationHUD() {
             <button
               onClick={toggleProfile}
               className="glass-panel rounded-lg px-2.5 py-1.5 flex items-center gap-2 hover:border-cyan-400 transition-colors border border-cyan-500/30 group"
-              title="Commander Profile [P]"
+              title={`${t.profile} [P]`}
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -88,7 +108,7 @@ export default function ExplorationHUD() {
             <button
               onClick={toggleInventory}
               className="glass-panel rounded-lg px-3 py-2 flex items-center gap-2 hover:border-cyan-400 transition-colors border border-transparent"
-              title="Inventory [I]"
+              title={`${t.inventory} [I]`}
             >
               <Package className="w-4 h-4 text-amber-400" />
               <span className="font-mono text-xs text-slate-300">{totalItems}</span>
@@ -96,15 +116,17 @@ export default function ExplorationHUD() {
             <button
               onClick={toggleCodex}
               className="glass-panel rounded-lg px-2.5 py-1.5 flex items-center gap-1.5 hover:border-cyan-400 transition-colors border border-transparent"
-              title="Space Handbook & Mission Info [Tab]"
+              title={`${t.info} [Tab]`}
             >
               <BookOpen className="w-4 h-4 text-cyan-400" />
-              <span className="hidden sm:inline font-mono text-xs text-cyan-300 font-bold">INFO</span>
+              <span className="hidden sm:inline font-mono text-xs text-cyan-300 font-bold">
+                {t.info}
+              </span>
             </button>
             <button
               onClick={togglePause}
               className="glass-panel rounded-lg p-2 hover:border-cyan-400 transition-colors border border-transparent"
-              title="Pause [Esc]"
+              title={`${t.pause} [Esc]`}
             >
               <Pause className="w-4 h-4 text-slate-400" />
             </button>
@@ -123,7 +145,7 @@ export default function ExplorationHUD() {
             title="Click or Double-Click / Tap to interact"
           >
             <KeyRound className="w-4 h-4 text-cyan-200 animate-pulse" />
-            <span>[E] INTERACT // DOUBLE-CLICK</span>
+            <span>{t.doubleClickPrompt}</span>
           </button>
         </div>
       )}
@@ -133,19 +155,19 @@ export default function ExplorationHUD() {
         <div className="flex items-center justify-center px-4 py-3">
           <div className="glass-panel rounded-lg px-4 py-2 flex items-center gap-4 text-xs font-mono text-slate-400">
             <span className="flex items-center gap-1">
-              <Move className="w-3 h-3" /> WASD / Arrows
+              <Move className="w-3 h-3 text-cyan-400" /> {t.controlsMove}
             </span>
             <span className="flex items-center gap-1">
-              <KeyRound className="w-3 h-3" /> [E] Interact
+              <KeyRound className="w-3 h-3 text-cyan-400" /> {t.controlsInteract}
             </span>
             <span className="flex items-center gap-1">
-              <Package className="w-3 h-3" /> [I] Inventory
+              <Package className="w-3 h-3 text-amber-400" /> {t.controlsInventory}
             </span>
             <span className="flex items-center gap-1">
-              <User className="w-3 h-3" /> [P] Profile
+              <User className="w-3 h-3 text-cyan-400" /> {t.controlsProfile}
             </span>
             <span className="hidden sm:flex items-center gap-1 text-cyan-400">
-              <Radio className="w-3 h-3" /> [M] Radar
+              <Radio className="w-3 h-3" /> {t.controlsRadar}
             </span>
           </div>
         </div>
@@ -161,13 +183,29 @@ export default function ExplorationHUD() {
             .filter(([, count]) => count > 0)
             .map(([type, count]) => {
               const info = COLLECTIBLE_INFO[type];
+              const localizedLabel =
+                language === 'ar'
+                  ? type === 'metal-scrap'
+                    ? t.metalScrap
+                    : type === 'energy-cell'
+                    ? t.energyCell
+                    : type === 'science-sample'
+                    ? t.scienceSample
+                    : type === 'blueprint-fragment'
+                    ? t.blueprintFragment
+                    : t.rareMineral
+                  : info.label;
+
               return (
                 <div
                   key={type}
-                  className="glass-panel rounded-lg px-2 py-1.5 flex items-center gap-1"
-                  title={`${info.label}: ${count}`}
+                  className="glass-panel rounded-lg px-2.5 py-1.5 flex items-center gap-1.5 border border-cyan-900/40"
+                  title={`${localizedLabel}: ${count}`}
                 >
-                  <span className="text-sm">{info.icon}</span>
+                  <span
+                    className="w-2.5 h-2.5 rounded-full inline-block shadow-sm"
+                    style={{ backgroundColor: info.color }}
+                  />
                   <span className="font-mono text-xs font-bold" style={{ color: info.color }}>
                     {count}
                   </span>

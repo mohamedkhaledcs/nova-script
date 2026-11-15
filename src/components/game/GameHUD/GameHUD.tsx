@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import type { Resources, MissionStage } from '@/types/game';
 import { isResourceCritical } from '@/lib/game-engine/resource-engine';
+import { useGameStore } from '@/game/store';
 
 interface GameHUDProps {
   resources: Resources;
@@ -26,7 +27,7 @@ interface GameHUDProps {
   onRestart: () => void;
 }
 
-const STAGE_LABELS: Record<MissionStage, string> = {
+const STAGE_LABELS_EN: Record<MissionStage, string> = {
   mission_planning: 'Mission Planning',
   spacecraft_design: 'Spacecraft Design',
   scientific_instruments: 'Science Instruments',
@@ -35,6 +36,17 @@ const STAGE_LABELS: Record<MissionStage, string> = {
   resource_management: 'Resource Ops',
   launch_planning: 'Launch Planning',
   mission_operations: 'Flight Operations',
+};
+
+const STAGE_LABELS_AR: Record<MissionStage, string> = {
+  mission_planning: 'تخطيط المهمة',
+  spacecraft_design: 'تصميم المركبة',
+  scientific_instruments: 'الأجهزة العلمية',
+  orbit_selection: 'اختيار المدار',
+  space_communications: 'الاتصالات',
+  resource_management: 'إدارة الموارد',
+  launch_planning: 'تخطيط الإطلاق',
+  mission_operations: 'عمليات الطيران',
 };
 
 export default function GameHUD({
@@ -47,10 +59,13 @@ export default function GameHUD({
   onToggleAudio,
   onRestart,
 }: GameHUDProps) {
+  const language = useGameStore((s) => s.language);
+  const isAr = language === 'ar';
+
   const resourceConfigs = [
     {
       key: 'budget' as const,
-      label: 'Budget',
+      label: isAr ? 'الميزانية' : 'Budget',
       value: resources.budget,
       delta: lastDeltas?.budget,
       color: 'text-amber-400',
@@ -60,7 +75,7 @@ export default function GameHUD({
     },
     {
       key: 'mass' as const,
-      label: 'Mass',
+      label: isAr ? 'الكتلة' : 'Mass',
       value: resources.mass,
       delta: lastDeltas?.mass,
       color: 'text-purple-400',
@@ -70,7 +85,7 @@ export default function GameHUD({
     },
     {
       key: 'power' as const,
-      label: 'Power',
+      label: isAr ? 'الطاقة' : 'Power',
       value: resources.power,
       delta: lastDeltas?.power,
       color: 'text-yellow-400',
@@ -80,7 +95,7 @@ export default function GameHUD({
     },
     {
       key: 'scientific_value' as const,
-      label: 'Science',
+      label: isAr ? 'العلوم' : 'Science',
       value: resources.scientific_value,
       delta: lastDeltas?.scientific_value,
       color: 'text-cyan-400',
@@ -90,7 +105,7 @@ export default function GameHUD({
     },
     {
       key: 'communication' as const,
-      label: 'Comms',
+      label: isAr ? 'الاتصال' : 'Comms',
       value: resources.communication,
       delta: lastDeltas?.communication,
       color: 'text-emerald-400',
@@ -114,13 +129,13 @@ export default function GameHUD({
 
           {destination && (
             <span className="text-xs px-2.5 py-0.5 rounded-full bg-slate-800 text-slate-200 border border-slate-700 capitalize">
-              Target: {destination}
+              {isAr ? (destination === 'moon' ? 'الوجهة: القمر' : 'الوجهة: المريخ') : `Target: ${destination}`}
             </span>
           )}
 
           {stage && (
             <span className="hidden sm:inline-block text-xs px-2.5 py-0.5 rounded bg-slate-900/80 text-cyan-300/90 border border-cyan-800/40 font-mono">
-              {STAGE_LABELS[stage] || stage}
+              {isAr ? STAGE_LABELS_AR[stage] || stage : STAGE_LABELS_EN[stage] || stage}
             </span>
           )}
         </div>

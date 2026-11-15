@@ -299,6 +299,7 @@ function CollectibleMarker({
 export default function Room3DScene({ roomId }: { roomId: RoomId }) {
   const room = getRoomDefinition(roomId);
   const collectiblesFound = useGameStore((s) => s.collectiblesFound);
+  const visualMode = useGameStore((s) => s.visualMode);
 
   return (
     <group>
@@ -332,39 +333,106 @@ export default function Room3DScene({ roomId }: { roomId: RoomId }) {
         />
       ))}
 
-      {/* Ambient lighting */}
-      <ambientLight intensity={0.3} color="#8899BB" />
-      <pointLight
-        position={[0, 8, 0]}
-        intensity={1.0}
-        color={room.accentColor}
-        distance={30}
-        decay={2}
-      />
-      <pointLight
-        position={[-8, 5, -5]}
-        intensity={0.4}
-        color="#3B82F6"
-        distance={20}
-        decay={2}
-      />
-      <pointLight
-        position={[8, 5, 5]}
-        intensity={0.4}
-        color={room.accentColor}
-        distance={20}
-        decay={2}
-      />
-
-      {/* Atmospheric particles */}
-      <Sparkles
-        count={80}
-        scale={[room.size.width * 0.8, 5, room.size.depth * 0.8]}
-        size={1.5}
-        speed={0.3}
-        opacity={0.3}
-        color={room.accentColor}
-      />
+      {/* Dynamic Lighting by Visual Mode */}
+      {visualMode === 'cyber-neon' ? (
+        <>
+          <ambientLight intensity={0.65} color="#350059" />
+          <pointLight
+            position={[0, 8, 0]}
+            intensity={2.4}
+            color="#00F0FF"
+            distance={35}
+            decay={2}
+          />
+          <pointLight
+            position={[-8, 6, -5]}
+            intensity={2.2}
+            color="#FF007F"
+            distance={28}
+            decay={2}
+          />
+          <pointLight
+            position={[8, 6, 5]}
+            intensity={1.8}
+            color="#FFE600"
+            distance={28}
+            decay={2}
+          />
+          <Sparkles
+            count={140}
+            scale={[room.size.width * 0.8, 5, room.size.depth * 0.8]}
+            size={2.2}
+            speed={0.5}
+            opacity={0.6}
+            color="#00F0FF"
+          />
+        </>
+      ) : visualMode === 'retro-pixel' ? (
+        <>
+          <ambientLight intensity={0.7} color="#998877" />
+          <pointLight
+            position={[0, 8, 0]}
+            intensity={1.3}
+            color="#FFAA33"
+            distance={28}
+            decay={1.8}
+          />
+          <pointLight
+            position={[-8, 5, -5]}
+            intensity={0.9}
+            color="#00CCBB"
+            distance={22}
+            decay={1.8}
+          />
+          <Sparkles
+            count={30}
+            scale={[room.size.width * 0.8, 5, room.size.depth * 0.8]}
+            size={2.5}
+            speed={0.2}
+            opacity={0.4}
+            color="#FFAA33"
+          />
+        </>
+      ) : visualMode === 'performance' ? (
+        <>
+          <ambientLight intensity={0.9} color="#CCD8EE" />
+          <directionalLight position={[10, 15, 10]} intensity={0.6} color="#FFFFFF" />
+        </>
+      ) : (
+        /* cinematic-3d default */
+        <>
+          <ambientLight intensity={0.35} color="#8899BB" />
+          <pointLight
+            position={[0, 8, 0]}
+            intensity={1.1}
+            color={room.accentColor}
+            distance={30}
+            decay={2}
+          />
+          <pointLight
+            position={[-8, 5, -5]}
+            intensity={0.5}
+            color="#3B82F6"
+            distance={20}
+            decay={2}
+          />
+          <pointLight
+            position={[8, 5, 5]}
+            intensity={0.5}
+            color={room.accentColor}
+            distance={20}
+            decay={2}
+          />
+          <Sparkles
+            count={80}
+            scale={[room.size.width * 0.8, 5, room.size.depth * 0.8]}
+            size={1.5}
+            speed={0.3}
+            opacity={0.3}
+            color={room.accentColor}
+          />
+        </>
+      )}
 
       {/* Room name display */}
       <Text

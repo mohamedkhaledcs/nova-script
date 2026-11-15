@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { audio } from '@/lib/audio/audio-manager';
 import type { MissionEnding, Resources, DecisionRecord } from '@/types/game';
+import { useGameStore } from '@/game/store';
 
 interface MissionReportProps {
   ending: MissionEnding;
@@ -23,7 +24,7 @@ interface MissionReportProps {
   onRestart: () => void;
 }
 
-const STATUS_CONFIGS: Record<string, { label: string; color: string; badge: string }> = {
+const STATUS_CONFIGS_EN: Record<string, { label: string; color: string; badge: string }> = {
   outstanding_success: {
     label: 'OUTSTANDING SUCCESS',
     color: 'text-cyan-400',
@@ -66,6 +67,49 @@ const STATUS_CONFIGS: Record<string, { label: string; color: string; badge: stri
   },
 };
 
+const STATUS_CONFIGS_AR: Record<string, { label: string; color: string; badge: string }> = {
+  outstanding_success: {
+    label: 'نجاح استثنائي باهر',
+    color: 'text-cyan-400',
+    badge: 'bg-cyan-950 border-cyan-500 text-cyan-300 shadow-glow-cyan',
+  },
+  efficient_success: {
+    label: 'نجاح كفء ومثالي',
+    color: 'text-emerald-400',
+    badge: 'bg-emerald-950 border-emerald-500 text-emerald-300 shadow-glow-green',
+  },
+  scientific_discovery: {
+    label: 'اكتشاف علمي تاريخي',
+    color: 'text-blue-400',
+    badge: 'bg-blue-950 border-blue-500 text-blue-300',
+  },
+  partial_success: {
+    label: 'نجاح جزئي',
+    color: 'text-yellow-400',
+    badge: 'bg-yellow-950 border-yellow-500 text-yellow-300',
+  },
+  strategy_revision: {
+    label: 'مراجعة الإستراتيجية مطلوبة',
+    color: 'text-amber-400',
+    badge: 'bg-amber-950 border-amber-500 text-amber-300 shadow-glow-amber',
+  },
+  resource_failure: {
+    label: 'فشل بسبب استنزاف الموارد',
+    color: 'text-red-400',
+    badge: 'bg-red-950 border-red-500 text-red-300 shadow-glow-red',
+  },
+  launch_failure: {
+    label: 'إلغاء الإطلاق لزيادة الحمولة',
+    color: 'text-red-400',
+    badge: 'bg-red-950 border-red-500 text-red-300 shadow-glow-red',
+  },
+  engineering_failure: {
+    label: 'فشل هندسي حراري',
+    color: 'text-red-400',
+    badge: 'bg-red-950 border-red-500 text-red-300 shadow-glow-red',
+  },
+};
+
 export default function MissionReport({
   ending,
   finalScore,
@@ -73,7 +117,10 @@ export default function MissionReport({
   history,
   onRestart,
 }: MissionReportProps) {
-  const statusInfo = STATUS_CONFIGS[ending.status] || {
+  const language = useGameStore((s) => s.language);
+  const isAr = language === 'ar';
+  const statusConfigs = isAr ? STATUS_CONFIGS_AR : STATUS_CONFIGS_EN;
+  const statusInfo = statusConfigs[ending.status] || {
     label: ending.status.toUpperCase(),
     color: 'text-slate-300',
     badge: 'bg-slate-900 border-slate-700 text-slate-300',
@@ -247,7 +294,7 @@ export default function MissionReport({
             className="flex-1 py-4 px-6 rounded-xl bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-mono font-bold tracking-wider shadow-glow-cyan transition-all duration-200 flex items-center justify-center gap-3"
           >
             <RotateCcw className="w-5 h-5 text-cyan-200" />
-            <span>RETURN TO STATION & REPLAY</span>
+            <span>{isAr ? 'العودة للمحطة وإعادة اللعب' : 'RETURN TO STATION & REPLAY'}</span>
           </button>
         </div>
       </div>

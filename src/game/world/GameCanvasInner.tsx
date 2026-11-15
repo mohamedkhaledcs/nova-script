@@ -15,9 +15,72 @@ import { useGameStore } from '@/game/store';
 
 export default function GameCanvasInner() {
   const currentRoom = useGameStore((s) => s.currentRoom);
+  const visualMode = useGameStore((s) => s.visualMode);
+
+  // Dynamic visual configurations based on visualMode
+  const modeConfig = React.useMemo(() => {
+    switch (visualMode) {
+      case 'retro-pixel':
+        return {
+          dpr: 0.32, // Low-res buffer for genuine 16-bit chunky pixelation
+          antialias: false,
+          fogColor: '#050a14',
+          fogNear: 16,
+          fogFar: 44,
+          style: {
+            width: '100%',
+            height: '100%',
+            background: '#040710',
+            imageRendering: 'pixelated' as const,
+            filter: 'contrast(1.35) saturate(1.25) brightness(1.05)',
+          },
+        };
+      case 'cyber-neon':
+        return {
+          dpr: [1, 1.5] as [number, number],
+          antialias: true,
+          fogColor: '#0c001a',
+          fogNear: 14,
+          fogFar: 45,
+          style: {
+            width: '100%',
+            height: '100%',
+            background: '#070014',
+            filter: 'saturate(2.2) contrast(1.35) brightness(1.15) hue-rotate(-12deg)',
+          },
+        };
+      case 'performance':
+        return {
+          dpr: 1,
+          antialias: false,
+          fogColor: '#02040A',
+          fogNear: 25,
+          fogFar: 60,
+          style: {
+            width: '100%',
+            height: '100%',
+            background: '#02040A',
+          },
+        };
+      default: // cinematic-3d
+        return {
+          dpr: [1, 2] as [number, number],
+          antialias: true,
+          fogColor: '#02040A',
+          fogNear: 20,
+          fogFar: 50,
+          style: {
+            width: '100%',
+            height: '100%',
+            background: '#02040A',
+          },
+        };
+    }
+  }, [visualMode]);
 
   return (
     <Canvas
+      key={visualMode} // Remount canvas when visualMode changes to cleanly reinitialize WebGL buffer resolution
       camera={{
         fov: 45,
         near: 0.1,
@@ -25,19 +88,15 @@ export default function GameCanvasInner() {
         position: [0, 14, 10],
       }}
       gl={{
-        antialias: true,
+        antialias: modeConfig.antialias,
         alpha: false,
-        powerPreference: 'high-performance',
+        powerPreference: visualMode === 'performance' ? 'low-power' : 'high-performance',
       }}
-      style={{
-        width: '100%',
-        height: '100%',
-        background: '#02040A',
-      }}
-      dpr={[1, 2]}
+      style={modeConfig.style}
+      dpr={modeConfig.dpr}
     >
       {/* Fog for depth */}
-      <fog attach="fog" args={['#02040A', 20, 50]} />
+      <fog attach="fog" args={[modeConfig.fogColor, modeConfig.fogNear, modeConfig.fogFar]} />
 
       {/* Camera follow system */}
       <CameraController />

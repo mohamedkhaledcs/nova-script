@@ -83,7 +83,19 @@ export default function MiniGameOverlay() {
 // ================================================================
 
 function TerminalView({ onClose }: { onClose: () => void }) {
-  const lines = [
+  const language = useGameStore((s) => s.language);
+  const lines = language === 'ar' ? [
+    '> محطة نوفا سكريبت المدارية // نواة لينكس 6.8.0-فضاء-سحيق',
+    '> قياسات المحطة: مثالية | دورة الغلاف الجوي: 101.3 كيلو باسكال (نيتروجين/أكسجين 78:21)',
+    '> توليد الطاقة: 48.6 كيلوواط (ألواح شمسية كهروضوئية + مولد ستيرلينغ)',
+    '> مرحل الاتصالات: شبكة الفضاء السحيق (غولدستون / مدريد / كانبيرا) متصلة',
+    '',
+    '> [إشعار من مركز مراقبة المهمات]',
+    '> مرحلة الاستكشاف: جميع أنظمة المحطة الفضائية جاهزة للعمل.',
+    '> توجه إلى لوحة المهمات لتحديد وجهتك الاستكشافية في الفضاء السحيق.',
+    '> قم بزيارة حظيرة المركبات لمعاينة وترقية مسبارك الآلي ثلاثي الأبعاد.',
+    '> اجمع المواد المسترجعة لتصنيع ترقيات تجميلية على طاولة الهندسة.',
+  ] : [
     '> NOVASCRIPT ORBITAL HUB // LINUX KERNEL 6.8.0-DEEPSPACE',
     '> Station Telemetry: NOMINAL | Atmospheric Loop: 101.3 kPa (N2/O2 78:21)',
     '> Power Generation: 48.6 kW (Photovoltaic + Stirling Auxiliary)',
@@ -97,12 +109,12 @@ function TerminalView({ onClose }: { onClose: () => void }) {
   ];
 
   return (
-    <div className="max-w-2xl w-full glass-panel rounded-2xl border border-cyan-500/50 shadow-glow-cyan overflow-hidden">
+    <div className="max-w-2xl w-full glass-panel rounded-2xl border border-cyan-500/50 shadow-glow-cyan overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between px-4 py-3 bg-space-900 border-b border-cyan-700/50">
         <div className="flex items-center gap-2">
           <Monitor className="w-4 h-4 text-cyan-400" />
           <span className="font-mono text-sm text-cyan-300 font-bold tracking-wider">
-            STATION TELEMETRY CONSOLE
+            {language === 'ar' ? 'كونسول القياس والتشخيص الفضائي' : 'STATION TELEMETRY CONSOLE'}
           </span>
         </div>
         <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
@@ -116,7 +128,7 @@ function TerminalView({ onClose }: { onClose: () => void }) {
             {line || '\u00A0'}
           </div>
         ))}
-        <div className="mt-3 text-cyan-400 animate-pulse">{'> ALL SYSTEMS GO _'}</div>
+        <div className="mt-3 text-cyan-400 animate-pulse">{language === 'ar' ? '> جميع الأنظمة جاهزة للإطلاق _' : '> ALL SYSTEMS GO _'}</div>
       </div>
 
       <div className="px-4 py-3 bg-space-900 border-t border-space-border/50 flex justify-end">
@@ -124,7 +136,7 @@ function TerminalView({ onClose }: { onClose: () => void }) {
           onClick={onClose}
           className="px-5 py-2 rounded-lg bg-cyan-700 hover:bg-cyan-600 text-white font-mono text-xs tracking-wider transition-colors"
         >
-          DISMISS [ESC]
+          {language === 'ar' ? 'إغلاق [ESC]' : 'DISMISS [ESC]'}
         </button>
       </div>
     </div>
@@ -136,7 +148,7 @@ function TerminalView({ onClose }: { onClose: () => void }) {
 // ================================================================
 
 function AntennaView({ onClose }: { onClose: () => void }) {
-  const { collectItem, inventory } = useGameStore();
+  const { collectItem, inventory, language } = useGameStore();
   const targetFreq = 8.415; // 8.415 GHz DSN X-Band Downlink
   const [freq, setFreq] = useState(7.85);
   const [locked, setLocked] = useState(false);
@@ -162,13 +174,13 @@ function AntennaView({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="max-w-xl w-full glass-panel rounded-2xl border border-emerald-500/50 shadow-glow-green overflow-hidden">
+    <div className="max-w-xl w-full glass-panel rounded-2xl border border-emerald-500/50 shadow-glow-green overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-space-900 border-b border-emerald-700/50">
         <div className="flex items-center gap-2">
           <Satellite className="w-4 h-4 text-emerald-400" />
           <span className="font-mono text-sm text-emerald-300 font-bold tracking-wider">
-            DEEP SPACE NETWORK // ANTENNA CALIBRATION
+            {language === 'ar' ? 'معايرة هوائي شبكة الفضاء السحيق (DSN)' : 'DEEP SPACE NETWORK // ANTENNA CALIBRATION'}
           </span>
         </div>
         <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
@@ -310,29 +322,29 @@ function AntennaView({ onClose }: { onClose: () => void }) {
 // ================================================================
 
 function ScannerView({ onClose }: { onClose: () => void }) {
-  const { collectItem, inventory } = useGameStore();
+  const { collectItem, inventory, language } = useGameStore();
   const [analyzing, setAnalyzing] = useState(false);
   const [analyzed, setAnalyzed] = useState(false);
   const [sampleType, setSampleType] = useState<'basalt' | 'regolith' | 'ice'>('basalt');
 
   const SAMPLES = {
     basalt: {
-      name: 'Lunar Mare Basalt Specimen',
-      composition: 'Pyroxene 48%, Plagioclase 32%, Ilmenite (FeTiO3) 14%, Olivine 6%',
+      name: language === 'ar' ? 'عينة بازلت بحار القمر' : 'Lunar Mare Basalt Specimen',
+      composition: language === 'ar' ? 'بيروكسين 48%، بلاجيوكلاز 32%، إلمنيت 14%، أوليفين 6%' : 'Pyroxene 48%, Plagioclase 32%, Ilmenite (FeTiO3) 14%, Olivine 6%',
       density: '3.3 g/cm³',
-      notes: 'Formed from ancient basaltic volcanic lava flows on the lunar maria.',
+      notes: language === 'ar' ? 'تشكلت من تدفقات الحمم البركانية القديمة في بحار القمر.' : 'Formed from ancient basaltic volcanic lava flows on the lunar maria.',
     },
     regolith: {
-      name: 'Martian Iron-Oxide Regolith',
-      composition: 'Silica (SiO2) 44%, Iron Oxides (Fe2O3) 18%, Magnesium Oxide 9%, Sulfates 6%',
+      name: language === 'ar' ? 'تربة مريخية غنية بأكاسيد الحديد' : 'Martian Iron-Oxide Regolith',
+      composition: language === 'ar' ? 'سيليكا 44%، أكاسيد حديد 18%، أكسيد مغنيسيوم 9%، كبريتات 6%' : 'Silica (SiO2) 44%, Iron Oxides (Fe2O3) 18%, Magnesium Oxide 9%, Sulfates 6%',
       density: '2.6 g/cm³',
-      notes: 'Fine iron-rich silicate dust weathered by wind-driven physical attrition.',
+      notes: language === 'ar' ? 'غبار سيليكات دقيق ناتج عن التعرية والرياح على سطح المريخ.' : 'Fine iron-rich silicate dust weathered by wind-driven physical attrition.',
     },
     ice: {
-      name: 'Permanently Shadowed Crater Volatiles',
-      composition: 'H2O Ice 86%, Carbon Dioxide (CO2) 8%, Ammonia 3%, Organics 3%',
+      name: language === 'ar' ? 'مركبات طيارة متجمدة في الفوهات القطبية' : 'Permanently Shadowed Crater Volatiles',
+      composition: language === 'ar' ? 'جليد ماء 86%، ثاني أكسيد الكربون 8%، أمونيا 3%، مواد عضوية 3%' : 'H2O Ice 86%, Carbon Dioxide (CO2) 8%, Ammonia 3%, Organics 3%',
       density: '0.92 g/cm³',
-      notes: 'Trapped cryogenic volatiles inside ultra-cold lunar polar crater basins.',
+      notes: language === 'ar' ? 'مركبات كريوجينية حبيسة في أعماق الفوهات القطبية شديدة البرودة.' : 'Trapped cryogenic volatiles inside ultra-cold lunar polar crater basins.',
     },
   };
 
@@ -352,12 +364,12 @@ function ScannerView({ onClose }: { onClose: () => void }) {
   };
 
   return (
-    <div className="max-w-xl w-full glass-panel rounded-2xl border border-cyan-500/50 shadow-glow-cyan overflow-hidden">
+    <div className="max-w-xl w-full glass-panel rounded-2xl border border-cyan-500/50 shadow-glow-cyan overflow-hidden" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="flex items-center justify-between px-4 py-3 bg-space-900 border-b border-cyan-700/50">
         <div className="flex items-center gap-2">
           <Microscope className="w-4 h-4 text-cyan-400" />
           <span className="font-mono text-sm text-cyan-300 font-bold tracking-wider">
-            RAMAN & MULTISPECTRAL SPECTROMETER
+            {language === 'ar' ? 'مطياف الليزر لتحليل العينات الكوكبية' : 'RAMAN & MULTISPECTRAL SPECTROMETER'}
           </span>
         </div>
         <button onClick={onClose} className="text-slate-400 hover:text-white p-1">
@@ -395,9 +407,9 @@ function ScannerView({ onClose }: { onClose: () => void }) {
 
           {/* Sample disk */}
           <div className="w-24 h-24 rounded-full border border-cyan-400/40 bg-space-900/80 flex items-center justify-center relative shadow-inner">
-            <span className="text-3xl">
-              {sampleType === 'basalt' ? '🪨' : sampleType === 'regolith' ? '🪐' : '🧊'}
-            </span>
+            <div className="w-16 h-16 rounded-full border border-cyan-400/50 bg-cyan-950/40 flex items-center justify-center font-mono font-bold text-[11px] text-cyan-300 shadow-glow-cyan">
+              {sampleType === 'basalt' ? 'BASALT' : sampleType === 'regolith' ? 'REGOLITH' : 'ICE-SIL'}
+            </div>
           </div>
 
           <div className="absolute bottom-2 left-3 text-[10px] font-mono text-slate-500">
@@ -450,6 +462,7 @@ function ScannerView({ onClose }: { onClose: () => void }) {
 // ================================================================
 
 function SpacecraftView({ onClose }: { onClose: () => void }) {
+  const language = useGameStore((s) => s.language);
   const [craftedList, setCraftedList] = useState<string[]>([]);
   const [selectedSubsystem, setSelectedSubsystem] = useState<
     'bus' | 'power' | 'comms' | 'propulsion' | 'science'
@@ -470,31 +483,49 @@ function SpacecraftView({ onClose }: { onClose: () => void }) {
 
   const subsystemDescriptions = {
     bus: {
-      name: 'Equipment Bus & Thermal Protection',
+      name: language === 'ar' ? 'هيكل المركبة والعزل الحراري' : 'Equipment Bus & Thermal Protection',
       detail: hasGoldenHull
-        ? 'Reinforced aerospace composite chassis coated in high-emissivity Golden MLI thermal blankets.'
+        ? language === 'ar'
+          ? 'هيكل مدعم من مركبات الفضاء مغلف ببطانيات العزل الحراري الذهبية متعددة الطبقات (MLI).'
+          : 'Reinforced aerospace composite chassis coated in high-emissivity Golden MLI thermal blankets.'
+        : language === 'ar'
+        ? 'هيكل قياسي من سبائك التيتانيوم والألمنيوم الفضائي مع طلاءات حرارية سلبية.'
         : 'Standard aerospace-grade titanium-aluminum alloy frame with passive thermal coatings.',
     },
     power: {
-      name: 'Electrical Power Subsystem (EPS)',
-      detail: 'Ultra-Triple-Junction GaAs photovoltaic deployable solar arrays with Li-ion storage buffers.',
+      name: language === 'ar' ? 'نظام الطاقة الكهربائية (EPS)' : 'Electrical Power Subsystem (EPS)',
+      detail: language === 'ar'
+        ? 'مصفوفات كهروضوئية ثلاثية الوصلات من زرنيخيد الغاليوم (GaAs) مع بطاريات ليثيوم-أيون تخزينية.'
+        : 'Ultra-Triple-Junction GaAs photovoltaic deployable solar arrays with Li-ion storage buffers.',
     },
     comms: {
-      name: 'Telecommunications Subsystem',
+      name: language === 'ar' ? 'نظام الاتصالات السحيقة' : 'Telecommunications Subsystem',
       detail: hasAntennaUpgrade
-        ? 'High-gain steerable parabolic reflector tuned for DSN X-band and Ka-band carrier communications.'
+        ? language === 'ar'
+          ? 'هوائي مكافئ عالي الكسب قابل للتوجيه بدقة متوافق مع نطاقات X و Ka لشبكة الفضاء السحيق.'
+          : 'High-gain steerable parabolic reflector tuned for DSN X-band and Ka-band carrier communications.'
+        : language === 'ar'
+        ? 'هوائي طبق قياسي عالي الكسب مع أبواق احتياطية منخفضة الكسب لجميع الاتجاهات.'
         : 'Standard parabolic high-gain dish antenna with redundant low-gain omnidirectional backup horns.',
     },
     propulsion: {
-      name: 'Propulsion & Attitude Control (ADCS)',
+      name: language === 'ar' ? 'الدفع والتحكم في الاتجاه (ADCS)' : 'Propulsion & Attitude Control (ADCS)',
       detail: hasPlasmaThrusters
-        ? 'Electrostatic Hall-effect plasma thrusters providing ultra-high specific impulse (Isp ~ 3000s).'
+        ? language === 'ar'
+          ? 'محركات بلازما إلكتروستاتيكية بتقنية هول توفر اندفاعاً نوعياً فائقاً (Isp ~ 3000 ثانية).'
+          : 'Electrostatic Hall-effect plasma thrusters providing ultra-high specific impulse (Isp ~ 3000s).'
+        : language === 'ar'
+        ? 'غرف تفاعل هيدرازين حفاز أحادي الوقود مع نفاثات غاز بارد للتحكم الدقيق في التوجيه.'
         : 'Monopropellant hydrazine catalytic reaction chambers with cold-gas RCS attitude control thrusters.',
     },
     science: {
-      name: 'Payload & Scientific Instruments',
+      name: language === 'ar' ? 'الحمولة والأجهزة العلمية' : 'Payload & Scientific Instruments',
       detail: hasScienceModule
-        ? 'Integrated pressurized science laboratory module with Raman spectrometer and high-resolution imager.'
+        ? language === 'ar'
+          ? 'وحدة مختبر علمي مدمجة تضم مطياف رامان الليزري وكاميرا تصوير عالية الدقة.'
+          : 'Integrated pressurized science laboratory module with Raman spectrometer and high-resolution imager.'
+        : language === 'ar'
+        ? 'حزمة أجهزة استشعار كوكبية قياسية مع ذراع مقياس المغناطيسية ومقياس الإشعاع الحراري.'
         : 'Core planetary exploration sensor suite with magnetometer boom and thermal radiometer.',
     },
   };
@@ -502,13 +533,13 @@ function SpacecraftView({ onClose }: { onClose: () => void }) {
   const activeSubsystem = subsystemDescriptions[selectedSubsystem];
 
   return (
-    <div className="max-w-3xl w-full glass-panel rounded-2xl border border-amber-500/50 shadow-glow-amber overflow-hidden flex flex-col">
+    <div className="max-w-3xl w-full glass-panel rounded-2xl border border-amber-500/50 shadow-glow-amber overflow-hidden flex flex-col" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-space-900 border-b border-amber-700/50">
         <div className="flex items-center gap-2">
           <Rocket className="w-4 h-4 text-amber-400" />
           <span className="font-mono text-sm text-amber-300 font-bold tracking-wider">
-            SPACECRAFT ASSEMBLY BAY // 3D VEHICLE INSPECTION
+            {language === 'ar' ? 'عنبر تجميع وفحص المركبة ثلاثية الأبعاد' : 'SPACECRAFT ASSEMBLY BAY // 3D VEHICLE INSPECTION'}
           </span>
         </div>
         <button onClick={onClose} className="text-slate-400 hover:text-white p-1">

@@ -29,6 +29,7 @@ import { COLLECTIBLE_INFO, COLLECTIBLE_LIMITS } from '@/game/types';
 import type { CollectibleType } from '@/game/types';
 import { ACHIEVEMENTS } from '@/game/progression/achievements';
 import { audio } from '@/lib/audio/audio-manager';
+import { TRANSLATIONS } from '@/lib/i18n/translations';
 
 export default function PlayerProfileModal() {
   const {
@@ -59,55 +60,57 @@ export default function PlayerProfileModal() {
 
   if (!isProfileOpen) return null;
 
+  const t = TRANSLATIONS[language || 'en'];
+
   // Calculate dynamic rank title
   const getRankInfo = () => {
     if (bestScore >= 250 && endingsDiscovered.length >= 3) {
       return {
-        title: 'Cosmos Legend',
-        tier: 'Master Rank V',
+        title: language === 'ar' ? t.rankCosmosLegend : 'Cosmos Legend',
+        tier: language === 'ar' ? 'الرتبة العليا V' : 'Master Rank V',
         color: 'from-amber-400 via-rose-400 to-cyan-400',
         badgeColor: 'border-amber-400 text-amber-300 bg-amber-950/60',
         progress: 100,
-        nextRank: 'MAXIMUM RANK ACHIEVED',
+        nextRank: language === 'ar' ? 'تم تحقيق أعلى رتبة فضائية' : 'MAXIMUM RANK ACHIEVED',
       };
     }
     if (missionsCompleted >= 4 || endingsDiscovered.length >= 4) {
       return {
-        title: 'Lead Systems Architect',
-        tier: 'Senior Rank IV',
+        title: language === 'ar' ? t.rankArchitect : 'Lead Systems Architect',
+        tier: language === 'ar' ? 'الرتبة المتقدمة IV' : 'Senior Rank IV',
         color: 'from-cyan-400 to-blue-400',
         badgeColor: 'border-cyan-400 text-cyan-300 bg-cyan-950/60',
         progress: Math.min(100, (bestScore / 250) * 100),
-        nextRank: 'Score 250+ & discover 3 endings for Cosmos Legend',
+        nextRank: language === 'ar' ? 'حقق 250+ نقطة للترقية لأسطورة الفضاء' : 'Score 250+ & discover 3 endings for Cosmos Legend',
       };
     }
     if (missionsCompleted >= 2 || endingsDiscovered.length >= 2) {
       return {
-        title: 'Flight Operations Director',
-        tier: 'Rank III',
+        title: language === 'ar' ? t.rankDirector : 'Flight Operations Director',
+        tier: language === 'ar' ? 'الرتبة الثالثة III' : 'Rank III',
         color: 'from-teal-400 to-emerald-400',
         badgeColor: 'border-teal-400 text-teal-300 bg-teal-950/60',
         progress: 75,
-        nextRank: 'Complete 4 missions for Lead Architect',
+        nextRank: language === 'ar' ? 'أكمل 4 مهمات للترقية لكبير المهندسين' : 'Complete 4 missions for Lead Architect',
       };
     }
     if (missionsCompleted >= 1) {
       return {
-        title: 'Mission Specialist',
-        tier: 'Rank II',
+        title: language === 'ar' ? t.rankSpecialist : 'Mission Specialist',
+        tier: language === 'ar' ? 'الرتبة الثانية II' : 'Rank II',
         color: 'from-blue-400 to-indigo-400',
         badgeColor: 'border-blue-400 text-blue-300 bg-blue-950/60',
         progress: 50,
-        nextRank: 'Complete 2 missions for Flight Director',
+        nextRank: language === 'ar' ? 'أكمل مهمتين للترقية لمدير العمليات' : 'Complete 2 missions for Flight Director',
       };
     }
     return {
-      title: 'Flight Cadet',
-      tier: 'Cadet Rank I',
+      title: language === 'ar' ? t.rankCadet : 'Flight Cadet',
+      tier: language === 'ar' ? 'رتبة متدرب I' : 'Cadet Rank I',
       color: 'from-slate-300 to-slate-400',
       badgeColor: 'border-slate-500 text-slate-300 bg-slate-900/60',
       progress: 20,
-      nextRank: 'Complete 1 mission for Mission Specialist',
+      nextRank: language === 'ar' ? 'أكمل أول مهمة للترقية لأخصائي مهام' : 'Complete 1 mission for Mission Specialist',
     };
   };
 
@@ -251,9 +254,9 @@ export default function PlayerProfileModal() {
                       ? 'bg-cyan-600 text-white shadow-glow-cyan'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-space-850'
                   }`}
-                  title="Select Male Astronaut (Commander Alex)"
+                  title="Select Commander Alex"
                 >
-                  ♂ ALEX
+                  {t.alexDesignation}
                 </button>
                 <button
                   onClick={() => handleSelectGender('female')}
@@ -262,9 +265,9 @@ export default function PlayerProfileModal() {
                       ? 'bg-gradient-to-r from-amber-500 to-rose-500 text-white shadow-glow-amber'
                       : 'text-slate-400 hover:text-slate-200 hover:bg-space-850'
                   }`}
-                  title="Select Female Astronaut (Commander Maya)"
+                  title="Select Specialist Maya"
                 >
-                  ♀ MAYA
+                  {t.mayaDesignation}
                 </button>
               </div>
 
@@ -434,11 +437,11 @@ export default function PlayerProfileModal() {
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-amber-400" />
                 <h5 className="font-mono text-xs font-bold text-white tracking-wider">
-                  MATERIAL TOKENS & STORAGE CAPACITY
+                  {language === 'ar' ? 'خزائن المواد والطاقة الاستيعابية' : 'MATERIAL TOKENS & STORAGE CAPACITY'}
                 </h5>
               </div>
               <span className="text-[11px] font-mono text-slate-400">
-                Total Harvested: {totalCollectiblesCount}
+                {language === 'ar' ? `إجمالي ما تم جمعه: ${totalCollectiblesCount}` : `Total Harvested: ${totalCollectiblesCount}`}
               </span>
             </div>
 
@@ -456,6 +459,18 @@ export default function PlayerProfileModal() {
                 const count = inventory.items[type] ?? 0;
                 const limit = COLLECTIBLE_LIMITS[type] ?? 20;
                 const isFull = count >= limit;
+                const localizedLabel =
+                  language === 'ar'
+                    ? type === 'metal-scrap'
+                      ? 'خردة معادن'
+                      : type === 'energy-cell'
+                      ? 'خلية طاقة'
+                      : type === 'science-sample'
+                      ? 'عينة علمية'
+                      : type === 'blueprint-fragment'
+                      ? 'جزء مخطط'
+                      : 'معدن نادر'
+                    : info.label;
 
                 return (
                   <div
@@ -468,23 +483,34 @@ export default function PlayerProfileModal() {
                   >
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-2">
-                        <span className="text-lg">{info.icon}</span>
+                        {/* Clean Vector Badge (Zero Emojis) */}
+                        <div
+                          className="w-6 h-6 rounded-md flex items-center justify-center font-mono font-black text-[9px]"
+                          style={{
+                            backgroundColor: `${info.color}25`,
+                            borderColor: `${info.color}60`,
+                            borderWidth: '1px',
+                            color: info.color,
+                          }}
+                        >
+                          {type === 'metal-scrap' ? 'SCRP' : type === 'energy-cell' ? 'FUSN' : type === 'science-sample' ? 'SMPL' : type === 'blueprint-fragment' ? 'SCHM' : 'CRYS'}
+                        </div>
                         <span
                           className="font-mono text-xs font-bold"
                           style={{ color: info.color }}
                         >
-                          {info.label}
+                          {localizedLabel}
                         </span>
                       </div>
                       {isFull && (
                         <span className="px-1.5 py-0.2 rounded text-[9px] font-mono bg-amber-500/20 text-amber-300 font-bold border border-amber-500/40">
-                          MAX
+                          {language === 'ar' ? 'الحد الأقصى' : 'MAX'}
                         </span>
                       )}
                     </div>
 
                     <div className="mt-2 flex items-center justify-between text-[11px] font-mono text-slate-400">
-                      <span>Stored:</span>
+                      <span>{language === 'ar' ? 'المخزن:' : 'Stored:'}</span>
                       <span className="font-bold text-slate-200">
                         {count} / {limit}
                       </span>
@@ -511,8 +537,9 @@ export default function PlayerProfileModal() {
               <div className="flex items-center gap-2">
                 <Shield className="w-4 h-4 text-cyan-400" />
                 <h5 className="font-mono text-xs font-bold text-white tracking-wider">
-                  CAREER BADGES & COMMENDATIONS ({unlockedAchievements.length} /{' '}
-                  {ACHIEVEMENTS.length})
+                  {language === 'ar'
+                    ? `أوسمة ونياشين الخدمة الفضائية (${unlockedAchievements.length} / ${ACHIEVEMENTS.length})`
+                    : `CAREER BADGES & COMMENDATIONS (${unlockedAchievements.length} / ${ACHIEVEMENTS.length})`}
                 </h5>
               </div>
             </div>
@@ -530,7 +557,10 @@ export default function PlayerProfileModal() {
                         : 'bg-space-950/50 border-space-border/30 opacity-40'
                     }`}
                   >
-                    <div className="text-2xl mb-1.5">{ach.icon}</div>
+                    {/* Clean Vector Emblem (Zero Emojis) */}
+                    <div className="w-10 h-10 rounded-xl mb-1.5 flex items-center justify-center bg-cyan-950/60 border border-cyan-400/40 text-cyan-300 shadow-sm">
+                      <Award className="w-5 h-5 text-cyan-400" />
+                    </div>
                     <span className="font-mono text-xs font-bold text-white leading-tight">
                       {ach.title}
                     </span>
@@ -539,11 +569,11 @@ export default function PlayerProfileModal() {
                     </span>
                     {isUnlocked ? (
                       <span className="mt-2 inline-flex items-center gap-1 text-[9px] font-mono text-emerald-400 font-bold">
-                        <CheckCircle2 className="w-3 h-3" /> UNLOCKED
+                        <CheckCircle2 className="w-3 h-3" /> {language === 'ar' ? 'تم الفتح' : 'UNLOCKED'}
                       </span>
                     ) : (
                       <span className="mt-2 inline-flex items-center gap-1 text-[9px] font-mono text-slate-500">
-                        <Lock className="w-3 h-3" /> LOCKED
+                        <Lock className="w-3 h-3" /> {language === 'ar' ? 'مغلق' : 'LOCKED'}
                       </span>
                     )}
                   </div>

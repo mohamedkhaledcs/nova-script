@@ -1,5 +1,6 @@
 /**
  * NovaScript Localization Dictionary (English by default, Arabic optional).
+ * Comprehensive translation dictionary for all UI panels, HUDs, modals, and gameplay text.
  */
 
 export interface Translations {
@@ -14,28 +15,137 @@ export interface Translations {
   back: string;
   saveAndClose: string;
   resetDefaults: string;
+  gameTitle: string;
+  gameSubtitle: string;
+  soundOn: string;
+  soundOff: string;
+  chooseAstronaut: string;
+  alexDesignation: string;
+  mayaDesignation: string;
+  version: string;
   
-  // Minimap
+  // Minimap & Station Rooms
   stationRadar: string;
+  radarSubtitle: string;
   centralHub: string;
+  centralHubDesc: string;
   commandCenter: string;
+  commandCenterDesc: string;
   vehicleHangar: string;
+  vehicleHangarDesc: string;
   scienceLab: string;
+  scienceLabDesc: string;
   commsArray: string;
+  commsArrayDesc: string;
   resourceBay: string;
+  resourceBayDesc: string;
   missionBoard: string;
+  missionBoardDesc: string;
+  dirCenter: string;
+  dirWest: string;
+  dirEast: string;
+  dirNorthWest: string;
+  dirNorthEast: string;
+  dirSouthWest: string;
+  dirSouthEast: string;
+  radarClickHint: string;
+  targetWaypoint: string;
+  distance: string;
+  meters: string;
   
   // HUD
   inventory: string;
+  crafting: string;
+  hangar: string;
+  pause: string;
   interactPrompt: string;
   doubleClickPrompt: string;
   radarToggle: string;
   info: string;
+  controlsMove: string;
+  controlsInteract: string;
+  controlsInventory: string;
+  controlsProfile: string;
+  controlsRadar: string;
+  capacity: string;
+  maxCapacity: string;
+  
+  // Materials & Collectibles
+  metalScrap: string;
+  metalScrapDesc: string;
+  energyCell: string;
+  energyCellDesc: string;
+  scienceSample: string;
+  scienceSampleDesc: string;
+  blueprintFragment: string;
+  blueprintFragmentDesc: string;
+  rareMineral: string;
+  rareMineralDesc: string;
+  
+  // Crafting Workbench
+  workbenchTitle: string;
+  workbenchSubtitle: string;
+  craftUpgrade: string;
+  craftedBadge: string;
+  insufficientMaterials: string;
+  cosmeticUpgradeNotice: string;
+  materialsRequired: string;
+  
+  // Mission Selector
+  missionAssignment: string;
+  selectTargetTitle: string;
+  selectTargetSubtitle: string;
+  lunarMissionTitle: string;
+  lunarMissionDesc: string;
+  marsMissionTitle: string;
+  marsMissionDesc: string;
+  shorterTransit: string;
+  moderateComplexity: string;
+  longerTransit: string;
+  higherComplexity: string;
+  selectMoonButton: string;
+  selectMarsButton: string;
+  
+  // Mini-Games
+  antennaTitle: string;
+  antennaSubtitle: string;
+  antennaFrequency: string;
+  antennaSignalStrength: string;
+  antennaLock: string;
+  antennaLocked: string;
+  spectrometerTitle: string;
+  spectrometerSubtitle: string;
+  spectrometerWavelength: string;
+  spectrometerCalibrate: string;
+  spectrometerIdentified: string;
+  
+  // Player Profile
+  profileTitle: string;
+  commanderPersonnel: string;
+  careerStats: string;
+  missionsCompleted: string;
+  endingsDiscovered: string;
+  bestScore: string;
+  modulesVisited: string;
+  itemsCrafted: string;
+  materialsCollected: string;
+  suitColorTitle: string;
+  resetProgress: string;
+  alexBio: string;
+  mayaBio: string;
+  rankCosmosLegend: string;
+  rankArchitect: string;
+  rankDirector: string;
+  rankSpecialist: string;
+  rankCadet: string;
   
   // Settings Tabs
   audioEngine: string;
   graphicsMood: string;
   keybindings: string;
+  masterVolume: string;
+  musicVolume: string;
+  sfxVolume: string;
   
   // Graphics & Moods
   visualModeTitle: string;
@@ -65,6 +175,16 @@ export interface Translations {
   actionHandbook: string;
   actionPause: string;
 
+  // Question & Mission Gameplay
+  optionA: string;
+  optionB: string;
+  chooseOption: string;
+  engineeringImpact: string;
+  confirmDecision: string;
+  sourceText: string;
+  scoreLabel: string;
+  stageLabel: string;
+
   // Language
   language: string;
 }
@@ -81,35 +201,139 @@ export const TRANSLATIONS: Record<'en' | 'ar', Translations> = {
     back: 'BACK',
     saveAndClose: 'SAVE & CLOSE',
     resetDefaults: 'RESET TO DEFAULTS',
+    gameTitle: 'NOVASCRIPT',
+    gameSubtitle: 'Deep Space Mission Design Simulator',
+    soundOn: 'Audio Enabled',
+    soundOff: 'Audio Muted',
+    chooseAstronaut: 'SELECT ACTIVE ASTRONAUT',
+    alexDesignation: 'ALEX // CDR',
+    mayaDesignation: 'MAYA // SPEC',
+    version: 'STATION SIMULATOR v2.2 // DEEP SPACE OPS',
 
     stationRadar: 'STATION RADAR',
-    centralHub: 'Central Hub',
+    radarSubtitle: 'ACTIVE ORBITAL SWEEP',
+    centralHub: 'Central Transit Hub',
+    centralHubDesc: 'Central nexus connecting all six orbital station modules',
     commandCenter: 'Command Center',
+    commandCenterDesc: 'Flight telemetry, station displays, and observation deck',
     vehicleHangar: 'Vehicle Hangar',
-    scienceLab: 'Science Lab',
-    commsArray: 'Comms Array',
+    vehicleHangarDesc: '3D Spacecraft assembly bay & engineering workbench',
+    scienceLab: 'Science Laboratory',
+    scienceLabDesc: 'Planetary geology research & laser Raman spectrometer',
+    commsArray: 'Communications Array',
+    commsArrayDesc: 'Deep Space Network antenna station & frequency calibration',
     resourceBay: 'Resource Bay',
-    missionBoard: 'Mission Board',
+    resourceBayDesc: 'Orbital raw materials storage, energy cells & salvage',
+    missionBoard: 'Mission Launch Board',
+    missionBoardDesc: 'Target trajectory computer & expedition launch console',
+    dirCenter: 'CENTER',
+    dirWest: 'WEST [W]',
+    dirEast: 'EAST [E]',
+    dirNorthWest: 'NORTH-WEST [NW]',
+    dirNorthEast: 'NORTH-EAST [NE]',
+    dirSouthWest: 'SOUTH-WEST [SW]',
+    dirSouthEast: 'SOUTH-EAST [SE]',
+    radarClickHint: 'CLICK ANY MODULE TO ENGAGE AUTOPILOT NAVIGATION',
+    targetWaypoint: 'TARGET WAYPOINT',
+    distance: 'DISTANCE',
+    meters: 'm',
 
     inventory: 'Inventory',
+    crafting: 'Crafting',
+    hangar: 'Hangar',
+    pause: 'Pause',
     interactPrompt: '[E] INTERACT',
     doubleClickPrompt: '[E] INTERACT // DOUBLE-CLICK',
     radarToggle: '[M] Radar',
-    info: 'INFO',
+    info: 'HANDBOOK',
+    controlsMove: 'WASD / Arrows to Move',
+    controlsInteract: '[E] Interact',
+    controlsInventory: '[I] Inventory',
+    controlsProfile: '[P] Profile',
+    controlsRadar: '[M] Radar',
+    capacity: 'Capacity',
+    maxCapacity: 'MAX CAPACITY',
+
+    metalScrap: 'Metal Scrap',
+    metalScrapDesc: 'Salvaged titanium alloy fragments for structural repairs.',
+    energyCell: 'Energy Cell',
+    energyCellDesc: 'Compact fusion micro-cells powering station subsystems.',
+    scienceSample: 'Science Sample',
+    scienceSampleDesc: 'Planetary soil and regolith specimens for laser spectrometry.',
+    blueprintFragment: 'Blueprint Fragment',
+    blueprintFragmentDesc: 'Orbital telemetry schematics for spacecraft upgrades.',
+    rareMineral: 'Rare Mineral',
+    rareMineralDesc: 'Exotic crystalline silicates with high thermal resistance.',
+
+    workbenchTitle: 'ENGINEERING WORKBENCH',
+    workbenchSubtitle: 'Craft aesthetic spacecraft upgrades using salvaged materials.',
+    craftUpgrade: 'CRAFT UPGRADE',
+    craftedBadge: 'INSTALLED',
+    insufficientMaterials: 'INSUFFICIENT MATERIALS',
+    cosmeticUpgradeNotice: 'Upgrades customize spacecraft visual components without altering mission formulas.',
+    materialsRequired: 'Materials Required:',
+
+    missionAssignment: 'MISSION ASSIGNMENT',
+    selectTargetTitle: 'SELECT EXPEDITION TARGET',
+    selectTargetSubtitle: 'Choose your flight destination. Each path introduces distinct orbital parameters.',
+    lunarMissionTitle: 'LUNAR RECONNAISSANCE',
+    lunarMissionDesc: 'Design a robotic probe for Moon exploration. Study lunar geology and test landing technologies.',
+    marsMissionTitle: 'MARS EXPEDITION',
+    marsMissionDesc: 'Engineer an interplanetary spacecraft to reach Mars. Manage atmospheric entry and search for ancient water.',
+    shorterTransit: '3-DAY TRANSIT',
+    moderateComplexity: 'MODERATE DELTA-V',
+    longerTransit: '7-9 MONTH TRANSIT',
+    higherComplexity: 'HIGH THERMAL LOAD',
+    selectMoonButton: 'SELECT MOON MISSION',
+    selectMarsButton: 'SELECT MARS MISSION',
+
+    antennaTitle: 'DEEP SPACE NETWORK CALIBRATION',
+    antennaSubtitle: 'Align the high-gain dish antenna frequency to establish uplink with mission control.',
+    antennaFrequency: 'Carrier Frequency',
+    antennaSignalStrength: 'Signal Strength',
+    antennaLock: 'LOCK SIGNAL',
+    antennaLocked: 'SIGNAL LOCKED & CALIBRATED',
+    spectrometerTitle: 'RAMAN LASER SPECTROMETER',
+    spectrometerSubtitle: 'Calibrate laser excitation wavelength to identify mineral crystal signatures.',
+    spectrometerWavelength: 'Laser Wavelength',
+    spectrometerCalibrate: 'ANALYZE SAMPLE',
+    spectrometerIdentified: 'SIGNATURE IDENTIFIED',
+
+    profileTitle: 'ASTRONAUT FLIGHT RECORD',
+    commanderPersonnel: 'STATION COMMAND PERSONNEL',
+    careerStats: 'FLIGHT METRICS & CAREER STATS',
+    missionsCompleted: 'Missions Completed',
+    endingsDiscovered: 'Endings Found',
+    bestScore: 'Best Mission Score',
+    modulesVisited: 'Modules Explored',
+    itemsCrafted: 'Items Crafted',
+    materialsCollected: 'Materials Salvaged',
+    suitColorTitle: 'EVA SUIT SURFACE COATING',
+    resetProgress: 'RESET CAREER DATA',
+    alexBio: 'Commander Alex Vance — Senior Aerospace Engineer and Flight Commander with over 4,200 simulated orbital hours.',
+    mayaBio: 'Specialist Dr. Maya Lin — Planetary Geologist and Astrobiology Lead, specializing in deep-space spectroscopy.',
+    rankCosmosLegend: 'Cosmos Legend',
+    rankArchitect: 'Lead Systems Architect',
+    rankDirector: 'Flight Operations Director',
+    rankSpecialist: 'Mission Specialist',
+    rankCadet: 'Cadet Explorer',
 
     audioEngine: 'AUDIO ENGINE',
     graphicsMood: 'GRAPHICS & MOOD',
     keybindings: 'KEYBOARD CONTROLS',
+    masterVolume: 'Master Volume',
+    musicVolume: 'Adaptive Soundtrack',
+    sfxVolume: 'Sound Effects',
 
     visualModeTitle: 'STATION RENDERING MOOD',
     modeCinematic: '3D Cinematic (Default)',
     modeCinematicDesc: 'Full dynamic Three.js lighting, volumetric space shadows, and headlight glow',
     modeRetro: '16-Bit Pixel Art Mode',
-    modeRetroDesc: 'Retro arcade CRT scanline curvature and nostalgic pixel filter',
+    modeRetroDesc: 'Authentic low-resolution pixel buffer, arcade CRT scanlines, and phosphor vignette',
     modeCyber: 'Cyberpunk Neon Mode',
-    modeCyberDesc: 'High-contrast glowing holographic contours and saturated cyan/magenta hues',
+    modeCyberDesc: 'High-contrast glowing contours, electric cyan/magenta lighting, and saturated bloom',
     modePerf: 'High Performance Mode',
-    modePerfDesc: 'Optimized flat shading for high-framerate or mobile battery saving',
+    modePerfDesc: 'Optimized flat lighting with zero post-filters for ultra-smooth framerate',
 
     keybindingsDesc: 'Click any key to rebind it. Multiple keys supported per action.',
     rebindPrompt: 'PRESS ANY KEY TO REBIND...',
@@ -126,10 +350,19 @@ export const TRANSLATIONS: Record<'en' | 'ar', Translations> = {
     actionHandbook: 'Open Space Handbook',
     actionPause: 'Pause Menu / Close Active',
 
+    optionA: 'OPTION A',
+    optionB: 'OPTION B',
+    chooseOption: 'CONFIRM CHOICE',
+    engineeringImpact: 'ENGINEERING IMPACT:',
+    confirmDecision: 'CONFIRM DECISION',
+    sourceText: 'NASA Technical Reference',
+    scoreLabel: 'Flight Score',
+    stageLabel: 'Mission Stage',
+
     language: 'LANGUAGE / اللغة',
   },
   ar: {
-    enterStation: 'دخول المحطة',
+    enterStation: 'دخول المحطة الفضائية',
     startNewMission: 'بدء مهمة جديدة',
     resumeMission: 'استئناف المهمة',
     settings: 'الإعدادات',
@@ -139,35 +372,139 @@ export const TRANSLATIONS: Record<'en' | 'ar', Translations> = {
     back: 'رجوع',
     saveAndClose: 'حفظ وإغلاق',
     resetDefaults: 'استعادة الإعدادات الافتراضية',
+    gameTitle: 'نوفا سكريبت',
+    gameSubtitle: 'محاكي هندسة وتصميم المهمات الفضائية السحيقة',
+    soundOn: 'الصوت مفعّل',
+    soundOff: 'الصوت مكتوم',
+    chooseAstronaut: 'اختيار رائد الفضاء النشط',
+    alexDesignation: 'أليكس // قائد المهمة',
+    mayaDesignation: 'مايا // أخصائية الفضاء',
+    version: 'محاكي المحطة الفضائية v2.2 // العمليات المدارية',
 
-    stationRadar: 'رادار المحطة',
-    centralHub: 'الممر المركزي',
-    commandCenter: 'غرفة القيادة والتحكم',
-    vehicleHangar: 'حظيرة المركبات',
+    stationRadar: 'رادار المحطة الفضائية',
+    radarSubtitle: 'مسح مداري نشط',
+    centralHub: 'ردهة العبور المركزية',
+    centralHubDesc: 'الرابط المحوري الذي يربط بين أقسام المحطة المدارية الستة',
+    commandCenter: 'مركز القيادة والتحكم',
+    commandCenterDesc: 'شاشات القياس عن بُعد، الرصد المداري، ومنصة المراقبة',
+    vehicleHangar: 'حظيرة المركبات الفضائية',
+    vehicleHangarDesc: 'عنبر تركيب وتجميع المركبات وطاولة الصيانة والهندسة',
     scienceLab: 'المختبر العلمي',
+    scienceLabDesc: 'أبحاث الجيولوجيا الفلكية ومطياف الليزر لتحليل العينات',
     commsArray: 'مصفوفة الاتصالات',
-    resourceBay: 'مستودع الموارد',
+    commsArrayDesc: 'محطة هوائي شبكة الفضاء السحيق ومعايرة الترددات',
+    resourceBay: 'مستودع الموارد والخامات',
+    resourceBayDesc: 'تخزين المواد الأولية، خلايا الاندماج، والخامات المسترجعة',
     missionBoard: 'لوحة إطلاق المهمات',
+    missionBoardDesc: 'حاسوب مسارات الطيران ومنصة إطلاق الرحلات الاستكشافية',
+    dirCenter: 'المركز',
+    dirWest: 'الغرب [W]',
+    dirEast: 'الشرق [E]',
+    dirNorthWest: 'الشمال الغربي [NW]',
+    dirNorthEast: 'الشمال الشرقي [NE]',
+    dirSouthWest: 'الجنوب الغربي [SW]',
+    dirSouthEast: 'الجنوب الشرقي [SE]',
+    radarClickHint: 'انقر على أي قسم لتفعيل نظام الملاحة التلقائي',
+    targetWaypoint: 'الوجهة المحددة',
+    distance: 'المسافة',
+    meters: 'متر',
 
     inventory: 'المخزون',
+    crafting: 'التصنيع',
+    hangar: 'الحظيرة',
+    pause: 'إيقاف',
     interactPrompt: '[E] تفاعل',
     doubleClickPrompt: '[E] تفاعل // نقر مزدوج',
     radarToggle: '[M] الرادار',
-    info: 'دليل',
+    info: 'دليل الفضاء',
+    controlsMove: 'WASD أو الأسهم للحركة',
+    controlsInteract: '[E] التفاعل',
+    controlsInventory: '[I] المخزون',
+    controlsProfile: '[P] الملف الشخصي',
+    controlsRadar: '[M] الرادار',
+    capacity: 'السعة',
+    maxCapacity: 'الحد الأقصى',
+
+    metalScrap: 'خردة معادن',
+    metalScrapDesc: 'شظايا سبائك التيتانيوم المسترجعة لإصلاح وتطوير الهيكل.',
+    energyCell: 'خلية طاقة',
+    energyCellDesc: 'خلايا اندماجية دقيقة لتغذية أنظمة المحطة بالطاقة المستمرة.',
+    scienceSample: 'عينة علمية',
+    scienceSampleDesc: 'عينات من التربة والصخور الكوكبية للتحليل الطيفي بالليزر.',
+    blueprintFragment: 'جزء مخطط هندسي',
+    blueprintFragmentDesc: 'مخططات هندسية لتصنيع ترقيات المركبة الفضائية.',
+    rareMineral: 'معدن نادر',
+    rareMineralDesc: 'بلورات سيليكات فضائية نادرة ذات مقاومة حرارية فائقة.',
+
+    workbenchTitle: 'طاولة الهندسة والتصنيع الفضائي',
+    workbenchSubtitle: 'استخدم المواد المسترجعة لتصنيع ترقيات تجميلية لمركبتك الفضائية.',
+    craftUpgrade: 'تصنيع الترقية',
+    craftedBadge: 'تم التثبيت',
+    insufficientMaterials: 'المواد غير كافية',
+    cosmeticUpgradeNotice: 'ترقيات المظهر تخص الهيكل الخارجي ولا تؤثر على معادلات المهمة العلمية.',
+    materialsRequired: 'المواد المطلوبة:',
+
+    missionAssignment: 'تكليف المهمة الفضائية',
+    selectTargetTitle: 'اختر الوجهة الفضائية',
+    selectTargetSubtitle: 'حدد وجهتك الاستكشافية. لكل مسار حساباته المدارية وتحدياته الهندسية الخاصة.',
+    lunarMissionTitle: 'مهمة استكشاف القمر',
+    lunarMissionDesc: 'تصميم مسبار آلي لاستكشاف سطح القمر ودراسة جيولوجيته واختبار تقنيات الهبوط.',
+    marsMissionTitle: 'رحلة استكشاف المريخ',
+    marsMissionDesc: 'تصميم مركبة فضائية عابرة للكواكب للهبوط على المريخ والبحث عن آثار المياه القديمة.',
+    shorterTransit: 'رحلة 3 أيام',
+    moderateComplexity: 'دلتا-في معتدلة',
+    longerTransit: 'رحلة 7-9 أشهر',
+    higherComplexity: 'أحمال حرارية عالية',
+    selectMoonButton: 'اختيار مهمة القمر',
+    selectMarsButton: 'اختيار مهمة المريخ',
+
+    antennaTitle: 'معايرة هوائي شبكة الفضاء السحيق',
+    antennaSubtitle: 'قم بموازنة تردد الهوائي عالي الكسب لتحقيق اتصال لاسلكي مستقر مع القيادة الأرضية.',
+    antennaFrequency: 'تردد الموجة الحاملة',
+    antennaSignalStrength: 'قوة الإشارة',
+    antennaLock: 'تثبيت التردد',
+    antennaLocked: 'تم تثبيت ومعايرة الإشارة بنجاح',
+    spectrometerTitle: 'مطياف الليزر لتحليل العينات',
+    spectrometerSubtitle: 'اضبط الطول الموجي لليزر لتحديد البصمة الطيفية للعينات الصخرية والمعدنية.',
+    spectrometerWavelength: 'الطول الموجي لليزر',
+    spectrometerCalibrate: 'تحليل العينة',
+    spectrometerIdentified: 'تم التعرف على البصمة المعدنية',
+
+    profileTitle: 'سجل رائد الفضاء والخدمة',
+    commanderPersonnel: 'سجل طاقم رواد المحطة',
+    careerStats: 'إحصائيات وسجلات الطيران الفضائي',
+    missionsCompleted: 'المهمات المنجزة',
+    endingsDiscovered: 'النهايات المكتشفة',
+    bestScore: 'أعلى نقاط محققة',
+    modulesVisited: 'الأقسام المستكشفة',
+    itemsCrafted: 'المعدات المصنعة',
+    materialsCollected: 'المواد المسترجعة',
+    suitColorTitle: 'طلاء بدلة السير الفضائي (EVA)',
+    resetProgress: 'إعادة تعيين بيانات التقدم',
+    alexBio: 'القائد أليكس فانس — مهندس طيران أول وقائد رحلات فضائية بأكثر من 4,200 ساعة مدارية مسجلة.',
+    mayaBio: 'الأخصائية د. مايا لين — عالمة جيولوجيا كوكبية وباحثة في علم الأحياء الفلكي والتحليل الطيفي.',
+    rankCosmosLegend: 'أسطورة الفضاء',
+    rankArchitect: 'كبير مهندسي النظم الفضائية',
+    rankDirector: 'مدير عمليات الطيران الفضائي',
+    rankSpecialist: 'أخصائي مهام فضائية',
+    rankCadet: 'مستكشف متدرب',
 
     audioEngine: 'محرك الصوت',
     graphicsMood: 'المظهر والجرافيكس',
     keybindings: 'أزرار التحكم',
+    masterVolume: 'مستوى الصوت العام',
+    musicVolume: 'الموسيقى التصويرية التفاعلية',
+    sfxVolume: 'المؤثرات الصوتية',
 
     visualModeTitle: 'نمط العرض ومظهر المحطة',
     modeCinematic: 'سينمائي 3D (الافتراضي)',
     modeCinematicDesc: 'إضاءة ثلاثية الأبعاد ديناميكية مع ظلال فلكية وكشافات رأس متوهجة',
     modeRetro: 'ريترو بكسل 16-بت',
-    modeRetroDesc: 'فلتر أركيد كلاسيكي مع خطوط شاشات الـ CRT الكلاسيكية',
+    modeRetroDesc: 'بفر منخفض الدقة يحاكي ألعاب البكسل الكلاسيكية مع خطوط شاشات CRT',
     modeCyber: 'سايبر بانك نيون',
-    modeCyberDesc: 'خطوط هولوغرافية متوهجة عالية التباين بألوان السيان والوردي النيون',
+    modeCyberDesc: 'خطوط هولوغرافية متوهجة عالية التباين بألوان السيان والوردي النيون مع بريق متوهج',
     modePerf: 'أداء فائق وتوفير طاقة',
-    modePerfDesc: 'إضاءة مسطحة خفيفة لأعلى معدل إطارات وتوفير بطارية الموبايل',
+    modePerfDesc: 'إضاءة مسطحة خفيفة بدون فلاتر إضافية لأعلى معدل إطارات وتوفير بطارية الموبايل',
 
     keybindingsDesc: 'اضغط على أي زر لإعادة تعيينه. يدعم عدة أزرار لكل حركة.',
     rebindPrompt: 'اضغط أي زر على لوحة المفاتيح...',
@@ -183,6 +520,15 @@ export const TRANSLATIONS: Record<'en' | 'ar', Translations> = {
     actionMinimap: 'إظهار/إخفاء رادار المحطة',
     actionHandbook: 'فتح موسوعة ودليل الفضاء',
     actionPause: 'إيقاف مؤقت / إغلاق النوافذ',
+
+    optionA: 'الخيار (أ)',
+    optionB: 'الخيار (ب)',
+    chooseOption: 'تأكيد الاختيار',
+    engineeringImpact: 'الأثر الهندسي والمواردي:',
+    confirmDecision: 'تأكيد القرار',
+    sourceText: 'المرجع الفني لوكالة ناسا',
+    scoreLabel: 'نقاط المهمة',
+    stageLabel: 'مرحلة الرحلة',
 
     language: 'اللغة / LANGUAGE',
   },

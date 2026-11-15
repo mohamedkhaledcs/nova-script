@@ -6,7 +6,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { X, BookOpen, ChevronDown, ChevronRight } from 'lucide-react';
+import { X, BookOpen, ChevronDown, ChevronRight, Award, Lock } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { ACHIEVEMENTS, type AchievementDef } from '@/game/progression/achievements';
 
@@ -164,8 +164,11 @@ export default function CodexPanel() {
                             <div className="text-slate-300 mt-1">
                               <span className="text-emerald-400">→</span> {entry.answerText}
                             </div>
-                            <div className="mt-2 p-2 rounded bg-cyan-950/30 border border-cyan-800/20 text-cyan-200">
-                              💡 {entry.learningPoint}
+                            <div className="mt-2 p-2 rounded bg-cyan-950/30 border border-cyan-800/20 text-cyan-200 flex items-start gap-1.5">
+                              <span className="text-[10px] font-mono font-bold px-1.5 py-0.5 rounded bg-cyan-900/60 text-cyan-300 border border-cyan-500/30 shrink-0">
+                                TAKEAWAY
+                              </span>
+                              <span>{entry.learningPoint}</span>
                             </div>
                           </div>
                         ))}
@@ -188,7 +191,13 @@ export default function CodexPanel() {
                         : 'bg-space-950/50 border-space-border/20 opacity-50'
                     }`}
                   >
-                    <span className="text-2xl">{isUnlocked ? ach.icon : '🔒'}</span>
+                    <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-space-900 border border-space-border shrink-0">
+                      {isUnlocked ? (
+                        <Award className="w-5 h-5 text-amber-400" />
+                      ) : (
+                        <Lock className="w-4 h-4 text-slate-500" />
+                      )}
+                    </div>
                     <div>
                       <div className={`font-mono text-sm font-bold ${isUnlocked ? 'text-amber-300' : 'text-slate-500'}`}>
                         {ach.title}

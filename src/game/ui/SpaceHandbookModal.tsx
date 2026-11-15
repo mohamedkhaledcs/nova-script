@@ -33,7 +33,7 @@ import {
 } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { audio } from '@/lib/audio/audio-manager';
-import { COLLECTIBLE_INFO, COLLECTIBLE_LIMITS } from '@/game/types';
+import { COLLECTIBLE_INFO, COLLECTIBLE_LIMITS, type Language } from '@/game/types';
 
 interface CodexEntry {
   questionId: string;
@@ -59,7 +59,7 @@ function loadSavedCodexEntries(): CodexEntry[] {
 type HandbookTab = 'destinations' | 'engineering' | 'physics' | 'station' | 'materials' | 'codex';
 
 export default function SpaceHandbookModal() {
-  const { isCodexOpen, toggleCodex } = useGameStore();
+  const { isCodexOpen, toggleCodex, language } = useGameStore();
   const [activeTab, setActiveTab] = useState<HandbookTab>('destinations');
   const [searchQuery, setSearchQuery] = useState('');
   const [discoveredEntries, setDiscoveredEntries] = useState<CodexEntry[]>([]);
@@ -72,8 +72,50 @@ export default function SpaceHandbookModal() {
 
   if (!isCodexOpen) return null;
 
+  const tabs: { id: HandbookTab; label: string; icon: any; count: number }[] = [
+    {
+      id: 'destinations',
+      label: language === 'ar' ? 'الوجهات الفضائية' : 'DESTINATIONS',
+      icon: Globe,
+      count: 2,
+    },
+    {
+      id: 'engineering',
+      label: language === 'ar' ? 'أنظمة المركبة' : 'SPACECRAFT SYSTEMS',
+      icon: Cpu,
+      count: 5,
+    },
+    {
+      id: 'physics',
+      label: language === 'ar' ? 'الفيزياء المدارية 101' : 'ORBITAL PHYSICS 101',
+      icon: Orbit,
+      count: 4,
+    },
+    {
+      id: 'station',
+      label: language === 'ar' ? 'أقسام المحطة' : 'STATION MODULES',
+      icon: Layers,
+      count: 7,
+    },
+    {
+      id: 'materials',
+      label: language === 'ar' ? 'المواد المسترجعة' : 'SALVAGE MATERIALS',
+      icon: Sparkles,
+      count: 5,
+    },
+    {
+      id: 'codex',
+      label: language === 'ar' ? 'السجلات الميدانية' : 'DISCOVERED FIELD NOTES',
+      icon: BookOpen,
+      count: discoveredEntries.length,
+    },
+  ];
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-lg p-2 sm:p-4 select-none animate-in fade-in duration-200">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-lg p-2 sm:p-4 select-none animate-in fade-in duration-200"
+      dir={language === 'ar' ? 'rtl' : 'ltr'}
+    >
       <div className="max-w-5xl w-full h-[92vh] glass-panel rounded-2xl border border-cyan-500/40 shadow-2xl flex flex-col overflow-hidden bg-space-950/95">
         {/* Top Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-cyan-900/60 bg-space-900/90">
@@ -83,13 +125,17 @@ export default function SpaceHandbookModal() {
             </div>
             <div>
               <h2 className="font-mono font-bold text-base sm:text-lg text-white tracking-wider flex items-center gap-2">
-                NOVASCRIPT DEEP-SPACE HANDBOOK & ARCHIVE
+                {language === 'ar'
+                  ? 'دليل وموسوعة نوفا سكريبت للفضاء السحيق'
+                  : 'NOVASCRIPT DEEP-SPACE HANDBOOK & ARCHIVE'}
                 <span className="hidden md:inline-block text-[10px] px-2 py-0.5 rounded-full bg-cyan-900/40 text-cyan-300 border border-cyan-500/30 font-mono">
-                  v2.4 TELEMETRY MANUAL
+                  {language === 'ar' ? 'دليل العمليات v2.4' : 'v2.4 TELEMETRY MANUAL'}
                 </span>
               </h2>
               <p className="text-xs text-slate-400 font-mono">
-                COMPREHENSIVE SPACE MISSION OPERATIONAL GUIDE & SCIENTIFIC PRINCIPLES
+                {language === 'ar'
+                  ? 'الدليل الشامل للعمليات والأسس العلمية للمهمات الفضائية المدارية'
+                  : 'COMPREHENSIVE SPACE MISSION OPERATIONAL GUIDE & SCIENTIFIC PRINCIPLES'}
               </p>
             </div>
           </div>
@@ -97,13 +143,13 @@ export default function SpaceHandbookModal() {
           <div className="flex items-center gap-3">
             {/* Search Input */}
             <div className="relative hidden sm:block w-48 lg:w-64">
-              <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+              <Search className={`w-3.5 h-3.5 absolute ${language === 'ar' ? 'right-3' : 'left-3'} top-1/2 -translate-y-1/2 text-slate-400`} />
               <input
                 type="text"
-                placeholder="Search archive..."
+                placeholder={language === 'ar' ? 'بحث في الموسوعة...' : 'Search archive...'}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-8 pr-3 py-1.5 rounded-lg bg-space-950/90 border border-space-border/60 text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400"
+                className={`w-full ${language === 'ar' ? 'pr-8 pl-3' : 'pl-8 pr-3'} py-1.5 rounded-lg bg-space-950/90 border border-space-border/60 text-xs font-mono text-slate-200 placeholder-slate-500 focus:outline-none focus:border-cyan-400`}
               />
             </div>
 
@@ -112,7 +158,7 @@ export default function SpaceHandbookModal() {
                 audio.click();
                 toggleCodex();
               }}
-              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-space-850 transition-colors"
+              className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-space-850 transition-colors cursor-pointer"
               title="Close Handbook [ESC / Tab]"
             >
               <X className="w-5 h-5" />
@@ -122,14 +168,7 @@ export default function SpaceHandbookModal() {
 
         {/* Tab Navigation Ribbon */}
         <div className="flex items-center gap-1 px-6 py-2 bg-space-950/80 border-b border-space-border/50 overflow-x-auto scrollbar-none">
-          {[
-            { id: 'destinations', label: 'DESTINATIONS', icon: Globe, count: 2 },
-            { id: 'engineering', label: 'SPACECRAFT SYSTEMS', icon: Cpu, count: 5 },
-            { id: 'physics', label: 'ORBITAL PHYSICS 101', icon: Orbit, count: 4 },
-            { id: 'station', label: 'STATION MODULES', icon: Layers, count: 7 },
-            { id: 'materials', label: 'SALVAGE MATERIALS', icon: Sparkles, count: 5 },
-            { id: 'codex', label: 'DISCOVERED FIELD NOTES', icon: BookOpen, count: discoveredEntries.length },
-          ].map((tab) => {
+          {tabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = activeTab === tab.id;
             return (
@@ -139,7 +178,7 @@ export default function SpaceHandbookModal() {
                   audio.click();
                   setActiveTab(tab.id as HandbookTab);
                 }}
-                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all whitespace-nowrap ${
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-xl font-mono text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
                   isActive
                     ? 'bg-gradient-to-r from-cyan-600/80 to-blue-600/80 text-white shadow-glow-cyan border border-cyan-400/50'
                     : 'text-slate-400 hover:text-slate-200 hover:bg-space-900 border border-transparent'
@@ -161,18 +200,18 @@ export default function SpaceHandbookModal() {
 
         {/* Tab Content Body */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
-          {activeTab === 'destinations' && <DestinationsSection query={searchQuery} />}
-          {activeTab === 'engineering' && <EngineeringSection query={searchQuery} />}
-          {activeTab === 'physics' && <PhysicsSection query={searchQuery} />}
-          {activeTab === 'station' && <StationSection query={searchQuery} />}
-          {activeTab === 'materials' && <MaterialsSection query={searchQuery} />}
-          {activeTab === 'codex' && <CodexSection entries={discoveredEntries} query={searchQuery} />}
+          {activeTab === 'destinations' && <DestinationsSection query={searchQuery} language={language} />}
+          {activeTab === 'engineering' && <EngineeringSection query={searchQuery} language={language} />}
+          {activeTab === 'physics' && <PhysicsSection query={searchQuery} language={language} />}
+          {activeTab === 'station' && <StationSection query={searchQuery} language={language} />}
+          {activeTab === 'materials' && <MaterialsSection query={searchQuery} language={language} />}
+          {activeTab === 'codex' && <CodexSection entries={discoveredEntries} query={searchQuery} language={language} />}
         </div>
 
         {/* Footer info bar */}
         <div className="px-6 py-2.5 bg-space-900 border-t border-space-border/50 flex items-center justify-between text-xs font-mono text-slate-400">
-          <span>PRESS [TAB] OR [ESC] TO EXIT HANDBOOK</span>
-          <span className="text-cyan-400">NOVASCRIPT EXPEDITION PROTOCOL // UNCLASSIFIED</span>
+          <span>{language === 'ar' ? 'اضغط [TAB] أو [ESC] لإغلاق الدليل' : 'PRESS [TAB] OR [ESC] TO EXIT HANDBOOK'}</span>
+          <span className="text-cyan-400">{language === 'ar' ? 'بروتوكول نوفا سكريبت الاستكشافي // غير مصنف' : 'NOVASCRIPT EXPEDITION PROTOCOL // UNCLASSIFIED'}</span>
         </div>
       </div>
     </div>
@@ -183,7 +222,7 @@ export default function SpaceHandbookModal() {
 // 1. Destinations Section (Moon vs Mars Architecture)
 // ============================================================================
 
-function DestinationsSection({ query }: { query: string }) {
+function DestinationsSection({ query, language }: { query: string; language?: Language }) {
   const destinations = [
     {
       name: 'THE MOON // LUNAR EXPLORATION INITIATIVE',
@@ -304,7 +343,7 @@ function DestinationsSection({ query }: { query: string }) {
                 <ul className="space-y-1.5">
                   {dest.hazards.map((haz, idx) => (
                     <li key={idx} className="flex items-start gap-2 text-xs font-mono text-slate-400">
-                      <span className="text-rose-400 font-bold shrink-0">⚠</span>
+                      <span className="text-rose-400 font-bold shrink-0 text-[10px]">[!]</span>
                       <span>{haz}</span>
                     </li>
                   ))}
@@ -322,7 +361,7 @@ function DestinationsSection({ query }: { query: string }) {
 // 2. Spacecraft Engineering Systems
 // ============================================================================
 
-function EngineeringSection({ query }: { query: string }) {
+function EngineeringSection({ query, language }: { query: string; language?: Language }) {
   const subsystems = [
     {
       title: '1. STRUCTURAL BUS & PRIMARY CHASSIS',
@@ -455,7 +494,7 @@ function EngineeringSection({ query }: { query: string }) {
 // 3. Orbital Mechanics & Physics 101
 // ============================================================================
 
-function PhysicsSection({ query }: { query: string }) {
+function PhysicsSection({ query, language }: { query: string; language?: Language }) {
   const concepts = [
     {
       title: 'THE TSIOLKOVSKY ROCKET EQUATION',
@@ -504,15 +543,65 @@ function PhysicsSection({ query }: { query: string }) {
 // 4. Station Modules Section
 // ============================================================================
 
-function StationSection({ query }: { query: string }) {
+function StationSection({ query, language }: { query: string; language?: string }) {
+  const isAr = language === 'ar';
   const modules = [
-    { code: 'HUB-TRN', name: 'Central Transit Hub', dir: 'Center', desc: 'The central arterial corridor connecting all orbital modules. Direct transit portals to all 6 specialized facilities.' },
-    { code: 'CMD-00', name: 'Command Center', dir: 'West (←)', desc: 'Mission oversight room. Panoramic observation deck and station diagnostic telemetry consoles.' },
-    { code: 'HNG-02', name: 'Assembly Hangar', dir: 'East (→)', desc: 'Modular vehicle hangar featuring the 3D Spacecraft inspection viewport and the engineering crafting workbench.' },
-    { code: 'LAB-01', name: 'Science Laboratory', dir: 'North-West (↖)', desc: 'Planetary geology research center. Houses the Raman laser spectrometer for mineral sample identification.' },
-    { code: 'COM-03', name: 'Communications Array', dir: 'North-East (↗)', desc: 'Deep Space Network antenna station. Features the interactive frequency calibration oscilloscope.' },
-    { code: 'RES-05', name: 'Resource Bay', dir: 'South-West (↙)', desc: 'Salvaged materials stockpile containing alloy crates, fusion cells, and supply lockers.' },
-    { code: 'MSN-06', name: 'Mission Launch Board', dir: 'South-East (↘)', desc: 'Launch operations terminal. Select your destination (Moon vs Mars) and begin the mission planning sequence.' },
+    {
+      code: 'HUB-TRN',
+      name: isAr ? 'ردهة العبور المركزية' : 'Central Transit Hub',
+      dir: isAr ? 'المركز' : 'Center',
+      desc: isAr
+        ? 'الممر الشرياني المركزي الذي يربط بين جميع الأقسام المدارية الستة. بوابات مباشرة لكافة المرافق المتخصصة.'
+        : 'The central arterial corridor connecting all orbital modules. Direct transit portals to all 6 specialized facilities.',
+    },
+    {
+      code: 'CMD-00',
+      name: isAr ? 'مركز القيادة والتحكم' : 'Command Center',
+      dir: isAr ? 'الغرب (←)' : 'West (←)',
+      desc: isAr
+        ? 'غرفة الإشراف على المهمات، منصة المراقبة البانورامية وشاشات القياس والتشخيص عن بُعد.'
+        : 'Mission oversight room. Panoramic observation deck and station diagnostic telemetry consoles.',
+    },
+    {
+      code: 'HNG-02',
+      name: isAr ? 'حظيرة المركبات الفضائية' : 'Assembly Hangar',
+      dir: isAr ? 'الشرق (→)' : 'East (→)',
+      desc: isAr
+        ? 'عنبر تركيب وتجميع المركبات الفضائية، نافذة فحص المركبة ثلاثية الأبعاد وطاولة الصيانة والهندسة.'
+        : 'Modular vehicle hangar featuring the 3D Spacecraft inspection viewport and the engineering crafting workbench.',
+    },
+    {
+      code: 'LAB-01',
+      name: isAr ? 'المختبر العلمي' : 'Science Laboratory',
+      dir: isAr ? 'الشمال الغربي [NW]' : 'North-West [NW]',
+      desc: isAr
+        ? 'مركز أبحاث الجيولوجيا الكوكبية. يضم مطياف الليزر لتحليل العينات الصخرية والمعدنية.'
+        : 'Planetary geology research center. Houses the Raman laser spectrometer for mineral sample identification.',
+    },
+    {
+      code: 'COM-03',
+      name: isAr ? 'مصفوفة الاتصالات' : 'Communications Array',
+      dir: isAr ? 'الشمال الشرقي [NE]' : 'North-East [NE]',
+      desc: isAr
+        ? 'محطة هوائي شبكة الفضاء السحيق. تتميز بجهاز راسم الإشارات لمعايرة ترددات الاتصال بالأرض.'
+        : 'Deep Space Network antenna station. Features the interactive frequency calibration oscilloscope.',
+    },
+    {
+      code: 'RES-05',
+      name: isAr ? 'عنبر الموارد والخامات' : 'Resource Bay',
+      dir: isAr ? 'الجنوب الغربي [SW]' : 'South-West [SW]',
+      desc: isAr
+        ? 'مستودع تخزين المواد المسترجعة، سبائك التيتانيوم، خلايا الطاقة الاندماجية، وخزائن الإمدادات.'
+        : 'Salvaged materials stockpile containing alloy crates, fusion cells, and supply lockers.',
+    },
+    {
+      code: 'MSN-06',
+      name: isAr ? 'لوحة إطلاق المهمات' : 'Mission Launch Board',
+      dir: isAr ? 'الجنوب الشرقي [SE]' : 'South-East [SE]',
+      desc: isAr
+        ? 'منصة عمليات الإطلاق الفضائي. اختر وجهتك الفضائية (القمر أو المريخ) وابدأ تسلسل التخطيط للمهمة.'
+        : 'Launch operations terminal. Select your destination (Moon vs Mars) and begin the mission planning sequence.',
+    },
   ];
 
   return (
@@ -537,7 +626,8 @@ function StationSection({ query }: { query: string }) {
 // 5. Materials Section
 // ============================================================================
 
-function MaterialsSection({ query }: { query: string }) {
+function MaterialsSection({ query, language }: { query: string; language?: string }) {
+  const isAr = language === 'ar';
   const list = Object.entries(COLLECTIBLE_INFO) as [keyof typeof COLLECTIBLE_INFO, typeof COLLECTIBLE_INFO[keyof typeof COLLECTIBLE_INFO]][];
 
   return (
@@ -545,16 +635,51 @@ function MaterialsSection({ query }: { query: string }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {list.map(([type, info]) => {
           const limit = COLLECTIBLE_LIMITS[type] ?? 20;
+          const localizedName = isAr
+            ? type === 'metal-scrap'
+              ? 'خردة معادن'
+              : type === 'energy-cell'
+              ? 'خلية طاقة اندماجية'
+              : type === 'science-sample'
+              ? 'عينة جيولوجية علمية'
+              : type === 'blueprint-fragment'
+              ? 'جزء مخطط هندسي'
+              : 'معدن كريستالي نادر'
+            : info.label;
+
+          const localizedDesc = isAr
+            ? type === 'metal-scrap'
+              ? 'شظايا سبائك التيتانيوم المسترجعة لإصلاح وتدعيم هياكل المركبات الفضائية.'
+              : type === 'energy-cell'
+              ? 'خلايا اندماج دقيقة لتغذية أنظمة الدفع والتحكم بالطاقة المستمرة في الفضاء السحيق.'
+              : type === 'science-sample'
+              ? 'عينات تربة وصخور كوكبية مأخوذة من المحاكاة المدارية للتحليل بالليزر.'
+              : type === 'blueprint-fragment'
+              ? 'مخططات وبيانات هندسية مدارية لتصميم وتركيب ترقيات المركبة الفضائية.'
+              : 'بلورات سيليكات فضائية نقية ذات قدرة استثنائية على تحمل الإشعاعات والحرارة العالية.'
+            : info.description;
+
           return (
             <div key={type} className="glass-panel p-5 rounded-2xl border border-space-border/60 space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-2xl">{info.icon}</span>
+                {/* Clean Vector Item Badge (Zero Emojis) */}
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center font-mono font-bold text-xs"
+                  style={{
+                    backgroundColor: `${info.color}15`,
+                    borderColor: `${info.color}50`,
+                    borderWidth: '1px',
+                    color: info.color,
+                  }}
+                >
+                  {type === 'metal-scrap' ? 'SCRP' : type === 'energy-cell' ? 'FUSN' : type === 'science-sample' ? 'SMPL' : type === 'blueprint-fragment' ? 'SCHM' : 'CRYS'}
+                </div>
                 <span className="font-mono text-[10px] px-2 py-0.5 rounded bg-space-950 text-cyan-300 border border-cyan-500/30">
-                  CAPACITY LIMIT: {limit}
+                  {isAr ? `أقصى سعة: ${limit}` : `CAPACITY LIMIT: ${limit}`}
                 </span>
               </div>
-              <div className="font-mono font-bold text-sm text-white">{info.label}</div>
-              <p className="font-mono text-xs text-slate-400 leading-relaxed">{info.description}</p>
+              <div className="font-mono font-bold text-sm text-white">{localizedName}</div>
+              <p className="font-mono text-xs text-slate-400 leading-relaxed">{localizedDesc}</p>
             </div>
           );
         })}
@@ -567,14 +692,19 @@ function MaterialsSection({ query }: { query: string }) {
 // 6. Codex & Discovered Field Notes Section
 // ============================================================================
 
-function CodexSection({ entries, query }: { entries: CodexEntry[]; query: string }) {
+function CodexSection({ entries, query, language }: { entries: CodexEntry[]; query: string; language?: string }) {
+  const isAr = language === 'ar';
   if (entries.length === 0) {
     return (
       <div className="p-12 text-center font-mono space-y-3">
         <BookOpen className="w-10 h-10 text-cyan-400/50 mx-auto" />
-        <h4 className="text-sm font-bold text-white tracking-wider">NO FIELD NOTES DISCOVERED YET</h4>
+        <h4 className="text-sm font-bold text-white tracking-wider">
+          {isAr ? 'لم يتم تسجيل ملاحظات ميدانية بعد' : 'NO FIELD NOTES DISCOVERED YET'}
+        </h4>
         <p className="text-xs text-slate-400 max-w-md mx-auto">
-          Begin missions at the Mission Board. Every engineering decision you commit records scientific learning points and mission telemetry into this archive.
+          {isAr
+            ? 'ابدأ مهمتك من لوحة المهمات. كل قرار هندسي تتخذه يسجل نقاط تعلم علمية وقياسات مدارية في هذا الأرشيف.'
+            : 'Begin missions at the Mission Board. Every engineering decision you commit records scientific learning points and mission telemetry into this archive.'}
         </p>
       </div>
     );
