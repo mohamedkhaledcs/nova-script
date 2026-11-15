@@ -12,7 +12,7 @@
 import React, { useEffect, useCallback, useRef } from 'react';
 import { useGameStore } from '@/game/store';
 import { getRoomDefinition } from '@/game/world/rooms';
-import { DEFAULT_KEYBINDINGS } from '@/game/types';
+import { DEFAULT_KEYBINDINGS, matchesKey } from '@/game/types';
 import { audio } from '@/lib/audio/audio-manager';
 
 interface InteractionHandlerProps {
@@ -105,11 +105,10 @@ export default function InteractionHandler({
         return;
       }
 
-      const key = e.key.toLowerCase();
       const bindings = keybindings || DEFAULT_KEYBINDINGS;
       const interactKeys = bindings.interact || DEFAULT_KEYBINDINGS.interact;
 
-      if (interactKeys.includes(key)) {
+      if (matchesKey(interactKeys, e)) {
         if (interactionTarget) {
           e.preventDefault();
           triggerInteraction();

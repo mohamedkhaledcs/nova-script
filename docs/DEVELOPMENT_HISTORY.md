@@ -1,6 +1,6 @@
 # NovaScript Development History & Version Changelog
 
-> **Current Version**: `2.3.0 (Latest Production Release)`  
+> **Current Version**: `2.4.0 (Latest Production Release)`  
 > **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)  
 > **Engineering Collaboration**: Mohamed Khaled & Antigravity (Google DeepMind)
 
@@ -167,6 +167,25 @@ Throughout development, the engineering effort followed an iterative co-developm
   - Graph engine test passed all 33 paths, 31 questions, and 8 endings.
 - **Repository Deployment**:
   - Full codebase deployed and synchronized with remote repository: `https://github.com/mohamedkhaledcs/nova-script` on both `main` and `dev` branches.
+
+---
+
+### Version 2.4.0 (Latest Production Release) — Tactical Radar Toggle & Universal Bilingual Keyboard Normalization
+*Radar Minimization Pill & Universal Keyboard Parity*
+
+- **Station Radar Interactive Show/Hide Toggle (`StationMinimap.tsx`)**:
+  - Added an in-radar header hide button (`EyeOff`) and bottom bar toggle.
+  - When minimized, collapses into a sleek tactical floating glassmorphism popup/pill in the bottom-right corner featuring an animated pulsating antenna blip, active station room code (e.g. `HUB-TRN`), and `[M]` badge.
+  - Clicking the bottom-right pill smoothly restores the full holographic radar matrix.
+  - Pressing `M` (or Arabic equivalent) toggles seamlessly between full radar panel and compact pill.
+- **Universal Bilingual Keyboard Normalization (`types.ts`, `page.tsx`, `useInput.ts`, `InteractionHandler.tsx`)**:
+  - Implemented `normalizeKey` and `matchesKey` supporting all keyboard variations across the application:
+    - English lowercase and uppercase (`M` / `m`, `W` / `w`, `E` / `e`, `I` / `i`, `P` / `p`, `Tab`, `Escape`).
+    - Arabic physical layout mapping: `ص`->w, `س`->s, `ش`->a, `ي`->d, `ث`->e, `ة`->m, `ه`->i, `ح`->p, `لا`->b.
+    - Arabic phonetic mapping: `م` (Meem) / `ة` (Teh Marbuta) both map to `m` for immediate Radar toggle.
+    - Browser physical `KeyboardEvent.code` resolution (`KeyM`, `KeyW`, `KeyA`, `KeyS`, `KeyD`, `KeyE`, `KeyI`).
+- **Comprehensive Verification**:
+  - Automated Puppeteer test (`scripts/test-radar-and-keys.mjs`) verified hide button, restore pill, `KeyM`, Arabic `ة` key, and Arabic HUD view with 6 verification screenshots.
 
 ---
 

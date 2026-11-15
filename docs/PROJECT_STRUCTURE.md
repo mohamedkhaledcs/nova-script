@@ -1,6 +1,6 @@
 # NovaScript Project Structure & File Guide
 
-> **Specification Version**: `2.3.0 (Latest Production Release)`  
+> **Specification Version**: `2.4.0 (Latest Production Release)`  
 > **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)  
 > **Architects**: Mohamed Khaled & Antigravity (Google DeepMind)
 

@@ -37,7 +37,7 @@ import CollectibleNotifications from '@/game/ui/CollectibleNotifications';
 import AchievementNotifications from '@/game/ui/AchievementNotifications';
 import InteractionHandler from '@/game/interactions/InteractionHandler';
 import { useGameStore } from '@/game/store';
-import { DEFAULT_KEYBINDINGS, type GameAction } from '@/game/types';
+import { DEFAULT_KEYBINDINGS, matchesKey, normalizeKey, type GameAction } from '@/game/types';
 import { addCodexEntry } from '@/game/ui/CodexPanel';
 import { musicEngine } from '@/game/audio/music-engine';
 
@@ -92,12 +92,12 @@ export default function GamePage() {
         return;
       }
 
-      const key = e.key.toLowerCase();
+      const key = normalizeKey(e.key, e.code);
       const store = useGameStore.getState();
       const bindings = store.keybindings || DEFAULT_KEYBINDINGS;
       const isAction = (action: GameAction) => {
         const list = bindings[action] || DEFAULT_KEYBINDINGS[action] || [];
-        return list.includes(key);
+        return matchesKey(list, e);
       };
 
       if (e.key === 'Escape' || isAction('pause')) {

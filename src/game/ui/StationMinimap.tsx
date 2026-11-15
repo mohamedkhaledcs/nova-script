@@ -16,7 +16,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Compass, Maximize2, Minimize2, Radio, Navigation } from 'lucide-react';
+import { Compass, Maximize2, Minimize2, Radio, Navigation, EyeOff } from 'lucide-react';
 import { useGameStore } from '@/game/store';
 import { getRoomDefinition } from '@/game/world/rooms';
 import type { RoomId } from '@/game/types';
@@ -132,6 +132,8 @@ export default function StationMinimap() {
     collectiblesFound,
     roomsVisited,
     language,
+    isMinimapOpen,
+    toggleMinimap,
   } = useGameStore();
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -156,6 +158,38 @@ export default function StationMinimap() {
     audio.select();
     setWaypointRoom((prev) => (prev === rId ? null : rId));
   };
+
+  // Collapsed popup pill (radar hidden)
+  if (!isMinimapOpen) {
+    return (
+      <div className="fixed bottom-14 right-4 z-30 select-none animate-fadeIn">
+        <button
+          onClick={() => {
+            audio.click();
+            toggleMinimap();
+          }}
+          className="flex items-center gap-2 px-3.5 py-2 rounded-xl glass-panel border border-cyan-500/50 bg-space-950/95 backdrop-blur-md shadow-glow-cyan hover:border-cyan-300 hover:bg-space-900 transition-all group cursor-pointer"
+          title={language === 'ar' ? 'استعادة وعرض الرادار [M]' : 'Restore Station Radar [M]'}
+        >
+          <div className="relative flex items-center justify-center">
+            <Radio className="w-4 h-4 text-cyan-400 animate-pulse group-hover:text-cyan-300" />
+            <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping" />
+          </div>
+          <div className="flex flex-col text-left">
+            <span className={`text-[10px] text-cyan-300 font-bold leading-tight ${language === 'ar' ? 'font-sans' : 'font-mono tracking-wider'}`}>
+              {t.stationRadar}
+            </span>
+            <span className="font-mono text-[8px] text-slate-400 leading-tight">
+              {activeLayout.code}
+            </span>
+          </div>
+          <span className="font-mono text-[9px] px-1.5 py-0.5 rounded bg-cyan-950/80 text-cyan-300 border border-cyan-500/40 font-bold group-hover:scale-110 transition-transform">
+            M
+          </span>
+        </button>
+      </div>
+    );
+  }
 
   return (
     <div className="fixed bottom-14 right-4 z-30 select-none">
@@ -183,14 +217,24 @@ export default function StationMinimap() {
                 audio.click();
                 setIsExpanded((prev) => !prev);
               }}
-              className="p-1 rounded text-slate-400 hover:text-white hover:bg-space-850"
-              title={isExpanded ? 'Minimize Radar' : 'Expand Blueprint'}
+              className="p-1 rounded text-slate-400 hover:text-white hover:bg-space-850 cursor-pointer transition-colors"
+              title={isExpanded ? (language === 'ar' ? 'تصغير الحجم' : 'Minimize Radar') : (language === 'ar' ? 'تكبير المخطط' : 'Expand Blueprint')}
             >
               {isExpanded ? (
                 <Minimize2 className="w-3 h-3" />
               ) : (
                 <Maximize2 className="w-3 h-3" />
               )}
+            </button>
+            <button
+              onClick={() => {
+                audio.click();
+                toggleMinimap();
+              }}
+              className="p-1 rounded text-slate-400 hover:text-cyan-300 hover:bg-cyan-950/60 cursor-pointer transition-colors"
+              title={language === 'ar' ? 'إخفاء الرادار إلى الزاوية [M]' : 'Hide Radar to Corner [M]'}
+            >
+              <EyeOff className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -415,7 +459,16 @@ export default function StationMinimap() {
           ) : (
             <div className="flex items-center justify-between w-full text-slate-400">
               <span className="text-cyan-300 font-bold">{t[activeLayout.labelKey] as string}</span>
-              <span className="text-slate-500">{t.radarToggle}</span>
+              <button
+                onClick={() => {
+                  audio.click();
+                  toggleMinimap();
+                }}
+                className="text-slate-400 hover:text-cyan-300 transition-colors cursor-pointer"
+                title={language === 'ar' ? 'إخفاء الرادار [M]' : 'Hide Radar [M]'}
+              >
+                {t.radarToggle}
+              </button>
             </div>
           )}
         </div>

@@ -57,17 +57,128 @@ export interface Keybindings {
 }
 
 export const DEFAULT_KEYBINDINGS: Keybindings = {
-  moveForward: ['w', 'arrowup'],
-  moveBackward: ['s', 'arrowdown'],
-  moveLeft: ['a', 'arrowleft'],
-  moveRight: ['d', 'arrowright'],
-  interact: ['e', 'enter'],
-  inventory: ['i', 'b'],
-  profile: ['p', 'c'],
-  minimap: ['m'],
-  handbook: ['tab', 'h'],
+  moveForward: ['w', 'arrowup', 'ص'],
+  moveBackward: ['s', 'arrowdown', 'س'],
+  moveLeft: ['a', 'arrowleft', 'ش'],
+  moveRight: ['d', 'arrowright', 'ي'],
+  interact: ['e', 'enter', 'ث'],
+  inventory: ['i', 'b', 'ه', 'لا'],
+  profile: ['p', 'c', 'ح', 'ؤ'],
+  minimap: ['m', 'ة', 'م'],
+  handbook: ['tab', 'h', 'ا'],
   pause: ['escape'],
 };
+
+/**
+ * Comprehensive bilingual keyboard normalization:
+ * Normalizes any keyboard input regardless of:
+ * - English uppercase / lowercase (M vs m, W vs w, E vs e, etc.)
+ * - Keyboard layout: Arabic QWERTY physical keys:
+ *   ض->q, ص->w, ث->e, ق->r, ف->t, غ->y, ع->u, ه->i, خ->o, ح->p, ج->[, د->]
+ *   ش->a, س->s, ي->d, ب->f, ل->g, ا->h, ت->j, ن->k, م->l, ك->;, ط->'
+ *   ئ->z, ء->x, ؤ->c, ر->v, لا->b, ى->n, ة->m, و->,, ز->., ظ->/
+ * - Arabic phonetic/mnemonic mapping:
+ *   م -> m (Minimap / Map)
+ *   ة -> m (Physical key for M on Arabic keyboard)
+ *   ب -> p / b (Profile / Bag)
+ *   ح -> h (Handbook)
+ *   ث -> e (Physical key for E)
+ *   ص -> w (Physical key for W)
+ *   س -> s (Physical key for S)
+ *   ش -> a (Physical key for A)
+ *   ي -> d (Physical key for D)
+ * - KeyboardEvent.code (e.g. 'KeyM' -> 'm', 'KeyW' -> 'w')
+ */
+const ARABIC_TO_LATIN: Record<string, string> = {
+  // Row 1 (QWERTY)
+  'ض': 'q',
+  'ص': 'w',
+  'ث': 'e',
+  'ق': 'r',
+  'ف': 't',
+  'غ': 'y',
+  'ع': 'u',
+  'ه': 'i',
+  'خ': 'o',
+  'ح': 'p',
+  'ج': '[',
+  'د': ']',
+
+  // Row 2 (ASDFGHJKL)
+  'ش': 'a',
+  'س': 's',
+  'ي': 'd',
+  'ب': 'f',
+  'ل': 'g',
+  'ا': 'h',
+  'ت': 'j',
+  'ن': 'k',
+  'م': 'm', // Maps to 'm' for minimap/movement convenience
+  'ك': ';',
+  'ط': "'",
+
+  // Row 3 (ZXCVBNM)
+  'ئ': 'z',
+  'ء': 'x',
+  'ؤ': 'c',
+  'ر': 'v',
+  'لا': 'b',
+  'ﻻ': 'b',
+  'ى': 'n',
+  'ة': 'm', // Physical M key on Arabic keyboard
+  'و': ',',
+  'ز': '.',
+  'ظ': '/',
+  'ذ': '`',
+
+  // Common variants
+  'أ': 'a',
+  'إ': 'i',
+  'آ': 'a',
+};
+
+export function normalizeKey(rawKey: string, code?: string): string {
+  // If code is provided and represents a physical letter key (e.g. 'KeyM', 'KeyW')
+  if (code && code.startsWith('Key')) {
+    return code.slice(3).toLowerCase();
+  }
+  if (code && code.startsWith('Digit')) {
+    return code.slice(5);
+  }
+  if (code && code === 'Space') {
+    return ' ';
+  }
+  if (code && code === 'Escape') {
+    return 'escape';
+  }
+  if (code && code === 'Enter') {
+    return 'enter';
+  }
+  if (code && code === 'Tab') {
+    return 'tab';
+  }
+  if (code && code.startsWith('Arrow')) {
+    return code.toLowerCase();
+  }
+
+  if (rawKey.length > 1) return rawKey.toLowerCase();
+  const lower = rawKey.toLowerCase();
+  return ARABIC_TO_LATIN[lower] || ARABIC_TO_LATIN[rawKey] || lower;
+}
+
+export function matchesKey(actionKeys: string[], e: KeyboardEvent): boolean {
+  const norm = normalizeKey(e.key, e.code);
+  const raw = e.key.toLowerCase();
+  const fromCode = e.code && e.code.startsWith('Key') ? e.code.slice(3).toLowerCase() : '';
+  
+  return actionKeys.some(
+    (k) =>
+      k === norm ||
+      k === raw ||
+      (fromCode && k === fromCode) ||
+      (ARABIC_TO_LATIN[raw] && k === ARABIC_TO_LATIN[raw])
+  );
+}
 
 export interface PlayerProfile {
   name: string;

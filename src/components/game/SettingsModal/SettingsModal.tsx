@@ -20,7 +20,7 @@ import {
 import { audio, type AudioSettings } from '@/lib/audio/audio-manager';
 import { useGameStore } from '@/game/store';
 import { TRANSLATIONS } from '@/lib/i18n/translations';
-import { type GameAction, type VisualMode, type Language } from '@/game/types';
+import { type GameAction, type VisualMode, type Language, normalizeKey } from '@/game/types';
 
 interface SettingsModalProps {
   isOpen: boolean;
@@ -53,7 +53,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
       e.preventDefault();
       e.stopPropagation();
 
-      const key = e.key.toLowerCase();
+      const key = normalizeKey(e.key, e.code);
       // Ignore alone modifiers unless user specifically presses space
       if (['control', 'shift', 'alt', 'meta'].includes(key)) return;
 

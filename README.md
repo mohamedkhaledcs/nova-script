@@ -52,8 +52,10 @@ NovaScript was architected and built through an intensive collaborative co-devel
   - **Minecraft Voxel 3D**: Handcrafted voxel station featuring a stepped Emerald Beacon with vertical skybeam, voxel book stacks, and iron anvil assemblies.
   - **Cyber Neon**: High-contrast cyberpunk aesthetic with glowing wireframes and holographic energy rings.
   - **CAD Blueprint**: Architectural aerospace technical blueprint visualization.
-- **Topological Station Radar Minimap**:
+- **Topological Station Radar Minimap & Minimization**:
   - Real-time radar sweep, room topological connections, player orientation beacon, and fast waypoint tracking.
+  - Interactive hide/show toggle (`[M]` key or hide button) that collapses the radar into a sleek tactical floating glassmorphism pill bottom-right.
+  - Universal bilingual keyboard normalization supporting English, Arabic physical QWERTY layout, uppercase/lowercase, and browser keycodes across all controls.
 
 ### 3. Complete Deep Bilingual Localization (English & Arabic)
 - **Scientific Arabic Overlay (`src/lib/i18n/mission-translations-ar.ts`)**:
