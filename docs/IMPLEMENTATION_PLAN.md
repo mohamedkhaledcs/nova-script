@@ -1,5 +1,9 @@
 # NovaScript: Master Implementation Blueprint & Execution Plan
 
+> **Specification Version**: `2.3.0 (Latest Production Release)`  
+> **Status**: Production Deployed | **Architecture**: Next.js 15 App Router | **Engine**: Deterministic Pure TS  
+> **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)
+
 This document establishes the step-by-step engineering plan for NovaScript.
 
 ---

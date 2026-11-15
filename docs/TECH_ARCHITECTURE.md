@@ -1,5 +1,9 @@
 # NovaScript: Technical Architecture & System Design
 
+> **Specification Version**: `2.3.0 (Latest Production Release)`  
+> **Status**: Production Deployed | **Architecture**: Next.js 15 App Router | **Engine**: Deterministic Pure TS  
+> **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)
+
 ## 1. System Overview & Technology Stack
 
 NovaScript is constructed as a decoupled, layered web application built on Next.js with App Router, TypeScript, Tailwind CSS, Three.js, GSAP, Motion for React, and Supabase.

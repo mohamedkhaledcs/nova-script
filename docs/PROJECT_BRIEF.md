@@ -1,5 +1,9 @@
 # NovaScript: Project Brief & Product Blueprint
 
+> **Specification Version**: `2.3.0 (Latest Production Release)`  
+> **Status**: Production Deployed | **Architecture**: Next.js 15 App Router | **Engine**: Deterministic Pure TS  
+> **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)
+
 ## 1. Executive Summary & Educational Disclaimer
 
 **NovaScript** is an educational space mission design and flight operations simulation. Players assume the role of Mission Commander at Mission Control, exploring critical architectural trade-offs, configuring spacecraft subsystems, balancing normalized engineering constraints, and operating robotic probes across the Solar System to the Moon and Mars.

@@ -1,5 +1,9 @@
 # NovaScript: Gameplay Flow & State Machine Specification
 
+> **Specification Version**: `2.3.0 (Latest Production Release)`  
+> **Status**: Production Deployed | **Architecture**: Next.js 15 App Router | **Engine**: Deterministic Pure TS  
+> **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)
+
 ## 1. High-Level State Machine & Architecture
 
 The NovaScript runtime operates as a deterministic finite-state machine (FSM). The state machine coordinates UI views, 3D simulation scenes, audio cues, and resource accounting.
