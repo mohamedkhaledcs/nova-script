@@ -13,6 +13,7 @@ nova-script/
 ├── .gitignore                                      # Git ignore rules for node_modules, build artifacts, env
 ├── AGENTS.md                                       # Working guidelines, prime directives, and engine rules for AI agents
 ├── LICENSE                                         # MIT Open Source License
+├── MOHAMED_DEV_RULES.md                            # Universal project-agnostic developer guidelines for Mohamed Khaled
 ├── next-env.d.ts                                   # Next.js TypeScript declarations
 ├── next.config.ts                                  # Next.js 15 configuration (React strict mode, build flags)
 ├── package.json                                    # Dependencies, scripts, package manifest
