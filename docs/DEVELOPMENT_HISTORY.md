@@ -1,6 +1,6 @@
 # NovaScript Development History & Version Changelog
 
-> **Current Version**: `2.4.0 (Latest Production Release)`  
+> **Current Version**: `2.5.0 (Latest Production Release)`  
 > **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)  
 > **Engineering Collaboration**: Mohamed Khaled & Antigravity (Google DeepMind)
 
@@ -194,13 +194,41 @@ Throughout development, the engineering effort followed an iterative co-developm
     - **Player Target Reticle**: Technical cyan locator ring under the astronaut's feet.
     - **Technical HUD Drafting Overlay**: Blueprint drafting corner brackets, technical grid paper overlay, and specification headers.
 
+### Version 2.5.0 (Latest Production Release) — Artemis Flight Director Telemetry Console, Multi-Room 3D Visual Modes & Collaboration Standards
+*Mission Operations Overhaul & Universal Collaboration Blueprint*
+
+- **Artemis Flight Director Telemetry Console (`QuestionViewer.tsx`)**:
+  - Implemented real-time **ECLSS & Subsystem Telemetry HUD Strip** at the top of question operations, displaying live micro-gauges and progress bars for all 5 aerospace resources (Budget, Mass, Power, Science Return, Comms).
+  - Integrated dynamic **Mission Elapsed Time (MET)** counter (`T+00:XX:42 MET`) and stage tracking.
+  - Added **Projected Delta & Trend Indicators** (`TrendingUp` / `TrendingDown`) previewing real-time subsystem deltas on hover and focus.
+  - Overhauled the **Engineering Trade-off Analysis & Flight Sign-Off Consequence Modal** with Artemis Flight Director operational standards.
+- **Mode-Aware Dynamic Question UI Theming (`QuestionViewer.tsx`)**:
+  - **CAD Blueprint Mode**: Navy blue drafting canvas (`#03142e`), high-contrast cyan wireframe borders, coordinate brackets (`┌ [CAD // 04.2]`, `[TRAJ-AXIS] ┐`, `└ [GEO-SPEC]`, `[SEC-NOMINAL] ┘`).
+  - **Retro Pixel Mode**: Minecraft voxel aesthetic with amber drop-shadows (`6px 6px 0 0 #78350F`), chunky 2px borders, and warm golden progress bars.
+  - **Cyber Neon Mode**: High-octane cyberpunk theme with emissive magenta/cyan glow lines (`#EC4899`, `#00F0FF`) and holographic neon cards.
+  - **Cinematic 3D Mode**: Aerospace glassmorphism console with refined metallic borders and subtle ambient backdrops.
+- **Universal Decision Hotkeys & Arabic Numeral Parity (`types.ts`, `QuestionViewer.tsx`)**:
+  - Quick decision selection via keyboard hotkeys: `[1]` / `[A]` (and Arabic `[١]` / `[ش]`) for Option A; `[2]` / `[B]` (and Arabic `[٢]` / `[س]`) for Option B.
+  - Modal confirmation hotkey: `[Enter]` or `[Space]` confirms decision and advances mission without mouse interaction; `[Escape]` re-examines trade-offs.
+  - Extended `ARABIC_TO_LATIN` mapping in `types.ts` with Arabic numerals (`١` through `٩` and `٠`).
+- **Comprehensive Multi-Room 3D Visual Mode Assemblies (`Room3DScene.tsx`)**:
+  - Expanded all 4 visual engines across every station room (`command-center`, `science-lab`, `hangar`, `comms-array`, `resource-bay`, `mission-board`, `hallway`):
+    - **Retro Pixel**: Minecraft Redstone Repeater console table & dust trails in Command Center; Bookshelves & Brewing stand in Science Lab; Iron Anvil & Crafting Table in Hangar; Double Chest in Resource Bay; Jukebox in Comms Array; Cartography Table in Mission Board.
+    - **Cyber Neon**: Tactical holographic radar rings & twin vertical data pillars in Command Center; Glowing DNA/molecular double-helix in Science Lab; High-voltage electric blue arc cylinder in Hangar; Radiating radar rings in Comms Array; Energy storage cells in Resource Bay; Tactical holographic grid in Mission Board.
+    - **CAD Blueprint**: Wireframe orbital trajectory ellipse & satellite model in Command Center; Spectrometer prism wireframe & ray vectors in Science Lab; Rocket propulsion nozzle schematic with dimension callouts in Hangar; Parabolic dish wireframe antenna in Comms Array; Isometric crate stack in Resource Bay; Flight flowgraph nodes in Mission Board.
+    - **Cinematic 3D**: Subtle atmospheric dust particle lighting field.
+- **Mohamed Khaled Collaboration Guidelines (`docs/MOHAMED_COLLABORATION_GUIDELINES.md`)**:
+  - Codified the definitive working standard, architectural rules, bilingual parity, zero-emoji policy, and developer mindset guidelines established by Mohamed Khaled for NovaScript and future projects.
+- **Automated Verification**:
+  - Tested with Puppeteer (`scripts/test-v25-polish.mjs`), capturing screenshots 61 through 66 across CAD Blueprint, Retro Pixel, Cyber Neon, Cinematic 3D Arabic, and keyboard navigation.
+
 ---
 
-## Future Roadmap Rhythm (v2.4.0+)
+## Future Roadmap Rhythm (v2.5.0+)
 
 Any subsequent updates to NovaScript should follow this continuous engineering cadence:
 1. Document the proposed changes in `PROJECT_ROADMAP_AND_CHECKLIST.md`.
 2. Add new domain entities to `docs/DATA_DICTIONARY.md` and `docs/PROJECT_STRUCTURE.md`.
 3. Verify zero TypeScript compiler errors (`npx tsc --noEmit`).
 4. Run the deterministic engine verification suite (`npm run test:engine`).
-5. Increment the minor version number (e.g., `v2.4.0`) in `docs/DEVELOPMENT_HISTORY.md` and `docs/PROJECT_STRUCTURE.md`.
+5. Increment the minor version number (e.g., `v2.5.0`) in `docs/DEVELOPMENT_HISTORY.md` and `docs/PROJECT_STRUCTURE.md`.

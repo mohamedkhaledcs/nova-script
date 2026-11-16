@@ -47,31 +47,40 @@ NovaScript was architected and built through an intensive collaborative co-devel
 - **Interactive 3D Station**:
   - Explore the Central Hub, Science Lab, Spacecraft Hangar, Communications Array, and Mission Launch Board.
   - WASD / Arrow keyboard movement, mouse double-click, and mobile double-tap interaction.
-- **4 Real-Time Visual Modes**:
-  - **Cinematic 3D**: Realistic PBR lighting, atmospheric bloom, and space station shadows.
-  - **Minecraft Voxel 3D**: Handcrafted voxel station featuring a stepped Emerald Beacon with vertical skybeam, voxel book stacks, and iron anvil assemblies.
-  - **Cyber Neon**: High-contrast cyberpunk aesthetic with glowing wireframes and holographic energy rings.
-  - **CAD Blueprint**: Architectural aerospace technical blueprint visualization.
+- **4 Real-Time Visual Modes Across All Station Rooms**:
+  - **Cinematic 3D**: Realistic PBR lighting, atmospheric bloom, soft dust particles, and space station shadows.
+  - **Minecraft Voxel 3D**: Handcrafted voxel station featuring a stepped Emerald Beacon with vertical skybeam, wall torches, Command Center redstone repeaters & dust, Science Lab bookshelves, Hangar iron anvil & crafting table, Resource Bay double chest, and Comms jukebox.
+  - **Cyber Neon**: High-contrast cyberpunk aesthetic with glowing wireframes, holographic energy rings, Command Center tactical rings & data pillars, Science Lab glowing DNA double-helix, and high-voltage plasma arcs in Hangar.
+  - **CAD Blueprint**: Architectural aerospace technical blueprint visualization featuring coordinate drafting brackets, floor calibration targets, datum lasers, Command Center orbital trajectory ellipse & satellite model, Science Lab spectrometer prism, and Hangar rocket propulsion nozzle schematic.
 - **Topological Station Radar Minimap & Minimization**:
   - Real-time radar sweep, room topological connections, player orientation beacon, and fast waypoint tracking.
   - Interactive hide/show toggle (`[M]` key or hide button) that collapses the radar into a sleek tactical floating glassmorphism pill bottom-right.
   - Universal bilingual keyboard normalization supporting English, Arabic physical QWERTY layout, uppercase/lowercase, and browser keycodes across all controls.
 
-### 3. Complete Deep Bilingual Localization (English & Arabic)
+### 3. Artemis Flight Director Telemetry & Mission Operations
+- **Real-Time ECLSS & Telemetry Console (`QuestionViewer.tsx`)**:
+  - High-density telemetry strip with live micro-gauges and progress bars for Budget, Mass, Power, Science Return, and Comms.
+  - Dynamic Mission Elapsed Time (MET) counter and stage tracking.
+  - Projected delta indicators (`TrendingUp` / `TrendingDown`) previewing resource impacts before committing.
+  - Rapid keyboard decision execution (`[1]` / `[2]`, `[A]` / `[B]`, Arabic `[١]` / `[٢]`, `[Enter]` to commit, `[Esc]` to review).
+  - Mode-aware dynamic styling adapting to CAD Blueprint, Retro Pixel, Cyber Neon, or Cinematic 3D themes.
+
+### 4. Complete Deep Bilingual Localization (English & Arabic)
 - **Scientific Arabic Overlay (`src/lib/i18n/mission-translations-ar.ts`)**:
   - All 31 questions, 62 answer choices, consequence evaluations, learning takeaways, and 8 mission endings translated into fluent, high-level scientific Arabic without touching the canonical English dataset.
   - Full RTL layout support across all modals, dialogues, and telemetry HUDs.
   - Instant 1-click language switcher in both Main Menu and Exploration HUD.
 
-### 4. Interactive Spacecraft Systems & Mini-Games
+### 5. Interactive Spacecraft Systems & Mini-Games
 - **Spectrometer Mini-Game**: Analyze lunar and martian soil samples and emission wavelengths.
 - **Antenna Alignment Simulation**: Tune azimuth, elevation, and carrier frequency for deep space signals.
 - **Spacecraft Bus Customizer & Crafting Workbench**: Assemble scientific payloads, ion thrusters, and solar arrays from collected blueprints and alloys.
 - **Space Handbook Encyclopedia**: In-depth aerospace field guide covering orbital mechanics (Hohmann transfers), thermal control systems, and comparative Moon vs. Mars environmental physics.
 
-### 5. Zero-Emoji Aerospace Aesthetic
+### 6. Zero-Emoji Aerospace Aesthetic & Collaboration Standards
 - Professional sci-fi styling utilizing custom SVG vectors, Lucide icons, and aerospace telemetry typography.
 - Verified by automated scanner with 0 emojis across the entire production codebase.
+- **Universal Collaboration Guidelines**: Codified in [`docs/MOHAMED_COLLABORATION_GUIDELINES.md`](docs/MOHAMED_COLLABORATION_GUIDELINES.md) defining architectural guardrails, input parity standards, and developer mindset for all AI and human contributors.
 
 ---
 

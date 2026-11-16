@@ -1,6 +1,6 @@
 # NovaScript Project Structure & File Guide
 
-> **Specification Version**: `2.4.0 (Latest Production Release)`  
+> **Specification Version**: `2.5.0 (Latest Production Release)`  
 > **Repository**: [https://github.com/mohamedkhaledcs/nova-script](https://github.com/mohamedkhaledcs/nova-script)  
 > **Architects**: Mohamed Khaled & Antigravity (Google DeepMind)
 
@@ -25,10 +25,11 @@ nova-script/
 │   ├── ASSET_GUIDE.md                              # Sprite specs (player 1:1 pixel art, rocket cursor 36px hotspot)
 │   ├── AUDIO_ASSET_MANIFEST.md                     # Sound synthesis specs, procedural Web Audio frequencies
 │   ├── DATA_DICTIONARY.md                          # Zod schemas, normalized 0–100 resources, data types
-│   ├── DEVELOPMENT_HISTORY.md                      # Chronological version changelog (v1.0.0 -> v2.3.0)
+│   ├── DEVELOPMENT_HISTORY.md                      # Chronological version changelog (v1.0.0 -> v2.5.0)
 │   ├── GAMEPLAY_FLOW.md                            # State machines, sequence choreography, cinematic transitions
 │   ├── IMPLEMENTATION_PLAN.md                      # Phased engineering blueprint & verification criteria
 │   ├── JSON_GRAPH_AUDIT.md                         # Canonical graph audit (31 questions, 62 answers, 8 endings)
+│   ├── MOHAMED_COLLABORATION_GUIDELINES.md         # Developer mindset, standards & working rules for Mohamed Khaled
 │   ├── PROJECT_BRIEF.md                            # Core vision, competition scope & engineering requirements
 │   ├── PROJECT_STRUCTURE.md                        # Complete file-by-file annotated architectural breakdown
 │   ├── SIMULATION_DESIGN.md                        # 3D scenes, orbits, telemetry & spacecraft visuals
@@ -62,6 +63,7 @@ nova-script/
 │   ├── test-voxel-and-hud-buttons.mjs              # Test runner for Minecraft voxel beacon & HUD controls
 │   ├── test-cad-blueprint.mjs                      # CAD Blueprint vs Cinematic 3D visual mode test
 │   ├── test-radar-and-keys.mjs                     # Minimap hide/show toggle & bilingual key test
+│   ├── test-v25-polish.mjs                         # v2.5.0 QuestionViewer, Multi-Room 3D & Hotkey test
 │   └── verify-arabic-and-modes.mjs                 # Comprehensive 15-screenshot verification suite
 │
 └── src/                                            # Core application source code

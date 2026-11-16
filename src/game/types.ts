@@ -131,6 +131,18 @@ const ARABIC_TO_LATIN: Record<string, string> = {
   'ظ': '/',
   'ذ': '`',
 
+  // Arabic Numerals
+  '١': '1',
+  '٢': '2',
+  '٣': '3',
+  '٤': '4',
+  '٥': '5',
+  '٦': '6',
+  '٧': '7',
+  '٨': '8',
+  '٩': '9',
+  '٠': '0',
+
   // Common variants
   'أ': 'a',
   'إ': 'i',

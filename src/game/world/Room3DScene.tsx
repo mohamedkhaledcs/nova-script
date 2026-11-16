@@ -132,6 +132,24 @@ function RoomFloor({
             args={[Math.max(width, depth), Math.round(Math.max(width, depth)), '#00F0FF', '#0284C7']}
             position={[0, 0.02, 0]}
           />
+          {/* Central Blueprint Calibration Target Rings */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.025, 0]}>
+            <ringGeometry args={[2.4, 2.48, 36]} />
+            <meshBasicMaterial color="#00F0FF" transparent opacity={0.6} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.025, 0]}>
+            <ringGeometry args={[4.8, 4.9, 48]} />
+            <meshBasicMaterial color="#0284C7" transparent opacity={0.4} />
+          </mesh>
+          {/* Blueprint Axis Crosshairs on Floor */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.024, 0]}>
+            <planeGeometry args={[width * 0.9, 0.04]} />
+            <meshBasicMaterial color="#00F0FF" transparent opacity={0.4} />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.024, 0]}>
+            <planeGeometry args={[0.04, depth * 0.9]} />
+            <meshBasicMaterial color="#00F0FF" transparent opacity={0.4} />
+          </mesh>
         </group>
       )}
 
@@ -377,6 +395,25 @@ function RoomWalls({
           <boxGeometry args={[wallThickness, wallHeight, depth]} />
           <meshBasicMaterial color="#0284C7" transparent opacity={0.16} />
         </mesh>
+
+        {/* 4 Corner Blueprint Datum Laser Beams & Calibration Vertices */}
+        {[
+          [-halfW, -halfD],
+          [halfW, -halfD],
+          [-halfW, halfD],
+          [halfW, halfD],
+        ].map(([px, pz], idx) => (
+          <group key={idx} position={[px, 0, pz]}>
+            <mesh position={[0, wallHeight / 2, 0]}>
+              <cylinderGeometry args={[0.06, 0.06, wallHeight, 8]} />
+              <meshBasicMaterial color="#00F0FF" />
+            </mesh>
+            <mesh position={[0, wallHeight + 0.15, 0]}>
+              <octahedronGeometry args={[0.18, 0]} />
+              <meshBasicMaterial color="#38BDF8" wireframe />
+            </mesh>
+          </group>
+        ))}
       </group>
     );
   }
@@ -676,6 +713,18 @@ function InteractableMarker({
           <planeGeometry args={[1.4, 1.4]} />
           <meshBasicMaterial color={accentColor} transparent opacity={0.25} wireframe />
         </mesh>
+      ) : visualMode === 'performance' ? (
+        <group position={[0, 0.03, 0]}>
+          {/* CAD Blueprint Object Target Reticle */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[0.85, 0.92, 24]} />
+            <meshBasicMaterial color="#00F0FF" />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[0.82, 16]} />
+            <meshBasicMaterial color="#0369A1" transparent opacity={0.22} />
+          </mesh>
+        </group>
       ) : (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.03, 0]}>
           <circleGeometry args={[1, 16]} />
@@ -687,12 +736,22 @@ function InteractableMarker({
       <group ref={meshRef} position={[0, 0, 0]}>
         {visualMode === 'retro-pixel' ? (
           renderVoxelMesh()
+        ) : visualMode === 'performance' ? (
+          /* Dual-layer CAD Blueprint Solid Core + Wireframe Hologram */
+          <group position={[0, 0.6, 0]}>
+            <mesh>
+              {renderStandardMesh()}
+              <meshBasicMaterial color="#021C3D" transparent opacity={0.7} />
+            </mesh>
+            <mesh scale={[1.015, 1.015, 1.015]}>
+              {renderStandardMesh()}
+              <meshBasicMaterial color="#00F0FF" wireframe />
+            </mesh>
+          </group>
         ) : (
           <mesh position={[0, 0.6, 0]}>
             {renderStandardMesh()}
-            {visualMode === 'performance' ? (
-              <meshBasicMaterial color={accentColor} wireframe />
-            ) : visualMode === 'cyber-neon' ? (
+            {visualMode === 'cyber-neon' ? (
               <meshStandardMaterial
                 color={accentColor}
                 emissive={accentColor}
@@ -808,15 +867,20 @@ function RoomAestheticDecorations({
 }) {
   const ringRef1 = useRef<THREE.Mesh>(null);
   const ringRef2 = useRef<THREE.Mesh>(null);
+  const dataRef = useRef<THREE.Group>(null);
 
   useFrame((state) => {
+    const t = state.clock.elapsedTime;
     if (ringRef1.current) {
-      ringRef1.current.rotation.z = state.clock.elapsedTime * 0.8;
-      ringRef1.current.rotation.x = Math.sin(state.clock.elapsedTime * 0.5) * 0.3;
+      ringRef1.current.rotation.z = t * 0.8;
+      ringRef1.current.rotation.x = Math.sin(t * 0.5) * 0.3;
     }
     if (ringRef2.current) {
-      ringRef2.current.rotation.z = -state.clock.elapsedTime * 0.6;
-      ringRef2.current.rotation.y = Math.cos(state.clock.elapsedTime * 0.5) * 0.3;
+      ringRef2.current.rotation.z = -t * 0.6;
+      ringRef2.current.rotation.y = Math.cos(t * 0.5) * 0.3;
+    }
+    if (dataRef.current) {
+      dataRef.current.rotation.y = t * 0.5;
     }
   });
 
@@ -847,6 +911,50 @@ function RoomAestheticDecorations({
               <meshBasicMaterial color="#38BDF8" transparent opacity={0.45} />
             </mesh>
             <pointLight position={[0, 1.5, 0]} intensity={1.8} color="#00F0FF" distance={16} decay={1.5} />
+            {/* Minecraft Wall Torches with warm voxel glow */}
+            {[-3.5, 3.5].map((tx, idx) => (
+              <group key={idx} position={[tx, 2.2, -5.8]}>
+                <mesh position={[0, -0.15, 0.1]} rotation={[Math.PI / 10, 0, 0]}>
+                  <boxGeometry args={[0.08, 0.45, 0.08]} />
+                  <meshStandardMaterial color="#78350F" roughness={0.9} flatShading />
+                </mesh>
+                <mesh position={[0, 0.12, 0.15]}>
+                  <boxGeometry args={[0.16, 0.16, 0.16]} />
+                  <meshStandardMaterial color="#F59E0B" emissive="#F59E0B" emissiveIntensity={1.4} roughness={0.2} flatShading />
+                </mesh>
+                <pointLight position={[0, 0.2, 0.25]} intensity={1.1} color="#FFAA00" distance={8} decay={2} />
+              </group>
+            ))}
+          </group>
+        )}
+
+        {/* Minecraft Command Console with Redstone Repeaters in Command Center */}
+        {roomId === 'command-center' && (
+          <group position={[0, 0, -3.5]}>
+            {/* Stone console slab */}
+            <mesh position={[0, 0.4, 0]}>
+              <boxGeometry args={[2.4, 0.8, 0.8]} />
+              <meshStandardMaterial color="#475569" roughness={0.9} flatShading />
+            </mesh>
+            {/* Redstone Dust wire trails */}
+            {[-0.6, 0, 0.6].map((rx, idx) => (
+              <group key={idx} position={[rx, 0.82, 0]}>
+                <mesh>
+                  <boxGeometry args={[0.2, 0.04, 0.5]} />
+                  <meshStandardMaterial color="#EF4444" emissive="#EF4444" emissiveIntensity={1.6} flatShading />
+                </mesh>
+                {/* Redstone torch pin */}
+                <mesh position={[0, 0.15, -0.15]}>
+                  <boxGeometry args={[0.06, 0.3, 0.06]} />
+                  <meshStandardMaterial color="#78350F" flatShading />
+                </mesh>
+                <mesh position={[0, 0.32, -0.15]}>
+                  <boxGeometry args={[0.1, 0.1, 0.1]} />
+                  <meshStandardMaterial color="#EF4444" emissive="#EF4444" emissiveIntensity={1.8} flatShading />
+                </mesh>
+              </group>
+            ))}
+            <pointLight position={[0, 1.2, 0]} intensity={1.2} color="#EF4444" distance={6} decay={2} />
           </group>
         )}
 
@@ -872,9 +980,10 @@ function RoomAestheticDecorations({
           </group>
         )}
 
-        {/* Minecraft Anvil in Hangar Bay */}
+        {/* Minecraft Anvil & Crafting Station in Hangar Bay */}
         {roomId === 'hangar' && (
           <group position={[-3.5, 0, -2.5]}>
+            {/* Iron Anvil */}
             <mesh position={[0, 0.1, 0]}>
               <boxGeometry args={[0.9, 0.2, 0.6]} />
               <meshStandardMaterial color="#334155" roughness={0.9} flatShading />
@@ -887,6 +996,55 @@ function RoomAestheticDecorations({
               <boxGeometry args={[1.1, 0.22, 0.5]} />
               <meshStandardMaterial color="#475569" roughness={0.9} flatShading />
             </mesh>
+            {/* Oak Crafting Table next to anvil */}
+            <mesh position={[1.4, 0.45, 0]}>
+              <boxGeometry args={[0.9, 0.9, 0.9]} />
+              <meshStandardMaterial color="#92400E" roughness={0.8} flatShading />
+            </mesh>
+          </group>
+        )}
+
+        {/* Minecraft Double Chest in Resource Bay */}
+        {roomId === 'resource-bay' && (
+          <group position={[0, 0.35, -4]}>
+            {/* Chest body */}
+            <mesh position={[0, 0, 0]}>
+              <boxGeometry args={[1.6, 0.7, 0.8]} />
+              <meshStandardMaterial color="#B45309" roughness={0.85} flatShading />
+            </mesh>
+            {/* Iron Latch */}
+            <mesh position={[0, 0.1, 0.42]}>
+              <boxGeometry args={[0.15, 0.2, 0.08]} />
+              <meshStandardMaterial color="#F8FAFC" roughness={0.5} flatShading />
+            </mesh>
+          </group>
+        )}
+
+        {/* Minecraft Jukebox & Antenna in Comms Array */}
+        {roomId === 'comms-array' && (
+          <group position={[0, 0.45, -3]}>
+            <mesh>
+              <boxGeometry args={[0.9, 0.9, 0.9]} />
+              <meshStandardMaterial color="#78350F" roughness={0.9} flatShading />
+            </mesh>
+            <mesh position={[0, 0.46, 0]}>
+              <boxGeometry args={[0.3, 0.02, 0.3]} />
+              <meshStandardMaterial color="#1E293B" flatShading />
+            </mesh>
+          </group>
+        )}
+
+        {/* Minecraft Cartography Table in Mission Board */}
+        {roomId === 'mission-board' && (
+          <group position={[0, 0.45, -3]}>
+            <mesh>
+              <boxGeometry args={[1.0, 0.9, 0.8]} />
+              <meshStandardMaterial color="#451A03" roughness={0.9} flatShading />
+            </mesh>
+            <mesh position={[0, 0.46, 0]}>
+              <boxGeometry args={[0.85, 0.02, 0.65]} />
+              <meshStandardMaterial color="#FEF08A" roughness={0.9} flatShading />
+            </mesh>
           </group>
         )}
       </group>
@@ -896,16 +1054,146 @@ function RoomAestheticDecorations({
   if (visualMode === 'cyber-neon') {
     return (
       <group>
-        <group position={[0, 2.2, 0]}>
-          <mesh ref={ringRef1} rotation={[Math.PI / 4, 0, 0]}>
-            <torusGeometry args={[1.8, 0.04, 16, 64]} />
-            <meshBasicMaterial color="#00F0FF" />
-          </mesh>
-          <mesh ref={ringRef2} rotation={[-Math.PI / 4, 0, 0]}>
-            <torusGeometry args={[2.3, 0.04, 16, 64]} />
-            <meshBasicMaterial color="#FF007F" />
-          </mesh>
-        </group>
+        {/* Hallway: Rotating Cyber Neon Rings & Floor Glow Runners */}
+        {roomId === 'hallway' && (
+          <group>
+            <group position={[0, 2.2, 0]}>
+              <mesh ref={ringRef1} rotation={[Math.PI / 4, 0, 0]}>
+                <torusGeometry args={[1.8, 0.04, 16, 64]} />
+                <meshBasicMaterial color="#00F0FF" />
+              </mesh>
+              <mesh ref={ringRef2} rotation={[-Math.PI / 4, 0, 0]}>
+                <torusGeometry args={[2.3, 0.04, 16, 64]} />
+                <meshBasicMaterial color="#FF007F" />
+              </mesh>
+            </group>
+            {/* Neon Floor Runner Strips */}
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[-2, 0.03, 0]}>
+              <planeGeometry args={[0.08, 12]} />
+              <meshBasicMaterial color="#00F0FF" />
+            </mesh>
+            <mesh rotation={[-Math.PI / 2, 0, 0]} position={[2, 0.03, 0]}>
+              <planeGeometry args={[0.08, 12]} />
+              <meshBasicMaterial color="#FF007F" />
+            </mesh>
+          </group>
+        )}
+
+        {/* Command Center: Tactical Neon Hologram & Side Data Pillars */}
+        {roomId === 'command-center' && (
+          <group>
+            <group ref={dataRef} position={[0, 1.8, -2]}>
+              <mesh rotation={[Math.PI / 2, 0, 0]}>
+                <torusGeometry args={[1.6, 0.03, 16, 48]} />
+                <meshBasicMaterial color="#00F0FF" />
+              </mesh>
+              <mesh rotation={[Math.PI / 3, 0, 0]}>
+                <torusGeometry args={[1.2, 0.03, 16, 48]} />
+                <meshBasicMaterial color="#A855F7" />
+              </mesh>
+            </group>
+            {/* Twin Vertical Data Pillars */}
+            {[-3.5, 3.5].map((px, idx) => (
+              <group key={idx} position={[px, 1.8, -2]}>
+                <mesh>
+                  <cylinderGeometry args={[0.08, 0.08, 3.6, 16]} />
+                  <meshBasicMaterial color={idx === 0 ? '#00F0FF' : '#FF007F'} />
+                </mesh>
+                <pointLight position={[0, 0, 0]} intensity={1.5} color={idx === 0 ? '#00F0FF' : '#FF007F'} distance={8} />
+              </group>
+            ))}
+          </group>
+        )}
+
+        {/* Science Lab: Holographic DNA / Molecular Helix */}
+        {roomId === 'science-lab' && (
+          <group ref={dataRef} position={[0, 2.0, -3]}>
+            {[...Array(12)].map((_, idx) => {
+              const y = (idx - 6) * 0.25;
+              const angle = idx * 0.5;
+              const x1 = Math.cos(angle) * 0.8;
+              const z1 = Math.sin(angle) * 0.8;
+              return (
+                <group key={idx} position={[0, y, 0]}>
+                  <mesh position={[x1, 0, z1]}>
+                    <sphereGeometry args={[0.08, 12, 12]} />
+                    <meshBasicMaterial color="#00F0FF" />
+                  </mesh>
+                  <mesh position={[-x1, 0, -z1]}>
+                    <sphereGeometry args={[0.08, 12, 12]} />
+                    <meshBasicMaterial color="#EC4899" />
+                  </mesh>
+                  <mesh rotation={[0, -angle, 0]}>
+                    <cylinderGeometry args={[0.015, 0.015, 1.6, 8]} />
+                    <meshBasicMaterial color="#818CF8" transparent opacity={0.6} />
+                  </mesh>
+                </group>
+              );
+            })}
+            <pointLight position={[0, 0, 0]} intensity={1.4} color="#00F0FF" distance={10} />
+          </group>
+        )}
+
+        {/* Hangar: High-Voltage Plasma Arc & Industrial Hazard Glow */}
+        {roomId === 'hangar' && (
+          <group position={[0, 1.5, -3]}>
+            <mesh>
+              <cylinderGeometry args={[0.4, 0.4, 2.8, 16]} />
+              <meshBasicMaterial color="#00F0FF" wireframe />
+            </mesh>
+            <mesh position={[0, 0, 0]}>
+              <cylinderGeometry args={[0.2, 0.2, 2.6, 12]} />
+              <meshBasicMaterial color="#38BDF8" transparent opacity={0.5} />
+            </mesh>
+            <pointLight position={[0, 0, 0]} intensity={2.0} color="#00F0FF" distance={12} />
+          </group>
+        )}
+
+        {/* Comms Array: Radiating Radar Pulse Rings */}
+        {roomId === 'comms-array' && (
+          <group position={[0, 2.2, -2]}>
+            <mesh ref={ringRef1} rotation={[-Math.PI / 4, 0, 0]}>
+              <torusGeometry args={[1.5, 0.03, 16, 48]} />
+              <meshBasicMaterial color="#00F0FF" />
+            </mesh>
+            <mesh ref={ringRef2} rotation={[-Math.PI / 4, 0, 0]}>
+              <torusGeometry args={[2.2, 0.03, 16, 48]} />
+              <meshBasicMaterial color="#10B981" />
+            </mesh>
+          </group>
+        )}
+
+        {/* Resource Bay: Cyber Energy Storage Cells */}
+        {roomId === 'resource-bay' && (
+          <group position={[0, 1.2, -3]}>
+            {[-1.2, 0, 1.2].map((cx, idx) => (
+              <group key={idx} position={[cx, 0, 0]}>
+                <mesh>
+                  <cylinderGeometry args={[0.25, 0.25, 1.8, 16]} />
+                  <meshBasicMaterial color="#FFB800" wireframe />
+                </mesh>
+                <mesh>
+                  <cylinderGeometry args={[0.18, 0.18, 1.6, 12]} />
+                  <meshBasicMaterial color="#F59E0B" transparent opacity={0.6} />
+                </mesh>
+              </group>
+            ))}
+          </group>
+        )}
+
+        {/* Mission Board: Holographic Tactical Grid */}
+        {roomId === 'mission-board' && (
+          <group position={[0, 1.8, -2.5]}>
+            <mesh ref={ringRef1} rotation={[0, 0, 0]}>
+              <ringGeometry args={[1.0, 1.05, 32]} />
+              <meshBasicMaterial color="#FF007F" side={THREE.DoubleSide} />
+            </mesh>
+            <mesh ref={ringRef2} rotation={[0, 0, 0]}>
+              <ringGeometry args={[1.6, 1.65, 32]} />
+              <meshBasicMaterial color="#00F0FF" side={THREE.DoubleSide} />
+            </mesh>
+          </group>
+        )}
       </group>
     );
   }
@@ -913,9 +1201,9 @@ function RoomAestheticDecorations({
   if (visualMode === 'performance') {
     return (
       <group>
+        {/* Hallway: Gyroscope Assembly */}
         {roomId === 'hallway' && (
           <group position={[0, 2.2, 0]}>
-            {/* Holographic Wireframe Station Gyroscope & Measurement Rings */}
             <mesh ref={ringRef1} rotation={[Math.PI / 4, 0, 0]}>
               <torusGeometry args={[2.0, 0.03, 8, 48]} />
               <meshBasicMaterial color="#00F0FF" />
@@ -930,11 +1218,124 @@ function RoomAestheticDecorations({
             </mesh>
           </group>
         )}
+
+        {/* Command Center: CAD Orbital Trajectory Ellipse & Satellite Wireframe */}
+        {roomId === 'command-center' && (
+          <group ref={dataRef} position={[0, 2.0, -2]}>
+            {/* Trajectory Ring */}
+            <mesh rotation={[Math.PI / 3, 0, 0]}>
+              <torusGeometry args={[2.0, 0.02, 6, 64]} />
+              <meshBasicMaterial color="#00F0FF" />
+            </mesh>
+            {/* Satellite Body */}
+            <mesh position={[1.4, 0.8, 0]}>
+              <boxGeometry args={[0.3, 0.3, 0.3]} />
+              <meshBasicMaterial color="#38BDF8" wireframe />
+            </mesh>
+            {/* Solar Panel Wings */}
+            <mesh position={[1.4, 0.8, 0]}>
+              <boxGeometry args={[1.0, 0.02, 0.25]} />
+              <meshBasicMaterial color="#0284C7" wireframe />
+            </mesh>
+          </group>
+        )}
+
+        {/* Science Lab: CAD Spectrometer Prism & Ray Vectors */}
+        {roomId === 'science-lab' && (
+          <group position={[0, 1.8, -3]}>
+            {/* Prism Wireframe */}
+            <mesh rotation={[0, Math.PI / 6, 0]}>
+              <cylinderGeometry args={[0.6, 0.6, 1.2, 3]} />
+              <meshBasicMaterial color="#00F0FF" wireframe />
+            </mesh>
+            {/* 3 Radiating Ray Lines */}
+            {[-0.3, 0, 0.3].map((off, idx) => (
+              <mesh key={idx} position={[off * 1.5, 0, off]} rotation={[0, 0, Math.PI / 2]}>
+                <cylinderGeometry args={[0.015, 0.015, 2.4, 6]} />
+                <meshBasicMaterial color="#38BDF8" />
+              </mesh>
+            ))}
+          </group>
+        )}
+
+        {/* Hangar: CAD Rocket Propulsion Nozzle Schematic */}
+        {roomId === 'hangar' && (
+          <group position={[0, 1.8, -3]}>
+            <mesh rotation={[Math.PI, 0, 0]}>
+              <coneGeometry args={[0.9, 1.8, 16, 4, true]} />
+              <meshBasicMaterial color="#00F0FF" wireframe />
+            </mesh>
+            {/* Combustion chamber cylinder */}
+            <mesh position={[0, 1.2, 0]}>
+              <cylinderGeometry args={[0.45, 0.45, 0.8, 16, 2, true]} />
+              <meshBasicMaterial color="#38BDF8" wireframe />
+            </mesh>
+            {/* Dimension marks */}
+            <mesh position={[1.1, 0, 0]}>
+              <cylinderGeometry args={[0.01, 0.01, 2.2, 4]} />
+              <meshBasicMaterial color="#0284C7" />
+            </mesh>
+          </group>
+        )}
+
+        {/* Comms Array: CAD Parabolic Dish Wireframe Antenna */}
+        {roomId === 'comms-array' && (
+          <group position={[0, 2.0, -2]}>
+            <mesh rotation={[-Math.PI / 4, 0, 0]}>
+              <sphereGeometry args={[1.2, 16, 8, 0, Math.PI * 2, 0, Math.PI / 2]} />
+              <meshBasicMaterial color="#00F0FF" wireframe />
+            </mesh>
+            <mesh position={[0, 0.5, 0.5]} rotation={[-Math.PI / 4, 0, 0]}>
+              <cylinderGeometry args={[0.03, 0.03, 1.2, 6]} />
+              <meshBasicMaterial color="#38BDF8" />
+            </mesh>
+          </group>
+        )}
+
+        {/* Resource Bay: CAD Storage Crate Stacks with Dimension Lines */}
+        {roomId === 'resource-bay' && (
+          <group position={[0, 0.8, -3]}>
+            {[-1.0, 1.0].map((cx, idx) => (
+              <mesh key={idx} position={[cx, 0, 0]}>
+                <boxGeometry args={[1.2, 1.2, 1.2]} />
+                <meshBasicMaterial color="#00F0FF" wireframe />
+              </mesh>
+            ))}
+            <mesh position={[0, 1.2, 0]}>
+              <boxGeometry args={[1.0, 1.0, 1.0]} />
+              <meshBasicMaterial color="#38BDF8" wireframe />
+            </mesh>
+          </group>
+        )}
+
+        {/* Mission Board: CAD Flight Flowgraph Nodes */}
+        {roomId === 'mission-board' && (
+          <group position={[0, 1.8, -2.5]}>
+            {[-1.5, 0, 1.5].map((nx, idx) => (
+              <group key={idx} position={[nx, (idx % 2) * 0.4, 0]}>
+                <mesh>
+                  <circleGeometry args={[0.3, 16]} />
+                  <meshBasicMaterial color="#00F0FF" wireframe side={THREE.DoubleSide} />
+                </mesh>
+              </group>
+            ))}
+            <mesh rotation={[0, 0, Math.PI / 2]}>
+              <cylinderGeometry args={[0.015, 0.015, 3.2, 6]} />
+              <meshBasicMaterial color="#0284C7" />
+            </mesh>
+          </group>
+        )}
       </group>
     );
   }
 
-  return null;
+  // Cinematic 3D: Subtle ambient dust particle field for realistic atmospheric depth
+  return (
+    <group position={[0, 2.0, 0]}>
+      {/* Soft atmospheric ambient light accent */}
+      <pointLight position={[0, 1.0, 0]} intensity={0.4} color="#38BDF8" distance={10} decay={2} />
+    </group>
+  );
 }
 
 // ============================================================================
