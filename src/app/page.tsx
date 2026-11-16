@@ -373,6 +373,32 @@ export default function GamePage() {
           </div>
         </div>
       )}
+
+      {/* CAD Blueprint Architectural Grid & Technical Schematic HUD Overlay */}
+      {visualMode === 'performance' && (
+        <div className="fixed inset-0 pointer-events-none z-50 overflow-hidden">
+          {/* Engineering Blueprint Paper Grid Pattern */}
+          <div className="absolute inset-0 bg-[radial-gradient(#0284c7_1px,transparent_1px)] [background-size:24px_24px] opacity-25" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,132,199,0.08)_1px,transparent_1px),linear-gradient(to_bottom,rgba(2,132,199,0.08)_1px,transparent_1px)] bg-[size:120px_120px]" />
+
+          {/* Drafting Corner Brackets */}
+          <div className="absolute top-3 left-3 w-8 h-8 border-t-2 border-l-2 border-cyan-400/70" />
+          <div className="absolute top-3 right-3 w-8 h-8 border-t-2 border-r-2 border-cyan-400/70" />
+          <div className="absolute bottom-3 left-3 w-8 h-8 border-b-2 border-l-2 border-cyan-400/70" />
+          <div className="absolute bottom-3 right-3 w-8 h-8 border-b-2 border-r-2 border-cyan-400/70" />
+
+          {/* Technical Blueprint Title Block */}
+          <div className="absolute top-3 left-8 text-[10px] font-mono text-cyan-300/90 tracking-widest uppercase flex items-center gap-2">
+            <span className="w-2 h-2 rounded-sm bg-cyan-400 animate-pulse inline-block" />
+            <span>[CAD BLUEPRINT // ISOMETRIC SCHEMATIC REV 4.2]</span>
+          </div>
+
+          {/* Technical Dimension Marks */}
+          <div className="absolute top-8 left-8 text-[8px] font-mono text-cyan-400/60 tracking-wider">
+            SCALE: 1:50 METRIC // COORD: WGS-84 ORBITAL // STATUS: STRUCTURAL NOMINAL
+          </div>
+        </div>
+      )}
       {/* ===== MAIN MENU ===== */}
       {screen === 'menu' && (
         <div className="flex-1 flex flex-col items-center justify-center">

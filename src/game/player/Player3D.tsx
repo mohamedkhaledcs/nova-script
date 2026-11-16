@@ -193,6 +193,18 @@ export default function Player3D() {
           <planeGeometry args={[0.7, 0.7]} />
           <meshBasicMaterial color="#000000" transparent opacity={0.5} />
         </mesh>
+      ) : visualMode === 'performance' ? (
+        <group position={[0, 0.025, 0]}>
+          {/* CAD Blueprint Player Target Reticle */}
+          <mesh rotation={[-Math.PI / 2, 0, 0]}>
+            <ringGeometry args={[0.42, 0.5, 32]} />
+            <meshBasicMaterial color="#00F0FF" />
+          </mesh>
+          <mesh rotation={[-Math.PI / 2, 0, 0]}>
+            <circleGeometry args={[0.38, 16]} />
+            <meshBasicMaterial color="#0284C7" transparent opacity={0.3} />
+          </mesh>
+        </group>
       ) : (
         <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0.01, 0]}>
           <circleGeometry args={[0.42, 24]} />

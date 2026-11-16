@@ -120,12 +120,19 @@ function RoomFloor({
         </mesh>
       )}
 
-      {/* Performance / Blueprint CAD Floor */}
+      {/* Performance / Blueprint CAD Architectural Grid Floor */}
       {visualMode === 'performance' && (
-        <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-          <planeGeometry args={[width, depth]} />
-          <meshBasicMaterial color="#020b18" />
-        </mesh>
+        <group position={[0, 0, 0]}>
+          <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
+            <planeGeometry args={[width, depth]} />
+            <meshBasicMaterial color="#041633" />
+          </mesh>
+          {/* Luminous Blueprint Architectural Grid Overlay */}
+          <gridHelper
+            args={[Math.max(width, depth), Math.round(Math.max(width, depth)), '#00F0FF', '#0284C7']}
+            position={[0, 0.02, 0]}
+          />
+        </group>
       )}
 
       {/* Cinematic 3D Standard Floor */}
@@ -330,25 +337,45 @@ function RoomWalls({
     );
   }
 
-  // Performance / Blueprint CAD Wireframe Walls
+  // Performance / Blueprint CAD Wireframe & Translucent Schematic Walls
   if (visualMode === 'performance') {
     return (
       <group>
+        {/* Back wall */}
         <mesh position={[0, wallHeight / 2, -halfD]}>
           <boxGeometry args={[width, wallHeight, wallThickness]} />
-          <meshBasicMaterial color="#06B6D4" wireframe />
+          <meshBasicMaterial color="#00F0FF" wireframe />
+        </mesh>
+        <mesh position={[0, wallHeight / 2, -halfD]}>
+          <boxGeometry args={[width, wallHeight, wallThickness]} />
+          <meshBasicMaterial color="#0284C7" transparent opacity={0.16} />
+        </mesh>
+        {/* Front wall */}
+        <mesh position={[0, wallHeight / 2, halfD]}>
+          <boxGeometry args={[width, wallHeight, wallThickness]} />
+          <meshBasicMaterial color="#00F0FF" wireframe />
         </mesh>
         <mesh position={[0, wallHeight / 2, halfD]}>
           <boxGeometry args={[width, wallHeight, wallThickness]} />
-          <meshBasicMaterial color="#06B6D4" wireframe />
+          <meshBasicMaterial color="#0284C7" transparent opacity={0.16} />
+        </mesh>
+        {/* Left wall */}
+        <mesh position={[-halfW, wallHeight / 2, 0]}>
+          <boxGeometry args={[wallThickness, wallHeight, depth]} />
+          <meshBasicMaterial color="#00F0FF" wireframe />
         </mesh>
         <mesh position={[-halfW, wallHeight / 2, 0]}>
           <boxGeometry args={[wallThickness, wallHeight, depth]} />
-          <meshBasicMaterial color="#06B6D4" wireframe />
+          <meshBasicMaterial color="#0284C7" transparent opacity={0.16} />
+        </mesh>
+        {/* Right wall */}
+        <mesh position={[halfW, wallHeight / 2, 0]}>
+          <boxGeometry args={[wallThickness, wallHeight, depth]} />
+          <meshBasicMaterial color="#00F0FF" wireframe />
         </mesh>
         <mesh position={[halfW, wallHeight / 2, 0]}>
           <boxGeometry args={[wallThickness, wallHeight, depth]} />
-          <meshBasicMaterial color="#06B6D4" wireframe />
+          <meshBasicMaterial color="#0284C7" transparent opacity={0.16} />
         </mesh>
       </group>
     );
@@ -883,6 +910,30 @@ function RoomAestheticDecorations({
     );
   }
 
+  if (visualMode === 'performance') {
+    return (
+      <group>
+        {roomId === 'hallway' && (
+          <group position={[0, 2.2, 0]}>
+            {/* Holographic Wireframe Station Gyroscope & Measurement Rings */}
+            <mesh ref={ringRef1} rotation={[Math.PI / 4, 0, 0]}>
+              <torusGeometry args={[2.0, 0.03, 8, 48]} />
+              <meshBasicMaterial color="#00F0FF" />
+            </mesh>
+            <mesh ref={ringRef2} rotation={[-Math.PI / 4, 0, 0]}>
+              <torusGeometry args={[2.5, 0.03, 8, 48]} />
+              <meshBasicMaterial color="#38BDF8" />
+            </mesh>
+            <mesh rotation={[0, Math.PI / 4, 0]}>
+              <octahedronGeometry args={[1.2, 1]} />
+              <meshBasicMaterial color="#0284C7" wireframe />
+            </mesh>
+          </group>
+        )}
+      </group>
+    );
+  }
+
   return null;
 }
 
@@ -1019,9 +1070,10 @@ export default function Room3DScene({ roomId }: { roomId: RoomId }) {
         </>
       ) : visualMode === 'performance' ? (
         <>
-          {/* Minimalist CAD Blueprint Lighting */}
-          <ambientLight intensity={0.95} color="#CCD8EE" />
-          <directionalLight position={[10, 15, 10]} intensity={0.7} color="#FFFFFF" />
+          {/* Architectural CAD Blueprint Technical Lighting */}
+          <ambientLight intensity={0.85} color="#0284C7" />
+          <directionalLight position={[0, 15, 0]} intensity={0.9} color="#38BDF8" />
+          <pointLight position={[0, 6, 0]} intensity={1.4} color="#00F0FF" distance={25} />
         </>
       ) : (
         /* Cinematic 3D Realistic Lighting */

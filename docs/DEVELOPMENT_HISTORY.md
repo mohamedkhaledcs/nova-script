@@ -186,6 +186,13 @@ Throughout development, the engineering effort followed an iterative co-developm
     - Browser physical `KeyboardEvent.code` resolution (`KeyM`, `KeyW`, `KeyA`, `KeyS`, `KeyD`, `KeyE`, `KeyI`).
 - **Comprehensive Verification**:
   - Automated Puppeteer test (`scripts/test-radar-and-keys.mjs`) verified hide button, restore pill, `KeyM`, Arabic `ة` key, and Arabic HUD view with 6 verification screenshots.
+- **CAD Blueprint Visual Mode Overhaul (`Room3DScene.tsx`, `GameCanvasInner.tsx`, `page.tsx`, `Player3D.tsx`)**:
+  - Completely redesigned Mode 4 (CAD Blueprint) to be 100% distinct from Cinematic 3D:
+    - **Luminous Blueprint Grid Floor**: Added interactive cyan/electric blue `gridHelper` over deep blueprint navy `#041633`.
+    - **Architectural Schematic Walls**: Cyan wireframe edges with translucent structural blue glass infill.
+    - **Holographic Gyroscope Assembly**: Rotating 3D wireframe measurement sphere and rings in the central hub.
+    - **Player Target Reticle**: Technical cyan locator ring under the astronaut's feet.
+    - **Technical HUD Drafting Overlay**: Blueprint drafting corner brackets, technical grid paper overlay, and specification headers.
 
 ---
 

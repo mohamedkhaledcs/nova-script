@@ -51,15 +51,16 @@ export default function GameCanvasInner() {
         };
       case 'performance':
         return {
-          dpr: 1,
-          antialias: false,
-          fogColor: '#02040A',
+          dpr: [1, 1.5] as [number, number],
+          antialias: true,
+          fogColor: '#03142e',
           fogNear: 25,
-          fogFar: 60,
+          fogFar: 65,
           style: {
             width: '100%',
             height: '100%',
-            background: '#02040A',
+            background: '#03142e',
+            filter: 'contrast(1.15) brightness(1.08)',
           },
         };
       default: // cinematic-3d

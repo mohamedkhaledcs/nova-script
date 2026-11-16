@@ -85,7 +85,7 @@ export default function ExplorationHUD() {
       case 'performance':
         return {
           label: t.modeBadgePerf,
-          color: 'text-sky-300 border-sky-500/40 bg-slate-900/90',
+          color: 'text-cyan-300 border-cyan-400/60 bg-cyan-950/80 shadow-[0_0_12px_rgba(0,240,255,0.25)]',
         };
       default:
         return {

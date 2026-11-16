@@ -60,6 +60,8 @@ nova-script/
 │   ├── test-profile-and-collectibles.mjs           # Test runner for achievements and collectible pickups
 │   ├── test-visual-modes-and-i18n.mjs              # Test runner for language toggling and graphic styles
 │   ├── test-voxel-and-hud-buttons.mjs              # Test runner for Minecraft voxel beacon & HUD controls
+│   ├── test-cad-blueprint.mjs                      # CAD Blueprint vs Cinematic 3D visual mode test
+│   ├── test-radar-and-keys.mjs                     # Minimap hide/show toggle & bilingual key test
 │   └── verify-arabic-and-modes.mjs                 # Comprehensive 15-screenshot verification suite
 │
 └── src/                                            # Core application source code
